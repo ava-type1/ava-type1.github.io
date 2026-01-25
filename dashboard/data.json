@@ -1,0 +1,97 @@
+{
+  "lastUpdated": "2026-01-25T21:15:00Z",
+  "projects": [
+    {
+      "name": "AVA Type 1 App",
+      "description": "iOS simulation game teaching T1D management to kids",
+      "status": "active",
+      "progress": 80,
+      "repo": "https://github.com/ava-type1/ava-type1-development-claude",
+      "notes": "SwiftUI, gamification, sticker collections, dual simulation modes"
+    },
+    {
+      "name": "AVA Drive",
+      "description": "Driving safety display - shows CGM data on external ESP32 screen",
+      "status": "active",
+      "progress": 60,
+      "repo": "https://github.com/ava-type1/ava-drive",
+      "notes": "iOS app + ESP32-C6 hardware, BLE communication"
+    },
+    {
+      "name": "AVA Companion/Buddy",
+      "description": "Physical plush toy with embedded ESP32-C6 display",
+      "status": "planned",
+      "progress": 20,
+      "repo": null,
+      "notes": "Waveshare ESP32-C6-LCD-1.47, 3D printed enclosure, pairs with app via BLE"
+    },
+    {
+      "name": "AVA Arena (Competition Mode)",
+      "description": "5-inch multi-player display with gamification scoring for T1D families",
+      "status": "idea",
+      "progress": 5,
+      "repo": null,
+      "notes": "ESP32-S3 + 5\" Waveshare touchscreen, 2-4 player split screen, weekly championships, crown for winners"
+    },
+    {
+      "name": "FieldSync",
+      "description": "Mobile home service workflow app - walkthroughs, materials, signatures",
+      "status": "deploying",
+      "progress": 90,
+      "repo": "https://github.com/ava-type1/fieldsyncv2",
+      "notes": "React PWA, Supabase backend, needs env vars in Netlify to go live"
+    },
+    {
+      "name": "AVA Website",
+      "description": "Marketing site for AVA products",
+      "status": "live",
+      "progress": 100,
+      "repo": "https://github.com/ava-type1/ava-type1.github.io",
+      "notes": "GitHub Pages, static HTML"
+    }
+  ],
+  "ideas": [
+    {
+      "name": "T1D Takeover",
+      "description": "Gamified independence training - gradually transfers diabetes management from parent to teen",
+      "category": "app",
+      "priority": "medium",
+      "addedDate": "2026-01-25"
+    },
+    {
+      "name": "Sugar Squad",
+      "description": "Moderated social network connecting T1D kids by age - pen pals, shared experiences",
+      "category": "app",
+      "priority": "medium",
+      "addedDate": "2026-01-25"
+    },
+    {
+      "name": "Coach Mode",
+      "description": "Sports/activity BG predictor - learns your patterns, recommends pre-activity carbs",
+      "category": "app",
+      "priority": "low",
+      "addedDate": "2026-01-25"
+    },
+    {
+      "name": "Plot Twist",
+      "description": "AI narrates your CGM data as a daily story with characters and drama",
+      "category": "app",
+      "priority": "low",
+      "addedDate": "2026-01-25"
+    }
+  ],
+  "recentActivity": [
+    {
+      "date": "2026-01-25",
+      "summary": "Built FieldSync PWA, deployed to Netlify (needs Supabase env vars)"
+    },
+    {
+      "date": "2026-01-25",
+      "summary": "Designed AVA Arena competition mode - scoring logic, display layouts, crown system"
+    },
+    {
+      "date": "2026-01-25",
+      "summary": "Brainstormed 6 T1D app ideas, Kam liked competition/gamification direction"
+    }
+  ]
+}

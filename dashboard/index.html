@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kam + Claude Dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    :root {
+      --bg: #0f172a;
+      --bg-card: #1e293b;
+      --bg-card-hover: #334155;
+      --text: #f1f5f9;
+      --text-muted: #94a3b8;
+      --accent: #3b82f6;
+      --green: #22c55e;
+      --yellow: #eab308;
+      --orange: #f97316;
+      --purple: #a855f7;
+      --pink: #ec4899;
+    }
+    
+    body {
+      font-family: 'Inter', -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+      padding: 20px;
+      min-height: 100vh;
+    }
+    
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 30px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid var(--bg-card);
+    }
+    
+    h1 {
+      font-size: 1.75rem;
+      font-weight: 700;
+    }
+    
+    h1 span { color: var(--accent); }
+    
+    .last-updated {
+      color: var(--text-muted);
+      font-size: 0.875rem;
+    }
+    
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 20px;
+    }
+    
+    @media (min-width: 768px) {
+      .grid { grid-template-columns: 2fr 1fr; }
+      .full-width { grid-column: 1 / -1; }
+    }
+    
+    .card {
+      background: var(--bg-card);
+      border-radius: 12px;
+      padding: 20px;
+    }
+    
+    .card h2 {
+      font-size: 1rem;
+      font-weight: 600;
+      margin-bottom: 15px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .card h2 .icon {
+      width: 20px;
+      height: 20px;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+    }
+    
+    /* Projects */
+    .project {
+      background: var(--bg);
+      border-radius: 8px;
+      padding: 15px;
+      margin-bottom: 10px;
+      transition: background 0.2s;
+    }
+    
+    .project:hover { background: var(--bg-card-hover); }
+    .project:last-child { margin-bottom: 0; }
+    
+    .project-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 8px;
+    }
+    
+    .project-name {
+      font-weight: 600;
+      font-size: 0.95rem;
+    }
+    
+    .project-name a {
+      color: var(--text);
+      text-decoration: none;
+    }
+    
+    .project-name a:hover { color: var(--accent); }
+    
+    .status {
+      font-size: 0.7rem;
+      font-weight: 600;
+      padding: 3px 8px;
+      border-radius: 20px;
+      text-transform: uppercase;
+    }
+    
+    .status-active { background: var(--green); color: #000; }
+    .status-deploying { background: var(--yellow); color: #000; }
+    .status-planned { background: var(--purple); color: #fff; }
+    .status-idea { background: var(--pink); color: #fff; }
+    .status-live { background: var(--accent); color: #fff; }
+    
+    .project-desc {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin-bottom: 10px;
+    }
+    
+    .progress-bar {
+      height: 4px;
+      background: var(--bg-card);
+      border-radius: 2px;
+      overflow: hidden;
+    }
+    
+    .progress-fill {
+      height: 100%;
+      background: var(--accent);
+      border-radius: 2px;
+      transition: width 0.3s;
+    }
+    
+    .project-notes {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin-top: 8px;
+      font-style: italic;
+    }
+    
+    /* Ideas */
+    .idea {
+      padding: 12px 0;
+      border-bottom: 1px solid var(--bg);
+    }
+    
+    .idea:last-child { border-bottom: none; }
+    
+    .idea-name {
+      font-weight: 600;
+      font-size: 0.9rem;
+      margin-bottom: 4px;
+    }
+    
+    .idea-desc {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+    
+    .idea-meta {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      margin-top: 6px;
+    }
+    
+    .priority-high { border-left: 3px solid var(--orange); padding-left: 10px; }
+    .priority-medium { border-left: 3px solid var(--yellow); padding-left: 10px; }
+    .priority-low { border-left: 3px solid var(--text-muted); padding-left: 10px; }
+    
+    /* Activity */
+    .activity {
+      padding: 10px 0;
+      border-bottom: 1px solid var(--bg);
+      font-size: 0.85rem;
+    }
+    
+    .activity:last-child { border-bottom: none; }
+    
+    .activity-date {
+      font-size: 0.75rem;
+      color: var(--accent);
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+    
+    /* Quick Links */
+    .links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    
+    .link-btn {
+      display: inline-block;
+      padding: 8px 14px;
+      background: var(--bg);
+      color: var(--text);
+      text-decoration: none;
+      border-radius: 6px;
+      font-size: 0.8rem;
+      font-weight: 500;
+      transition: background 0.2s;
+    }
+    
+    .link-btn:hover { background: var(--accent); }
+    
+    .telegram-cta {
+      margin-top: 30px;
+      text-align: center;
+      padding: 20px;
+      background: linear-gradient(135deg, var(--accent), var(--purple));
+      border-radius: 12px;
+    }
+    
+    .telegram-cta p {
+      margin-bottom: 10px;
+      font-size: 0.9rem;
+    }
+    
+    .telegram-cta a {
+      color: #fff;
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>Kam <span>+</span> Claude</h1>
+      <div class="last-updated" id="lastUpdated"></div>
+    </header>
+    
+    <div class="grid">
+      <div class="card">
+        <h2><span class="icon" style="background: var(--green);">📦</span> Projects</h2>
+        <div id="projects"></div>
+      </div>
+      
+      <div>
+        <div class="card" style="margin-bottom: 20px;">
+          <h2><span class="icon" style="background: var(--pink);">💡</span> Ideas Backlog</h2>
+          <div id="ideas"></div>
+        </div>
+        
+        <div class="card">
+          <h2><span class="icon" style="background: var(--accent);">⚡</span> Recent Activity</h2>
+          <div id="activity"></div>
+        </div>
+      </div>
+      
+      <div class="card full-width">
+        <h2><span class="icon" style="background: var(--purple);">🔗</span> Quick Links</h2>
+        <div class="links">
+          <a href="https://github.com/ava-type1" class="link-btn" target="_blank">GitHub Org</a>
+          <a href="https://github.com/ava-type1/ava-drive" class="link-btn" target="_blank">AVA Drive Repo</a>
+          <a href="https://github.com/ava-type1/ava-type1-development-claude" class="link-btn" target="_blank">AVA Type 1 Repo</a>
+          <a href="https://github.com/ava-type1/fieldsyncv2" class="link-btn" target="_blank">FieldSync Repo</a>
+          <a href="https://spiffy-cranachan-9cabab.netlify.app" class="link-btn" target="_blank">FieldSync (Netlify)</a>
+          <a href="https://supabase.com/dashboard" class="link-btn" target="_blank">Supabase Dashboard</a>
+        </div>
+      </div>
+    </div>
+    
+    <div class="telegram-cta">
+      <p>Keep chatting with Claude via Telegram — this dashboard updates as we work.</p>
+      <a href="https://t.me/ClawdBot">Open Telegram →</a>
+    </div>
+  </div>
+  
+  <script>
+    async function loadData() {
+      try {
+        const res = await fetch('data.json?' + Date.now());
+        const data = await res.json();
+        render(data);
+      } catch (e) {
+        console.error('Failed to load data:', e);
+      }
+    }
+    
+    function render(data) {
+      // Last updated
+      const updated = new Date(data.lastUpdated);
+      document.getElementById('lastUpdated').textContent = 
+        'Updated: ' + updated.toLocaleDateString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+      
+      // Projects
+      const projectsHtml = data.projects.map(p => `
+        <div class="project">
+          <div class="project-header">
+            <div class="project-name">
+              ${p.repo ? `<a href="${p.repo}" target="_blank">${p.name}</a>` : p.name}
+            </div>
+            <span class="status status-${p.status}">${p.status}</span>
+          </div>
+          <div class="project-desc">${p.description}</div>
+          <div class="progress-bar">
+            <div class="progress-fill" style="width: ${p.progress}%"></div>
+          </div>
+          ${p.notes ? `<div class="project-notes">${p.notes}</div>` : ''}
+        </div>
+      `).join('');
+      document.getElementById('projects').innerHTML = projectsHtml;
+      
+      // Ideas
+      const ideasHtml = data.ideas.map(i => `
+        <div class="idea priority-${i.priority}">
+          <div class="idea-name">${i.name}</div>
+          <div class="idea-desc">${i.description}</div>
+          <div class="idea-meta">${i.category} · ${i.priority} priority · added ${i.addedDate}</div>
+        </div>
+      `).join('');
+      document.getElementById('ideas').innerHTML = ideasHtml;
+      
+      // Activity
+      const activityHtml = data.recentActivity.map(a => `
+        <div class="activity">
+          <div class="activity-date">${a.date}</div>
+          <div>${a.summary}</div>
+        </div>
+      `).join('');
+      document.getElementById('activity').innerHTML = activityHtml;
+    }
+    
+    loadData();
+  </script>
+</body>
+</html>

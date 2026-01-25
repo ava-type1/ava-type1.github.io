@@ -154,14 +154,28 @@
       </ul>
     </div>
     
+    <div class="card" style="background: #dcfce7; border-color: #86efac;">
+      <h2 style="color: #166534;">✅ We Have Working Base Firmware!</h2>
+      <p style="font-size: 0.9rem;">Kam provided existing dual-user Dexcom display code that already has:</p>
+      <ul style="font-size: 0.85rem; margin-left: 20px; margin-top: 8px;">
+        <li>Split-screen layout (currently 2 users: Kaislyn + Dad)</li>
+        <li>Dexcom API integration</li>
+        <li>Multiple views (Main, Stats, Big Number, Clock)</li>
+        <li>BLE connection to AvaDrive iOS app</li>
+        <li>Anti-aliased digit fonts</li>
+        <li>History graphs</li>
+      </ul>
+      <p style="font-size: 0.85rem; margin-top: 12px;"><strong>Saved to:</strong> <code>/root/clawd/ava-arena-firmware/</code></p>
+    </div>
+    
     <div class="next-steps">
-      <h2>⏭️ Next Steps to Build This</h2>
+      <h2>⏭️ Next Steps to Build AVA Arena</h2>
       <ul>
-        <li>Confirm exact Waveshare 5" model (need model number for resolution/touch driver)</li>
-        <li>Decide: scoring on ESP32 or in iOS app? (recommend app - easier to update)</li>
-        <li>Design competition data model for AVA Drive app</li>
-        <li>Build ESP32 firmware for multi-player split screen</li>
-        <li>Add competition mode UI to AVA Drive iOS app</li>
+        <li><strong>Extend player support:</strong> Modify split-screen from 2 → 2-4 players</li>
+        <li><strong>Add scoring engine:</strong> Implement points-per-hour logic based on BG zones</li>
+        <li><strong>Add competition state:</strong> Track 24h/72h/weekly competitions</li>
+        <li><strong>Add crown overlay:</strong> Display winner badge for last week's champion</li>
+        <li><strong>Update iOS app:</strong> Add competition mode UI to AVA Drive</li>
       </ul>
     </div>
   </div>

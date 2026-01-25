@@ -57,9 +57,9 @@
     {
       "name": "AVA Arena",
       "emoji": "🏆",
-      "status": "Idea",
-      "statusColor": "purple",
-      "note": "Competition mode + 5\" display",
+      "status": "30%",
+      "statusColor": "green",
+      "note": "Has working base firmware!",
       "link": "projects/ava-arena.html"
     },
     {
@@ -101,9 +101,9 @@
   ],
   
   "recentWork": [
+    { "date": "Jan 25", "what": "Received working base firmware for AVA Arena (dual-user display)" },
     { "date": "Jan 25", "what": "Built FieldSync PWA, designed AVA Arena scoring" },
-    { "date": "Jan 25", "what": "Created project dashboard with detail pages" },
-    { "date": "Jan 25", "what": "Brainstormed T1D app ideas" }
+    { "date": "Jan 25", "what": "Created project dashboard with detail pages" }
   ],
   
   "links": [

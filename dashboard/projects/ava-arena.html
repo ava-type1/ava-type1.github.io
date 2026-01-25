@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AVA Arena | Kam × Claude</title>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    :root {
+      --bg: #fafafa; --card: #ffffff; --text: #18181b; --muted: #71717a;
+      --border: #e4e4e7; --blue: #3b82f6; --green: #22c55e; --purple: #a855f7;
+    }
+    body { font-family: 'Space Grotesk', sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; padding: 24px; }
+    .container { max-width: 900px; margin: 0 auto; }
+    .back { display: inline-flex; align-items: center; gap: 6px; color: var(--muted); text-decoration: none; font-size: 0.85rem; margin-bottom: 20px; }
+    .back:hover { color: var(--text); }
+    .header { display: flex; align-items: center; gap: 16px; margin-bottom: 24px; }
+    .emoji { font-size: 3rem; }
+    .title-block h1 { font-size: 2rem; font-weight: 700; margin-bottom: 4px; }
+    .subtitle { color: var(--muted); font-size: 1rem; }
+    .status-bar { display: flex; align-items: center; gap: 16px; margin-bottom: 32px; flex-wrap: wrap; }
+    .status-badge { padding: 6px 14px; border-radius: 20px; font-size: 0.8rem; font-weight: 600; background: #f3e8ff; color: #7c3aed; }
+    
+    .concept { background: linear-gradient(135deg, var(--purple) 0%, var(--blue) 100%); color: white; border-radius: 12px; padding: 24px; margin-bottom: 32px; }
+    .concept h2 { font-size: 1rem; margin-bottom: 12px; }
+    .concept p { font-size: 0.95rem; opacity: 0.9; }
+    
+    .card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 20px; margin-bottom: 20px; }
+    .card h2 { font-size: 0.85rem; font-weight: 600; margin-bottom: 12px; }
+    
+    .layouts { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 20px; }
+    @media (max-width: 640px) { .layouts { grid-template-columns: 1fr; } }
+    .layout-box { background: var(--bg); border-radius: 8px; padding: 16px; text-align: center; }
+    .layout-title { font-weight: 600; font-size: 0.8rem; margin-bottom: 8px; }
+    .layout-diagram { font-family: monospace; font-size: 0.7rem; white-space: pre; background: white; padding: 10px; border-radius: 4px; border: 1px solid var(--border); }
+    
+    .scoring-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+    .scoring-table th, .scoring-table td { padding: 10px; text-align: left; border-bottom: 1px solid var(--border); }
+    .scoring-table th { font-size: 0.7rem; text-transform: uppercase; color: var(--muted); }
+    
+    .features { list-style: none; }
+    .features li { padding: 10px 0; border-bottom: 1px solid var(--border); font-size: 0.9rem; display: flex; align-items: flex-start; gap: 10px; }
+    .features li:last-child { border-bottom: none; }
+    .feature-icon { font-size: 1.2rem; }
+    
+    .next-steps { background: #fef3c7; border: 1px solid #fcd34d; border-radius: 12px; padding: 20px; }
+    .next-steps h2 { font-size: 0.85rem; font-weight: 600; margin-bottom: 12px; color: #92400e; }
+    .next-steps ul { margin-left: 20px; font-size: 0.9rem; }
+    .next-steps li { margin-bottom: 6px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <a href="../" class="back">← Back to Dashboard</a>
+    
+    <div class="header">
+      <span class="emoji">🏆</span>
+      <div class="title-block">
+        <h1>AVA Arena</h1>
+        <p class="subtitle">Competition mode - gamified T1D management for families</p>
+      </div>
+    </div>
+    
+    <div class="status-bar">
+      <span class="status-badge">Idea / Design Phase</span>
+    </div>
+    
+    <div class="concept">
+      <h2>💡 The Concept</h2>
+      <p>A 5-inch touchscreen display showing 2-4 T1D family members competing on blood sugar management. Weekly championships, daily scores, and a crown for the winner. Turn diabetes management into a family game.</p>
+    </div>
+    
+    <div class="card">
+      <h2>📐 Display Layouts</h2>
+      <div class="layouts">
+        <div class="layout-box">
+          <div class="layout-title">2 Players</div>
+          <div class="layout-diagram">┌─────┬─────┐
+│     │     │
+│  1  │  2  │
+│     │     │
+└─────┴─────┘</div>
+        </div>
+        <div class="layout-box">
+          <div class="layout-title">3 Players</div>
+          <div class="layout-diagram">┌───────────┐
+│     1     │
+├─────┬─────┤
+│  2  │  3  │
+└─────┴─────┘</div>
+        </div>
+        <div class="layout-box">
+          <div class="layout-title">4 Players</div>
+          <div class="layout-diagram">┌─────┬─────┐
+│  1  │  2  │
+├─────┼─────┤
+│  3  │  4  │
+└─────┴─────┘</div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="card">
+      <h2>🎯 Scoring System (Points per Hour)</h2>
+      <table class="scoring-table">
+        <thead>
+          <tr>
+            <th>Zone</th>
+            <th>BG Range</th>
+            <th>Points</th>
+            <th>Vibe</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>🎯 Target</td><td>70-140</td><td>+100</td><td>Crushing it</td></tr>
+          <tr><td>✅ In Range</td><td>140-180</td><td>+70</td><td>Solid</td></tr>
+          <tr><td>⚠️ Mild High</td><td>180-250</td><td>+20</td><td>Happens</td></tr>
+          <tr><td>🔶 High</td><td>250-300</td><td>0</td><td>Neutral</td></tr>
+          <tr><td>🔴 Very High</td><td>300+</td><td>-10</td><td>Gentle nudge</td></tr>
+          <tr><td>⚠️ Mild Low</td><td>55-70</td><td>+10</td><td>Caught it!</td></tr>
+          <tr><td>🔴 Severe Low</td><td>&lt;55</td><td>-20</td><td>Safety</td></tr>
+        </tbody>
+      </table>
+      <p style="font-size: 0.8rem; color: var(--muted); margin-top: 12px;"><strong>Philosophy:</strong> Don't punish highs/lows too hard - they already deal with enough. Always earnable points.</p>
+    </div>
+    
+    <div class="card">
+      <h2>🏅 Competition Modes</h2>
+      <ul class="features">
+        <li><span class="feature-icon">⚡</span> <div><strong>Quick Match</strong> - 24 hours</div></li>
+        <li><span class="feature-icon">🎮</span> <div><strong>Weekend Warrior</strong> - 72 hours</div></li>
+        <li><span class="feature-icon">👑</span> <div><strong>Weekly Championship</strong> - 7 days, winner gets crown displayed all next week</div></li>
+      </ul>
+    </div>
+    
+    <div class="card">
+      <h2>✨ Bonus Points</h2>
+      <ul class="features">
+        <li><span class="feature-icon">🦸</span> <div><strong>Recovery Hero</strong> - +50 for getting back in range within 1 hour after high/low</div></li>
+        <li><span class="feature-icon">🌙</span> <div><strong>Night Owl</strong> - +25 bonus for overnight (11pm-6am) time in range</div></li>
+        <li><span class="feature-icon">📈</span> <div><strong>Steady Eddie</strong> - +30 for 2+ hours with no swings &gt;30 points</div></li>
+      </ul>
+    </div>
+    
+    <div class="next-steps">
+      <h2>⏭️ Next Steps to Build This</h2>
+      <ul>
+        <li>Confirm exact Waveshare 5" model (need model number for resolution/touch driver)</li>
+        <li>Decide: scoring on ESP32 or in iOS app? (recommend app - easier to update)</li>
+        <li>Design competition data model for AVA Drive app</li>
+        <li>Build ESP32 firmware for multi-player split screen</li>
+        <li>Add competition mode UI to AVA Drive iOS app</li>
+      </ul>
+    </div>
+  </div>
+</body>
+</html>

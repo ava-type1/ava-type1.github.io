@@ -175,6 +175,21 @@
       font-size: 0.85rem;
     }
     
+    .project-link {
+      display: block;
+      text-decoration: none;
+      color: inherit;
+      transition: transform 0.15s;
+    }
+    
+    .project-link:hover {
+      transform: translateX(4px);
+    }
+    
+    .project-link:hover .project-name {
+      color: var(--blue);
+    }
+    
     .project-note {
       font-size: 0.7rem;
       color: var(--muted);
@@ -387,16 +402,19 @@
       `).join('');
       
       // Projects
-      document.getElementById('projects').innerHTML = d.projects.map(p => `
-        <div class="project">
+      document.getElementById('projects').innerHTML = d.projects.map(p => {
+        const inner = `
           <span class="project-emoji">${p.emoji}</span>
           <div class="project-info">
             <div class="project-name">${p.name}</div>
             <div class="project-note">${p.note}</div>
           </div>
           <span class="project-status status-${p.statusColor}">${p.status}</span>
-        </div>
-      `).join('');
+        `;
+        return p.link 
+          ? `<a href="${p.link}" class="project project-link">${inner}</a>`
+          : `<div class="project">${inner}</div>`;
+      }).join('');
       
       // Ideas
       document.getElementById('ideas').innerHTML = d.ideaBank.map(i => `

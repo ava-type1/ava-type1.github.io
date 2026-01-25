@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "2026-01-25T21:19:00Z",
+  "lastUpdated": "2026-01-25T21:24:00Z",
   "weekOf": "Jan 20-26, 2026",
   
   "focus": {
@@ -35,35 +35,40 @@
       "emoji": "🏠",
       "status": "90%",
       "statusColor": "yellow",
-      "note": "Needs Netlify env vars to go live"
+      "note": "Needs Netlify env vars to go live",
+      "link": "projects/fieldsync.html"
     },
     {
       "name": "AVA Type 1 App",
       "emoji": "🎮",
       "status": "80%",
       "statusColor": "green",
-      "note": "iOS simulation game"
+      "note": "iOS simulation game",
+      "link": "projects/ava-type1.html"
     },
     {
       "name": "AVA Drive",
       "emoji": "🚗",
       "status": "60%",
       "statusColor": "green",
-      "note": "CGM display for driving"
+      "note": "CGM display for driving",
+      "link": "projects/ava-drive.html"
     },
     {
       "name": "AVA Arena",
       "emoji": "🏆",
       "status": "Idea",
       "statusColor": "purple",
-      "note": "Competition mode + 5\" display"
+      "note": "Competition mode + 5\" display",
+      "link": "projects/ava-arena.html"
     },
     {
       "name": "AVA Buddy",
       "emoji": "🧸",
       "status": "20%",
       "statusColor": "blue",
-      "note": "Plush with BLE display"
+      "note": "Plush with BLE display",
+      "link": null
     }
   ],
   
@@ -97,7 +102,7 @@
   
   "recentWork": [
     { "date": "Jan 25", "what": "Built FieldSync PWA, designed AVA Arena scoring" },
-    { "date": "Jan 25", "what": "Created this dashboard" },
+    { "date": "Jan 25", "what": "Created project dashboard with detail pages" },
     { "date": "Jan 25", "what": "Brainstormed T1D app ideas" }
   ],
   

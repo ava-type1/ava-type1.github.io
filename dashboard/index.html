@@ -3,354 +3,425 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Kam + Claude Dashboard</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <title>Kam + Claude HQ</title>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     
     :root {
-      --bg: #0f172a;
-      --bg-card: #1e293b;
-      --bg-card-hover: #334155;
-      --text: #f1f5f9;
-      --text-muted: #94a3b8;
-      --accent: #3b82f6;
+      --bg: #fafafa;
+      --card: #ffffff;
+      --text: #18181b;
+      --muted: #71717a;
+      --border: #e4e4e7;
+      --blue: #3b82f6;
       --green: #22c55e;
       --yellow: #eab308;
-      --orange: #f97316;
       --purple: #a855f7;
       --pink: #ec4899;
+      --orange: #f97316;
     }
     
     body {
-      font-family: 'Inter', -apple-system, sans-serif;
+      font-family: 'Space Grotesk', -apple-system, sans-serif;
       background: var(--bg);
       color: var(--text);
       line-height: 1.5;
-      padding: 20px;
+      padding: 24px;
       min-height: 100vh;
     }
     
     .container {
-      max-width: 1200px;
+      max-width: 1100px;
       margin: 0 auto;
     }
     
-    header {
+    /* Header */
+    .header {
       display: flex;
       justify-content: space-between;
-      align-items: center;
-      margin-bottom: 30px;
-      padding-bottom: 20px;
-      border-bottom: 1px solid var(--bg-card);
+      align-items: baseline;
+      margin-bottom: 32px;
     }
     
-    h1 {
-      font-size: 1.75rem;
+    .logo {
+      font-size: 1.5rem;
       font-weight: 700;
+      letter-spacing: -0.5px;
     }
     
-    h1 span { color: var(--accent); }
+    .logo span { color: var(--blue); }
     
-    .last-updated {
-      color: var(--text-muted);
-      font-size: 0.875rem;
+    .meta {
+      font-size: 0.8rem;
+      color: var(--muted);
     }
     
-    .grid {
+    /* Bento Grid */
+    .bento {
       display: grid;
-      grid-template-columns: 1fr;
-      gap: 20px;
-    }
-    
-    @media (min-width: 768px) {
-      .grid { grid-template-columns: 2fr 1fr; }
-      .full-width { grid-column: 1 / -1; }
+      grid-template-columns: repeat(12, 1fr);
+      gap: 16px;
     }
     
     .card {
-      background: var(--bg-card);
-      border-radius: 12px;
+      background: var(--card);
+      border-radius: 16px;
       padding: 20px;
+      border: 1px solid var(--border);
     }
     
-    .card h2 {
-      font-size: 1rem;
+    .card-title {
+      font-size: 0.7rem;
       font-weight: 600;
-      margin-bottom: 15px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--muted);
+      margin-bottom: 12px;
+    }
+    
+    /* Focus - spans full width */
+    .focus {
+      grid-column: span 12;
+      background: linear-gradient(135deg, var(--blue) 0%, var(--purple) 100%);
+      color: white;
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+    
+    .focus .card-title { color: rgba(255,255,255,0.7); }
+    
+    .focus-week {
+      font-size: 2rem;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+    
+    .focus-items {
+      flex: 1;
+    }
+    
+    .focus-item {
       display: flex;
       align-items: center;
       gap: 8px;
+      font-size: 0.95rem;
+      margin-bottom: 4px;
     }
     
-    .card h2 .icon {
-      width: 20px;
-      height: 20px;
-      border-radius: 6px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 12px;
+    .focus-item:before {
+      content: "→";
+      opacity: 0.7;
+    }
+    
+    /* Claude's Thoughts */
+    .thoughts {
+      grid-column: span 8;
+    }
+    
+    .thought {
+      padding: 12px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    
+    .thought:last-child { border-bottom: none; }
+    
+    .thought-type {
+      font-size: 0.65rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      padding: 2px 6px;
+      border-radius: 4px;
+      display: inline-block;
+      margin-bottom: 6px;
+    }
+    
+    .thought-type.recommendation { background: #dbeafe; color: var(--blue); }
+    .thought-type.question { background: #fef3c7; color: #b45309; }
+    .thought-type.idea { background: #f3e8ff; color: var(--purple); }
+    
+    .thought-text {
+      font-size: 0.9rem;
+      line-height: 1.5;
     }
     
     /* Projects */
-    .project {
-      background: var(--bg);
-      border-radius: 8px;
-      padding: 15px;
-      margin-bottom: 10px;
-      transition: background 0.2s;
+    .projects {
+      grid-column: span 4;
     }
     
-    .project:hover { background: var(--bg-card-hover); }
-    .project:last-child { margin-bottom: 0; }
-    
-    .project-header {
+    .project {
       display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      margin-bottom: 8px;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    
+    .project:last-child { border-bottom: none; }
+    
+    .project-emoji {
+      font-size: 1.25rem;
+    }
+    
+    .project-info {
+      flex: 1;
+      min-width: 0;
     }
     
     .project-name {
       font-weight: 600;
-      font-size: 0.95rem;
+      font-size: 0.85rem;
     }
     
-    .project-name a {
-      color: var(--text);
-      text-decoration: none;
-    }
-    
-    .project-name a:hover { color: var(--accent); }
-    
-    .status {
+    .project-note {
       font-size: 0.7rem;
+      color: var(--muted);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    
+    .project-status {
+      font-size: 0.65rem;
       font-weight: 600;
       padding: 3px 8px;
       border-radius: 20px;
-      text-transform: uppercase;
+      white-space: nowrap;
     }
     
-    .status-active { background: var(--green); color: #000; }
-    .status-deploying { background: var(--yellow); color: #000; }
-    .status-planned { background: var(--purple); color: #fff; }
-    .status-idea { background: var(--pink); color: #fff; }
-    .status-live { background: var(--accent); color: #fff; }
+    .status-green { background: #dcfce7; color: #166534; }
+    .status-yellow { background: #fef9c3; color: #854d0e; }
+    .status-purple { background: #f3e8ff; color: #7c3aed; }
+    .status-blue { background: #dbeafe; color: #1d4ed8; }
     
-    .project-desc {
-      font-size: 0.85rem;
-      color: var(--text-muted);
-      margin-bottom: 10px;
+    /* Idea Bank */
+    .ideas {
+      grid-column: span 6;
     }
     
-    .progress-bar {
-      height: 4px;
-      background: var(--bg-card);
-      border-radius: 2px;
-      overflow: hidden;
+    .idea-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
     }
     
-    .progress-fill {
-      height: 100%;
-      background: var(--accent);
-      border-radius: 2px;
-      transition: width 0.3s;
-    }
-    
-    .project-notes {
-      font-size: 0.75rem;
-      color: var(--text-muted);
-      margin-top: 8px;
-      font-style: italic;
-    }
-    
-    /* Ideas */
     .idea {
-      padding: 12px 0;
-      border-bottom: 1px solid var(--bg);
+      background: var(--bg);
+      padding: 12px;
+      border-radius: 10px;
     }
-    
-    .idea:last-child { border-bottom: none; }
     
     .idea-name {
       font-weight: 600;
-      font-size: 0.9rem;
-      margin-bottom: 4px;
+      font-size: 0.85rem;
+      margin-bottom: 2px;
     }
     
-    .idea-desc {
-      font-size: 0.8rem;
-      color: var(--text-muted);
+    .idea-liner {
+      font-size: 0.75rem;
+      color: var(--muted);
     }
     
-    .idea-meta {
-      font-size: 0.7rem;
-      color: var(--text-muted);
+    .idea-tag {
+      display: inline-block;
+      font-size: 0.6rem;
+      padding: 2px 5px;
+      border-radius: 3px;
       margin-top: 6px;
     }
     
-    .priority-high { border-left: 3px solid var(--orange); padding-left: 10px; }
-    .priority-medium { border-left: 3px solid var(--yellow); padding-left: 10px; }
-    .priority-low { border-left: 3px solid var(--text-muted); padding-left: 10px; }
+    .tag-fresh { background: var(--green); color: white; }
+    .tag-backlog { background: var(--muted); color: white; }
     
-    /* Activity */
-    .activity {
-      padding: 10px 0;
-      border-bottom: 1px solid var(--bg);
+    /* Recent Work */
+    .recent {
+      grid-column: span 6;
+    }
+    
+    .work-item {
+      display: flex;
+      gap: 12px;
+      padding: 8px 0;
       font-size: 0.85rem;
     }
     
-    .activity:last-child { border-bottom: none; }
-    
-    .activity-date {
-      font-size: 0.75rem;
-      color: var(--accent);
+    .work-date {
+      color: var(--blue);
       font-weight: 600;
-      margin-bottom: 4px;
+      white-space: nowrap;
+      min-width: 50px;
     }
     
-    /* Quick Links */
-    .links {
+    /* Links */
+    .links-row {
+      grid-column: span 12;
       display: flex;
+      gap: 10px;
       flex-wrap: wrap;
-      gap: 8px;
     }
     
     .link-btn {
-      display: inline-block;
-      padding: 8px 14px;
-      background: var(--bg);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 10px 16px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
       color: var(--text);
       text-decoration: none;
-      border-radius: 6px;
-      font-size: 0.8rem;
+      font-size: 0.85rem;
       font-weight: 500;
-      transition: background 0.2s;
+      transition: all 0.15s;
     }
     
-    .link-btn:hover { background: var(--accent); }
+    .link-btn:hover {
+      background: var(--text);
+      color: white;
+      border-color: var(--text);
+    }
     
-    .telegram-cta {
-      margin-top: 30px;
+    /* Footer */
+    .footer {
+      margin-top: 32px;
       text-align: center;
-      padding: 20px;
-      background: linear-gradient(135deg, var(--accent), var(--purple));
-      border-radius: 12px;
+      font-size: 0.8rem;
+      color: var(--muted);
     }
     
-    .telegram-cta p {
-      margin-bottom: 10px;
-      font-size: 0.9rem;
+    .footer a {
+      color: var(--blue);
+      text-decoration: none;
     }
     
-    .telegram-cta a {
-      color: #fff;
-      font-weight: 600;
+    /* Mobile */
+    @media (max-width: 768px) {
+      .bento { gap: 12px; }
+      .card { padding: 16px; }
+      
+      .focus {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+      }
+      
+      .focus-week { font-size: 1.5rem; }
+      
+      .thoughts, .projects, .ideas, .recent { grid-column: span 12; }
+      
+      .idea-grid { grid-template-columns: 1fr; }
     }
   </style>
 </head>
 <body>
   <div class="container">
-    <header>
-      <h1>Kam <span>+</span> Claude</h1>
-      <div class="last-updated" id="lastUpdated"></div>
+    <header class="header">
+      <div class="logo">Kam <span>×</span> Claude</div>
+      <div class="meta" id="lastUpdated"></div>
     </header>
     
-    <div class="grid">
-      <div class="card">
-        <h2><span class="icon" style="background: var(--green);">📦</span> Projects</h2>
+    <div class="bento">
+      <!-- Focus -->
+      <div class="card focus" id="focus"></div>
+      
+      <!-- Claude's Thoughts -->
+      <div class="card thoughts">
+        <div class="card-title">💭 Claude's Thoughts</div>
+        <div id="thoughts"></div>
+      </div>
+      
+      <!-- Projects -->
+      <div class="card projects">
+        <div class="card-title">📦 Projects</div>
         <div id="projects"></div>
       </div>
       
-      <div>
-        <div class="card" style="margin-bottom: 20px;">
-          <h2><span class="icon" style="background: var(--pink);">💡</span> Ideas Backlog</h2>
-          <div id="ideas"></div>
-        </div>
-        
-        <div class="card">
-          <h2><span class="icon" style="background: var(--accent);">⚡</span> Recent Activity</h2>
-          <div id="activity"></div>
-        </div>
+      <!-- Idea Bank -->
+      <div class="card ideas">
+        <div class="card-title">💡 Idea Bank</div>
+        <div class="idea-grid" id="ideas"></div>
       </div>
       
-      <div class="card full-width">
-        <h2><span class="icon" style="background: var(--purple);">🔗</span> Quick Links</h2>
-        <div class="links">
-          <a href="https://github.com/ava-type1" class="link-btn" target="_blank">GitHub Org</a>
-          <a href="https://github.com/ava-type1/ava-drive" class="link-btn" target="_blank">AVA Drive Repo</a>
-          <a href="https://github.com/ava-type1/ava-type1-development-claude" class="link-btn" target="_blank">AVA Type 1 Repo</a>
-          <a href="https://github.com/ava-type1/fieldsyncv2" class="link-btn" target="_blank">FieldSync Repo</a>
-          <a href="https://spiffy-cranachan-9cabab.netlify.app" class="link-btn" target="_blank">FieldSync (Netlify)</a>
-          <a href="https://supabase.com/dashboard" class="link-btn" target="_blank">Supabase Dashboard</a>
-        </div>
+      <!-- Recent Work -->
+      <div class="card recent">
+        <div class="card-title">⚡ Recent</div>
+        <div id="recent"></div>
       </div>
+      
+      <!-- Links -->
+      <div class="links-row" id="links"></div>
     </div>
     
-    <div class="telegram-cta">
-      <p>Keep chatting with Claude via Telegram — this dashboard updates as we work.</p>
-      <a href="https://t.me/ClawdBot">Open Telegram →</a>
-    </div>
+    <footer class="footer">
+      Chat continues on <a href="https://t.me/ClawdBot">Telegram</a> · Dashboard updates as we work
+    </footer>
   </div>
   
   <script>
-    async function loadData() {
-      try {
-        const res = await fetch('data.json?' + Date.now());
-        const data = await res.json();
-        render(data);
-      } catch (e) {
-        console.error('Failed to load data:', e);
-      }
-    }
-    
-    function render(data) {
-      // Last updated
-      const updated = new Date(data.lastUpdated);
+    async function load() {
+      const res = await fetch('data.json?' + Date.now());
+      const d = await res.json();
+      
       document.getElementById('lastUpdated').textContent = 
-        'Updated: ' + updated.toLocaleDateString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+        new Date(d.lastUpdated).toLocaleDateString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+      
+      // Focus
+      document.getElementById('focus').innerHTML = `
+        <div>
+          <div class="card-title">${d.focus.title}</div>
+          <div class="focus-week">${d.weekOf}</div>
+        </div>
+        <div class="focus-items">
+          ${d.focus.items.map(i => `<div class="focus-item">${i}</div>`).join('')}
+        </div>
+      `;
+      
+      // Thoughts
+      document.getElementById('thoughts').innerHTML = d.claudeSuggestions.items.map(t => `
+        <div class="thought">
+          <span class="thought-type ${t.type}">${t.type}</span>
+          <div class="thought-text">${t.text}</div>
+        </div>
+      `).join('');
       
       // Projects
-      const projectsHtml = data.projects.map(p => `
+      document.getElementById('projects').innerHTML = d.projects.map(p => `
         <div class="project">
-          <div class="project-header">
-            <div class="project-name">
-              ${p.repo ? `<a href="${p.repo}" target="_blank">${p.name}</a>` : p.name}
-            </div>
-            <span class="status status-${p.status}">${p.status}</span>
+          <span class="project-emoji">${p.emoji}</span>
+          <div class="project-info">
+            <div class="project-name">${p.name}</div>
+            <div class="project-note">${p.note}</div>
           </div>
-          <div class="project-desc">${p.description}</div>
-          <div class="progress-bar">
-            <div class="progress-fill" style="width: ${p.progress}%"></div>
-          </div>
-          ${p.notes ? `<div class="project-notes">${p.notes}</div>` : ''}
+          <span class="project-status status-${p.statusColor}">${p.status}</span>
         </div>
       `).join('');
-      document.getElementById('projects').innerHTML = projectsHtml;
       
       // Ideas
-      const ideasHtml = data.ideas.map(i => `
-        <div class="idea priority-${i.priority}">
+      document.getElementById('ideas').innerHTML = d.ideaBank.map(i => `
+        <div class="idea">
           <div class="idea-name">${i.name}</div>
-          <div class="idea-desc">${i.description}</div>
-          <div class="idea-meta">${i.category} · ${i.priority} priority · added ${i.addedDate}</div>
+          <div class="idea-liner">${i.oneLiner}</div>
+          <span class="idea-tag tag-${i.status}">${i.status}</span>
         </div>
       `).join('');
-      document.getElementById('ideas').innerHTML = ideasHtml;
       
-      // Activity
-      const activityHtml = data.recentActivity.map(a => `
-        <div class="activity">
-          <div class="activity-date">${a.date}</div>
-          <div>${a.summary}</div>
+      // Recent
+      document.getElementById('recent').innerHTML = d.recentWork.map(w => `
+        <div class="work-item">
+          <span class="work-date">${w.date}</span>
+          <span>${w.what}</span>
         </div>
       `).join('');
-      document.getElementById('activity').innerHTML = activityHtml;
+      
+      // Links
+      document.getElementById('links').innerHTML = d.links.map(l => `
+        <a href="${l.url}" class="link-btn" target="_blank">${l.name} →</a>
+      `).join('');
     }
     
-    loadData();
+    load();
   </script>
 </body>
 </html>

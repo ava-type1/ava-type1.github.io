@@ -1,97 +1,110 @@
 {
-  "lastUpdated": "2026-01-25T21:15:00Z",
+  "lastUpdated": "2026-01-25T21:19:00Z",
+  "weekOf": "Jan 20-26, 2026",
+  
+  "focus": {
+    "title": "This Week's Focus",
+    "items": [
+      "Get FieldSync live (just needs Netlify env vars)",
+      "Decide on AVA Arena display hardware specs"
+    ]
+  },
+  
+  "claudeSuggestions": {
+    "title": "💭 Claude's Thoughts",
+    "updated": "2026-01-25",
+    "items": [
+      {
+        "type": "recommendation",
+        "text": "The AVA Arena competition idea has legs. Before building, consider: do you want family vs family competition, or within-family competition? Changes the social dynamics a lot."
+      },
+      {
+        "type": "question",
+        "text": "FieldSync is 90% done but stalled on deployment. Want to knock that out first before starting new stuff? Quick win."
+      },
+      {
+        "type": "idea",
+        "text": "What if AVA Buddy (the plush) had a 'mood' that reflects the kid's BG? Happy face in range, sleepy face when low, etc. More emotional connection than just numbers."
+      }
+    ]
+  },
+  
   "projects": [
     {
+      "name": "FieldSync",
+      "emoji": "🏠",
+      "status": "90%",
+      "statusColor": "yellow",
+      "note": "Needs Netlify env vars to go live"
+    },
+    {
       "name": "AVA Type 1 App",
-      "description": "iOS simulation game teaching T1D management to kids",
-      "status": "active",
-      "progress": 80,
-      "repo": "https://github.com/ava-type1/ava-type1-development-claude",
-      "notes": "SwiftUI, gamification, sticker collections, dual simulation modes"
+      "emoji": "🎮",
+      "status": "80%",
+      "statusColor": "green",
+      "note": "iOS simulation game"
     },
     {
       "name": "AVA Drive",
-      "description": "Driving safety display - shows CGM data on external ESP32 screen",
-      "status": "active",
-      "progress": 60,
-      "repo": "https://github.com/ava-type1/ava-drive",
-      "notes": "iOS app + ESP32-C6 hardware, BLE communication"
+      "emoji": "🚗",
+      "status": "60%",
+      "statusColor": "green",
+      "note": "CGM display for driving"
     },
     {
-      "name": "AVA Companion/Buddy",
-      "description": "Physical plush toy with embedded ESP32-C6 display",
-      "status": "planned",
-      "progress": 20,
-      "repo": null,
-      "notes": "Waveshare ESP32-C6-LCD-1.47, 3D printed enclosure, pairs with app via BLE"
+      "name": "AVA Arena",
+      "emoji": "🏆",
+      "status": "Idea",
+      "statusColor": "purple",
+      "note": "Competition mode + 5\" display"
     },
     {
-      "name": "AVA Arena (Competition Mode)",
-      "description": "5-inch multi-player display with gamification scoring for T1D families",
-      "status": "idea",
-      "progress": 5,
-      "repo": null,
-      "notes": "ESP32-S3 + 5\" Waveshare touchscreen, 2-4 player split screen, weekly championships, crown for winners"
-    },
-    {
-      "name": "FieldSync",
-      "description": "Mobile home service workflow app - walkthroughs, materials, signatures",
-      "status": "deploying",
-      "progress": 90,
-      "repo": "https://github.com/ava-type1/fieldsyncv2",
-      "notes": "React PWA, Supabase backend, needs env vars in Netlify to go live"
-    },
-    {
-      "name": "AVA Website",
-      "description": "Marketing site for AVA products",
-      "status": "live",
-      "progress": 100,
-      "repo": "https://github.com/ava-type1/ava-type1.github.io",
-      "notes": "GitHub Pages, static HTML"
+      "name": "AVA Buddy",
+      "emoji": "🧸",
+      "status": "20%",
+      "statusColor": "blue",
+      "note": "Plush with BLE display"
     }
   ],
-  "ideas": [
+  
+  "ideaBank": [
     {
       "name": "T1D Takeover",
-      "description": "Gamified independence training - gradually transfers diabetes management from parent to teen",
-      "category": "app",
-      "priority": "medium",
-      "addedDate": "2026-01-25"
+      "oneLiner": "Gamified teen independence training",
+      "status": "fresh"
     },
     {
       "name": "Sugar Squad",
-      "description": "Moderated social network connecting T1D kids by age - pen pals, shared experiences",
-      "category": "app",
-      "priority": "medium",
-      "addedDate": "2026-01-25"
+      "oneLiner": "Pen pals for T1D kids",
+      "status": "fresh"
     },
     {
       "name": "Coach Mode",
-      "description": "Sports/activity BG predictor - learns your patterns, recommends pre-activity carbs",
-      "category": "app",
-      "priority": "low",
-      "addedDate": "2026-01-25"
+      "oneLiner": "Sports BG predictor",
+      "status": "backlog"
     },
     {
       "name": "Plot Twist",
-      "description": "AI narrates your CGM data as a daily story with characters and drama",
-      "category": "app",
-      "priority": "low",
-      "addedDate": "2026-01-25"
+      "oneLiner": "AI narrates your CGM data as a story",
+      "status": "backlog"
+    },
+    {
+      "name": "AVA Buddy Moods",
+      "oneLiner": "Plush shows emotional state based on BG",
+      "status": "fresh"
     }
   ],
-  "recentActivity": [
-    {
-      "date": "2026-01-25",
-      "summary": "Built FieldSync PWA, deployed to Netlify (needs Supabase env vars)"
-    },
-    {
-      "date": "2026-01-25",
-      "summary": "Designed AVA Arena competition mode - scoring logic, display layouts, crown system"
-    },
-    {
-      "date": "2026-01-25",
-      "summary": "Brainstormed 6 T1D app ideas, Kam liked competition/gamification direction"
-    }
+  
+  "recentWork": [
+    { "date": "Jan 25", "what": "Built FieldSync PWA, designed AVA Arena scoring" },
+    { "date": "Jan 25", "what": "Created this dashboard" },
+    { "date": "Jan 25", "what": "Brainstormed T1D app ideas" }
+  ],
+  
+  "links": [
+    { "name": "GitHub", "url": "https://github.com/ava-type1" },
+    { "name": "FieldSync", "url": "https://spiffy-cranachan-9cabab.netlify.app" },
+    { "name": "Supabase", "url": "https://supabase.com/dashboard" },
+    { "name": "Netlify", "url": "https://app.netlify.com" }
   ]
 }

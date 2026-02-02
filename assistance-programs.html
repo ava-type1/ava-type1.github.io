@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Patient Assistance Programs — AVA Type 1</title>
+<meta name="description" content="Directory of real patient assistance programs for insulin, CGMs, insulin pumps, and general diabetes supplies. Find help paying for Type 1 Diabetes care.">
+<link rel="icon" href="images/AvaLogo.png">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+--navy:#0a1628;--navy-light:#0f2035;--navy-card:rgba(15,32,53,0.6);
+--cyan:#00d4ff;--teal:#00b4d8;--blue:#0077b6;--purple:#7b2ff7;
+--gradient-text:linear-gradient(135deg,#00d4ff,#7b2ff7);
+--gradient-card:linear-gradient(135deg,rgba(0,212,255,0.08),rgba(123,47,247,0.08));
+--glass:rgba(255,255,255,0.04);--glass-border:rgba(255,255,255,0.08);
+--text:#e8edf5;--text-dim:#8899b0;--radius:20px;
+}
+html{scroll-behavior:smooth}
+body{font-family:'Inter',system-ui,sans-serif;background:var(--navy);color:var(--text);overflow-x:hidden;line-height:1.6}
+a{color:inherit;text-decoration:none}
+.container{max-width:1200px;margin:0 auto;padding:0 24px}
+
+nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:16px 0;background:rgba(10,22,40,0.85);backdrop-filter:blur(20px);border-bottom:1px solid var(--glass-border)}
+nav .container{display:flex;align-items:center;justify-content:space-between}
+.nav-logo{display:flex;align-items:center;gap:10px;font-weight:800;font-size:1.15rem}
+.nav-logo img{height:36px;width:36px;border-radius:10px}
+.nav-links{display:flex;align-items:center;gap:32px;font-size:.9rem;font-weight:500}
+.nav-links a{color:var(--text-dim);transition:color .2s}
+.nav-links a:hover{color:#fff}
+.nav-cta{background:linear-gradient(135deg,var(--cyan),var(--purple));color:#fff!important;padding:10px 24px;border-radius:50px;font-weight:700;font-size:.85rem;transition:transform .2s,box-shadow .2s}
+.nav-cta:hover{transform:translateY(-2px);box-shadow:0 8px 30px rgba(0,212,255,0.3)}
+
+.page-hero{padding:140px 0 60px;text-align:center;background:linear-gradient(180deg,#0a1628 0%,#0d1f3c 40%,#0a2a4a 70%,#0a1628 100%);position:relative}
+.page-hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 30% 80%,rgba(0,180,216,0.12) 0%,transparent 60%),radial-gradient(ellipse at 70% 20%,rgba(123,47,247,0.08) 0%,transparent 50%);pointer-events:none}
+.page-hero .container{position:relative;z-index:1}
+.back-link{display:inline-flex;align-items:center;gap:8px;color:var(--cyan);font-weight:600;font-size:.9rem;margin-bottom:24px;transition:opacity .2s}
+.back-link:hover{opacity:.8}
+.page-hero h1{font-size:clamp(2rem,4.5vw,3.2rem);font-weight:900;margin-bottom:16px}
+.page-hero h1 .gradient{background:var(--gradient-text);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.page-hero p{color:var(--text-dim);font-size:1.1rem;max-width:700px;margin:0 auto;line-height:1.7}
+
+.content{padding:60px 0 100px}
+.category{margin-bottom:64px}
+.category-header{display:flex;align-items:center;gap:14px;margin-bottom:32px}
+.category-icon{width:48px;height:48px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:1.5rem;background:var(--gradient-card);border:1px solid var(--glass-border)}
+.category-header h2{font-size:1.6rem;font-weight:800}
+
+.program-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:24px}
+.program-card{background:var(--gradient-card);border:1px solid var(--glass-border);border-radius:var(--radius);padding:28px;transition:transform .2s,border-color .2s}
+.program-card:hover{transform:translateY(-4px);border-color:rgba(0,212,255,0.25)}
+.program-card h3{font-size:1.15rem;font-weight:700;margin-bottom:8px;color:#fff}
+.program-card .covers{display:inline-block;font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--cyan);background:rgba(0,212,255,0.1);padding:4px 12px;border-radius:50px;margin-bottom:12px}
+.program-card p{color:var(--text-dim);font-size:.92rem;line-height:1.65;margin-bottom:16px}
+.program-card .apply-link{display:inline-flex;align-items:center;gap:6px;color:var(--cyan);font-weight:600;font-size:.9rem;transition:opacity .2s}
+.program-card .apply-link:hover{opacity:.8}
+
+.disclaimer{background:var(--glass);border:1px solid var(--glass-border);border-radius:var(--radius);padding:24px 28px;margin-top:48px;color:var(--text-dim);font-size:.88rem;line-height:1.7}
+.disclaimer strong{color:var(--text)}
+
+footer{padding:48px 0 32px;border-top:1px solid var(--glass-border)}
+.footer-bottom{display:flex;justify-content:space-between;align-items:center;color:var(--text-dim);font-size:.85rem;flex-wrap:wrap;gap:12px}
+
+@media(max-width:768px){
+  .nav-links{display:none}
+  .program-grid{grid-template-columns:1fr}
+  .footer-bottom{flex-direction:column;text-align:center}
+}
+</style>
+</head>
+<body>
+
+<nav>
+<div class="container">
+  <a href="index.html" class="nav-logo">
+    <img src="images/AvaLogo.png" alt="AVA Type 1">
+    <span>AVA Type 1</span>
+  </a>
+  <div class="nav-links">
+    <a href="education.html">Education</a>
+    <a href="first-30-days.html">First 30 Days</a>
+    <a href="assistance-programs.html" style="color:#fff">Assistance</a>
+    <a href="index.html#newsletter" class="nav-cta">Get Updates</a>
+  </div>
+</div>
+</nav>
+
+<section class="page-hero">
+<div class="container">
+  <a href="index.html" class="back-link">← Back to Home</a>
+  <h1>Patient <span class="gradient">Assistance Programs</span></h1>
+  <p>Type 1 Diabetes is expensive. These programs can help. We've compiled real, current assistance programs for insulin, CGMs, pumps, and general diabetes care — with direct links to apply.</p>
+</div>
+</section>
+
+<section class="content">
+<div class="container">
+
+<!-- INSULIN -->
+<div class="category">
+<div class="category-header">
+  <div class="category-icon">💉</div>
+  <h2>Insulin Assistance</h2>
+</div>
+<div class="program-grid">
+
+<div class="program-card">
+  <h3>Lilly Cares Foundation</h3>
+  <span class="covers">Humalog, Lyumjev, Basaglar</span>
+  <p>Provides free Lilly insulin to qualifying patients who are uninsured or underinsured. Covers most Lilly insulin products. Must be a US resident, not enrolled in Medicare Part D or Medicaid, and have a household income at or below 400% of the federal poverty level.</p>
+  <a href="https://www.lillycares.com" target="_blank" class="apply-link">Apply at lillycares.com →</a>
+</div>
+
+<div class="program-card">
+  <h3>Novo Nordisk Patient Assistance Program</h3>
+  <span class="covers">Novolog, Levemir, Tresiba, Fiasp</span>
+  <p>Free Novo Nordisk insulin for eligible uninsured or underinsured patients. Requires a valid prescription, US residency, no current Medicare/Medicaid coverage, and income at or below 400% FPL. Also offers the $35 insulin cap program for those with commercial insurance.</p>
+  <a href="https://www.novocare.com/pap.html" target="_blank" class="apply-link">Apply at novocare.com →</a>
+</div>
+
+<div class="program-card">
+  <h3>Sanofi Patient Connection</h3>
+  <span class="covers">Lantus, Toujeo, Admelog, Apidra</span>
+  <p>Provides free Sanofi insulins to uninsured patients meeting income requirements (at or below 400% FPL). Also offers a Copay Card program for those with commercial insurance — potentially reducing out-of-pocket costs to as low as $0.</p>
+  <a href="https://www.sanofipatientconnection.com" target="_blank" class="apply-link">Apply at sanofipatientconnection.com →</a>
+</div>
+
+<div class="program-card">
+  <h3>GetInsulin.org</h3>
+  <span class="covers">Emergency insulin supply</span>
+  <p>A nonprofit that helps people in urgent need access insulin. Provides connections to manufacturers, pharmacies, and programs that can help when you're in a crisis. Useful as a starting point if you're unsure which program fits your situation or need insulin immediately.</p>
+  <a href="https://getinsulin.org" target="_blank" class="apply-link">Visit getinsulin.org →</a>
+</div>
+
+</div>
+</div>
+
+<!-- CGM -->
+<div class="category">
+<div class="category-header">
+  <div class="category-icon">📊</div>
+  <h2>CGM (Continuous Glucose Monitor) Assistance</h2>
+</div>
+<div class="program-grid">
+
+<div class="program-card">
+  <h3>Dexcom Patient Assistance</h3>
+  <span class="covers">Dexcom G7, Dexcom ONE</span>
+  <p>Dexcom offers a patient assistance program for uninsured individuals who meet income eligibility requirements. Provides Dexcom CGM sensors and transmitters at no cost. You'll need a prescription and proof of income. They also offer a bridge program while insurance is being established.</p>
+  <a href="https://www.dexcom.com/patient-assistance" target="_blank" class="apply-link">Apply at dexcom.com →</a>
+</div>
+
+<div class="program-card">
+  <h3>Abbott FreeStyle Libre Savings</h3>
+  <span class="covers">FreeStyle Libre 2, Libre 3</span>
+  <p>Abbott offers savings programs for commercially insured patients — potentially reducing the cost of FreeStyle Libre sensors to as low as $0-$75/month. For uninsured patients, they have discount programs and can connect you to third-party patient assistance. Check their website for current offers.</p>
+  <a href="https://www.freestyle.abbott/us-en/myfreestyle.html" target="_blank" class="apply-link">Apply at freestyle.abbott →</a>
+</div>
+
+</div>
+</div>
+
+<!-- PUMPS -->
+<div class="category">
+<div class="category-header">
+  <div class="category-icon">⚙️</div>
+  <h2>Insulin Pump Assistance</h2>
+</div>
+<div class="program-grid">
+
+<div class="program-card">
+  <h3>Omnipod Financial Assistance</h3>
+  <span class="covers">Omnipod 5, Omnipod DASH</span>
+  <p>Insulet (Omnipod manufacturer) offers financial assistance for qualifying patients. Their team will work with your insurance to maximize coverage and, for eligible uninsured patients, may provide pumps at reduced or no cost. They also have a copay assistance program for commercially insured users.</p>
+  <a href="https://www.omnipod.com/is-omnipod-right-for-me/insurance-coverage" target="_blank" class="apply-link">Learn more at omnipod.com →</a>
+</div>
+
+<div class="program-card">
+  <h3>Medtronic Financial Assistance</h3>
+  <span class="covers">MiniMed 780G, Guardian CGM</span>
+  <p>Medtronic provides patient financial assistance for qualifying patients. Includes insurance verification, copay assistance for commercially insured patients, and programs for the uninsured. Their dedicated team helps navigate the application process and find the best option for your situation.</p>
+  <a href="https://www.medtronicdiabetes.com/customer-support/patient-financial-assistance" target="_blank" class="apply-link">Apply at medtronicdiabetes.com →</a>
+</div>
+
+<div class="program-card">
+  <h3>Tandem Diabetes Assistance</h3>
+  <span class="covers">t:slim X2, Mobi</span>
+  <p>Tandem offers insurance support and financial assistance programs. Their team will verify your insurance benefits and, for eligible patients, provide copay assistance or programs for those without adequate coverage. Contact their customer support to discuss your situation and options.</p>
+  <a href="https://www.tandemdiabetes.com/support/insurance" target="_blank" class="apply-link">Learn more at tandemdiabetes.com →</a>
+</div>
+
+<div class="program-card">
+  <h3>Insulin Pumpers Foundation</h3>
+  <span class="covers">Pump supplies & accessories</span>
+  <p>A nonprofit organization that helps insulin pump users access supplies when they face financial hardship. Provides pump supplies, infusion sets, and related accessories. Especially helpful for people in transitional periods — between insurance plans, during job changes, or in emergency situations.</p>
+  <a href="https://insulinpumpers.org" target="_blank" class="apply-link">Visit insulinpumpers.org →</a>
+</div>
+
+</div>
+</div>
+
+<!-- GENERAL -->
+<div class="category">
+<div class="category-header">
+  <div class="category-icon">🏥</div>
+  <h2>General Assistance & Resources</h2>
+</div>
+<div class="program-grid">
+
+<div class="program-card">
+  <h3>NeedyMeds</h3>
+  <span class="covers">Comprehensive drug & program database</span>
+  <p>A massive, free database of patient assistance programs, copay cards, and discount programs for virtually every medication — including all diabetes drugs and supplies. Search by drug name, diagnosis, or manufacturer. Also offers a free drug discount card accepted at most pharmacies.</p>
+  <a href="https://www.needymeds.org" target="_blank" class="apply-link">Search at needymeds.org →</a>
+</div>
+
+<div class="program-card">
+  <h3>RxAssist</h3>
+  <span class="covers">Medication assistance directory</span>
+  <p>A comprehensive database of pharmaceutical manufacturer patient assistance programs, state programs, discount drug cards, and other resources. Maintained by Volunteers in Health Care. A great starting point for finding all available programs for your specific medications.</p>
+  <a href="https://www.rxassist.org" target="_blank" class="apply-link">Search at rxassist.org →</a>
+</div>
+
+<div class="program-card">
+  <h3>Medicare Extra Help (Low Income Subsidy)</h3>
+  <span class="covers">Medicare Part D prescription costs</span>
+  <p>If you're on Medicare and have limited income, Extra Help can pay part or most of your prescription drug costs — including insulin, test strips, and diabetes supplies covered under Part D. You may qualify with income up to 150% FPL. Can save you up to $5,000 per year on prescriptions.</p>
+  <a href="https://www.ssa.gov/medicare/part-d-extra-help" target="_blank" class="apply-link">Apply at ssa.gov →</a>
+</div>
+
+</div>
+</div>
+
+<div class="disclaimer">
+  <strong>⚠️ Important Note:</strong> Program details, eligibility requirements, and availability may change. We recommend visiting each program's official website for the most current information. This page is meant as a starting point — not medical or financial advice. Always confirm details directly with the program before applying. Last reviewed: 2025.
+</div>
+
+</div>
+</section>
+
+<footer>
+<div class="container">
+  <div class="footer-bottom">
+    <span>© 2025 AVA Type 1. All rights reserved.</span>
+    <span>Made with 💙 for the T1D community</span>
+  </div>
+</div>
+</footer>
+
+</body>
+</html>

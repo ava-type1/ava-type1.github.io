@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>First 30 Days After Diagnosis — AVA Type 1</title>
+<meta name="description" content="A warm, practical guide for families navigating the first 30 days after a Type 1 Diabetes diagnosis. Week by week, you'll find your footing.">
+<link rel="icon" href="images/AvaLogo.png">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+--navy:#0a1628;--navy-light:#0f2035;--navy-card:rgba(15,32,53,0.6);
+--cyan:#00d4ff;--teal:#00b4d8;--blue:#0077b6;--purple:#7b2ff7;
+--gradient-text:linear-gradient(135deg,#00d4ff,#7b2ff7);
+--gradient-card:linear-gradient(135deg,rgba(0,212,255,0.08),rgba(123,47,247,0.08));
+--glass:rgba(255,255,255,0.04);--glass-border:rgba(255,255,255,0.08);
+--text:#e8edf5;--text-dim:#8899b0;--radius:20px;
+}
+html{scroll-behavior:smooth}
+body{font-family:'Inter',system-ui,sans-serif;background:var(--navy);color:var(--text);overflow-x:hidden;line-height:1.6}
+a{color:inherit;text-decoration:none}
+.container{max-width:900px;margin:0 auto;padding:0 24px}
+
+nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:16px 0;background:rgba(10,22,40,0.85);backdrop-filter:blur(20px);border-bottom:1px solid var(--glass-border)}
+nav .inner{max-width:1200px;margin:0 auto;padding:0 24px;display:flex;align-items:center;justify-content:space-between}
+.nav-logo{display:flex;align-items:center;gap:10px;font-weight:800;font-size:1.15rem}
+.nav-logo img{height:36px;width:36px;border-radius:10px}
+.nav-links{display:flex;align-items:center;gap:32px;font-size:.9rem;font-weight:500}
+.nav-links a{color:var(--text-dim);transition:color .2s}
+.nav-links a:hover{color:#fff}
+.nav-cta{background:linear-gradient(135deg,var(--cyan),var(--purple));color:#fff!important;padding:10px 24px;border-radius:50px;font-weight:700;font-size:.85rem;transition:transform .2s,box-shadow .2s}
+.nav-cta:hover{transform:translateY(-2px);box-shadow:0 8px 30px rgba(0,212,255,0.3)}
+
+.page-hero{padding:140px 0 60px;text-align:center;background:linear-gradient(180deg,#0a1628 0%,#0d1f3c 40%,#0a2a4a 70%,#0a1628 100%);position:relative}
+.page-hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 30% 80%,rgba(0,180,216,0.12) 0%,transparent 60%),radial-gradient(ellipse at 70% 20%,rgba(123,47,247,0.08) 0%,transparent 50%);pointer-events:none}
+.page-hero .container{position:relative;z-index:1}
+.back-link{display:inline-flex;align-items:center;gap:8px;color:var(--cyan);font-weight:600;font-size:.9rem;margin-bottom:24px;transition:opacity .2s}
+.back-link:hover{opacity:.8}
+.page-hero h1{font-size:clamp(2rem,4.5vw,3.2rem);font-weight:900;margin-bottom:16px}
+.page-hero h1 .gradient{background:var(--gradient-text);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.page-hero p{color:var(--text-dim);font-size:1.1rem;max-width:700px;margin:0 auto;line-height:1.7}
+.page-hero .hero-note{margin-top:20px;font-style:italic;color:var(--teal);font-size:.95rem}
+
+.content{padding:60px 0 100px}
+
+.timeline{position:relative;padding-left:40px}
+.timeline::before{content:'';position:absolute;left:14px;top:0;bottom:0;width:2px;background:linear-gradient(180deg,var(--cyan),var(--purple),transparent)}
+
+.phase{position:relative;margin-bottom:56px}
+.phase::before{content:'';position:absolute;left:-40px;top:6px;width:28px;height:28px;border-radius:50%;background:var(--navy);border:3px solid var(--cyan);z-index:1}
+.phase.purple::before{border-color:var(--purple)}
+.phase.teal::before{border-color:var(--teal)}
+.phase.blue::before{border-color:var(--blue)}
+
+.phase-label{display:inline-block;font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:var(--cyan);background:rgba(0,212,255,0.1);padding:4px 14px;border-radius:50px;border:1px solid rgba(0,212,255,0.15);margin-bottom:12px}
+.phase.purple .phase-label{color:var(--purple);background:rgba(123,47,247,0.1);border-color:rgba(123,47,247,0.2)}
+.phase.teal .phase-label{color:var(--teal);background:rgba(0,180,216,0.1);border-color:rgba(0,180,216,0.2)}
+.phase.blue .phase-label{color:var(--blue);background:rgba(0,119,182,0.1);border-color:rgba(0,119,182,0.2)}
+
+.phase h2{font-size:1.5rem;font-weight:800;margin-bottom:16px}
+.phase p{color:var(--text-dim);font-size:.95rem;line-height:1.75;margin-bottom:14px;max-width:780px}
+.phase strong{color:var(--text)}
+.phase ul{color:var(--text-dim);font-size:.95rem;line-height:1.75;margin:0 0 16px 20px}
+.phase li{margin-bottom:6px}
+
+.tip-box{background:var(--gradient-card);border:1px solid var(--glass-border);border-radius:16px;padding:20px 24px;margin:16px 0}
+.tip-box .tip-title{font-weight:700;color:var(--cyan);margin-bottom:8px;font-size:.9rem}
+.tip-box p{margin-bottom:0;font-size:.9rem}
+
+.heart-box{background:rgba(123,47,247,0.06);border:1px solid rgba(123,47,247,0.15);border-radius:16px;padding:20px 24px;margin:16px 0}
+.heart-box .tip-title{font-weight:700;color:var(--purple);margin-bottom:8px;font-size:.9rem}
+.heart-box p{margin-bottom:0;font-size:.9rem;color:var(--text-dim)}
+
+.resource-links{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;margin-top:32px}
+.resource-link{display:block;background:var(--glass);border:1px solid var(--glass-border);border-radius:14px;padding:20px;transition:border-color .2s,transform .2s}
+.resource-link:hover{border-color:rgba(0,212,255,0.25);transform:translateY(-2px)}
+.resource-link h4{font-size:1rem;font-weight:700;margin-bottom:6px;color:#fff}
+.resource-link p{color:var(--text-dim);font-size:.85rem;line-height:1.5;margin:0}
+
+footer{padding:48px 0 32px;border-top:1px solid var(--glass-border)}
+.footer-bottom{max-width:1200px;margin:0 auto;padding:0 24px;display:flex;justify-content:space-between;align-items:center;color:var(--text-dim);font-size:.85rem;flex-wrap:wrap;gap:12px}
+
+@media(max-width:768px){
+  .nav-links{display:none}
+  .resource-links{grid-template-columns:1fr}
+  .footer-bottom{flex-direction:column;text-align:center}
+}
+</style>
+</head>
+<body>
+
+<nav>
+<div class="inner">
+  <a href="index.html" class="nav-logo">
+    <img src="images/AvaLogo.png" alt="AVA Type 1">
+    <span>AVA Type 1</span>
+  </a>
+  <div class="nav-links">
+    <a href="education.html">Education</a>
+    <a href="first-30-days.html" style="color:#fff">First 30 Days</a>
+    <a href="assistance-programs.html">Assistance</a>
+    <a href="index.html#newsletter" class="nav-cta">Get Updates</a>
+  </div>
+</div>
+</nav>
+
+<section class="page-hero">
+<div class="container">
+  <a href="index.html" class="back-link">← Back to Home</a>
+  <h1>The First <span class="gradient">30 Days</span></h1>
+  <p>Your child was just diagnosed with Type 1 Diabetes. The world feels like it shifted under your feet. This guide walks you through the first month — week by week — so you know what to expect and how to find your footing.</p>
+  <p class="hero-note">💙 Written by a T1D dad, for the parents who just got the news.</p>
+</div>
+</section>
+
+<section class="content">
+<div class="container">
+<div class="timeline">
+
+<!-- DAYS 1-3 -->
+<div class="phase">
+  <span class="phase-label">Days 1–3</span>
+  <h2>The Shock</h2>
+  <p>Right now, nothing feels real. You might be in the hospital watching nurses teach you how to draw up insulin in a syringe, feeling like you're watching someone else's life. Your child is scared. You're scared. And someone just told you this is forever.</p>
+  <p><strong>This is the hardest part. It gets better. We promise.</strong></p>
+  <p>In these first days, you're going to be flooded with information — carb counting, insulin dosing, blood sugar targets, what to do for highs, what to do for lows, glucagon, ketones. It will feel like drinking from a fire hose. That's normal.</p>
+
+  <div class="heart-box">
+    <div class="tip-title">💜 What you're feeling is valid</div>
+    <p>Grief, anger, fear, guilt, numbness — you may cycle through all of these in a single hour. Some parents describe it as mourning the life they thought their child would have. That's okay. Let yourself feel it. But know this: your child can still do everything they dreamed of. They'll just carry a few extra supplies.</p>
+  </div>
+
+  <div class="tip-box">
+    <div class="tip-title">💡 Practical tips for right now</div>
+    <p><strong>Don't try to memorize everything.</strong> Take notes. Take photos of the whiteboards. Record your diabetes educator if they'll let you. You'll refer back to all of this.<br><br>
+    <strong>Accept help.</strong> When people ask what they can do — say yes. Meals, picking up siblings, walking the dog. You need to focus on learning.<br><br>
+    <strong>Sleep when you can.</strong> You'll be checking blood sugar through the night for a while. Tag-team with your partner if possible.<br><br>
+    <strong>Ask for a CGM immediately.</strong> A continuous glucose monitor (like Dexcom G7 or Libre 3) will change your life. It means alarms instead of 3am finger sticks. Push for one before you leave the hospital if you can.</p>
+  </div>
+</div>
+
+<!-- DAYS 4-7 -->
+<div class="phase purple">
+  <span class="phase-label">Days 4–7</span>
+  <h2>Learning the Basics</h2>
+  <p>You're home now. The hospital safety net is gone, and it's just you, your child, and a bag full of supplies you barely know how to use. The first meal you dose insulin for at home will be terrifying. That's normal.</p>
+  <p>This week is about building the most basic routines: checking blood sugar, counting carbs, giving insulin, and treating lows. That's it. Don't worry about perfection. Don't worry about A1C. Just keep your child safe.</p>
+
+  <ul>
+    <li><strong>Learn the Rule of 15:</strong> For a low blood sugar (under 70), give 15g of fast-acting carbs, wait 15 minutes, recheck. Repeat if needed.</li>
+    <li><strong>Start a log:</strong> Write down blood sugars, what was eaten, insulin given, and activity. Patterns will emerge that help you and your endo team adjust doses.</li>
+    <li><strong>Stock your supplies:</strong> Glucose tabs everywhere — nightstand, backpack, car, kitchen. Juice boxes in the fridge. You never want to be caught without a low treatment.</li>
+    <li><strong>Talk to your child:</strong> Age-appropriately explain what's happening. Kids are resilient, but they need honesty and reassurance. "Your body needs help making insulin now. We're going to learn how to help it together."</li>
+  </ul>
+
+  <div class="tip-box">
+    <div class="tip-title">💡 The "honeymoon phase"</div>
+    <p>Many newly diagnosed T1D patients enter a "honeymoon period" where the pancreas still produces some insulin. Blood sugars may be surprisingly easy to manage. This is temporary — it can last weeks to months, sometimes over a year. Don't be alarmed when it ends and insulin needs increase. It doesn't mean you're doing something wrong.</p>
+  </div>
+</div>
+
+<!-- WEEK 2 -->
+<div class="phase teal">
+  <span class="phase-label">Week 2</span>
+  <h2>Building Routines</h2>
+  <p>By now, the adrenaline is wearing off and the exhaustion is setting in. You're doing this every day. Every meal is a math problem. Every bedtime is an anxiety event. The mental load is real and relentless.</p>
+  <p>But something else is happening too: you're getting better at it. Carb counting that took 10 minutes now takes 2. You're starting to recognize what 15 grams of carbs looks like. You can draw up insulin without shaking. These are wins.</p>
+
+  <ul>
+    <li><strong>Create a meal rotation:</strong> Pick 5-7 meals where you know the carb counts. Repeat them. Novelty is the enemy right now — save adventurous eating for later.</li>
+    <li><strong>School or daycare:</strong> Start working on a 504 plan (US) or medical plan. Your child has legal rights to accommodations. Your endo team and school nurse will help.</li>
+    <li><strong>Connect with other T1D families:</strong> Nothing helps more than talking to someone who gets it. Join Facebook groups, local JDRF chapters, or online communities.</li>
+    <li><strong>Let some things go:</strong> The house is messy. Dinner is frozen pizza (again). That's fine. You're keeping a human alive with a broken pancreas. Lower the bar on everything else.</li>
+  </ul>
+
+  <div class="heart-box">
+    <div class="tip-title">💜 For the parents who are barely holding it together</div>
+    <p>If you're crying in the shower, lying awake at 2am staring at the CGM, or snapping at your partner — you're not failing. You're processing trauma while simultaneously becoming your child's nurse, nutritionist, and pharmacist. That's an impossible ask, and you're doing it anyway. Be gentle with yourself.</p>
+  </div>
+</div>
+
+<!-- WEEK 3 -->
+<div class="phase blue">
+  <span class="phase-label">Week 3</span>
+  <h2>Gaining Confidence</h2>
+  <p>Something shifts around week three. Not all at once — but you'll notice moments where you handle a situation without panicking. A low blood sugar that you treat calmly. A site change that goes smoothly. A bolus you calculate in your head.</p>
+  <p>You're starting to trust yourself. And your child is adjusting too — complaining about site changes instead of crying through them, reminding you it's time to bolus, becoming a partner in their own care.</p>
+
+  <ul>
+    <li><strong>Review with your endo:</strong> Most teams will see you 2-3 weeks after diagnosis to adjust insulin doses. Bring your logs. Ask questions. No question is too small.</li>
+    <li><strong>Start exploring technology:</strong> If you don't have a CGM yet, push for one. If you're on injections, ask about insulin pumps — most endos want patients stable for a few months first, but it's good to start the conversation.</li>
+    <li><strong>Let your child be a kid:</strong> Birthday parties, sleepovers, sports — they can do all of it. It takes more planning, but don't let diabetes steal their childhood. Pack extra supplies and let them play.</li>
+    <li><strong>Forgive bad days:</strong> You'll have days where nothing works. The same meal that was perfectly dosed yesterday sends blood sugar to 300 today. Diabetes doesn't follow rules. It's not your fault.</li>
+  </ul>
+
+  <div class="tip-box">
+    <div class="tip-title">💡 The 300 Club</div>
+    <p>Every T1D family has 300+ blood sugar readings. Every single one. It doesn't mean you failed — it means your child has diabetes. Correct, hydrate, move on. The goal isn't perfection; it's resilience.</p>
+  </div>
+</div>
+
+<!-- WEEK 4 -->
+<div class="phase">
+  <span class="phase-label">Week 4</span>
+  <h2>Finding Your New Normal</h2>
+  <p>One month in. You've made it through the hardest transition of your life. Diabetes is still new, still scary, still exhausting — but it's no longer the only thing you can think about. Moments of normal life are creeping back in.</p>
+  <p>You laugh at dinner again. Your child argues about homework instead of blood sugar checks. You go a whole hour without thinking about diabetes. These moments will get longer.</p>
+
+  <ul>
+    <li><strong>Build your team:</strong> Endocrinologist, diabetes educator, school nurse, therapist (for you and/or your child), and your T1D community. You don't have to do this alone.</li>
+    <li><strong>Look into assistance programs:</strong> Diabetes is expensive. Check our <a href="assistance-programs.html" style="color:var(--cyan)">Patient Assistance Programs</a> page for help with insulin, CGMs, and pump costs.</li>
+    <li><strong>Educate your circle:</strong> Grandparents, teachers, coaches, babysitters — the more people who understand the basics, the safer your child is and the more freedom you both get.</li>
+    <li><strong>Think about the future:</strong> Research is moving fast. Automated insulin delivery systems are getting better every year. Stem cell therapies and immunotherapies are in clinical trials. There is real hope for a cure within our children's lifetimes.</li>
+  </ul>
+
+  <div class="heart-box">
+    <div class="tip-title">💜 A letter to you, one month in</div>
+    <p>You did it. Thirty days ago, you didn't know what a bolus was. Now you're calculating insulin-to-carb ratios in your sleep (literally). You've become the person your child depends on, and you've risen to it — even on the days it didn't feel like it. Your child is watching you handle this, and they're learning that hard things don't have to break you. That's the most important lesson you'll ever teach them.</p>
+  </div>
+</div>
+
+</div><!-- /timeline -->
+
+<h2 style="font-size:1.5rem;font-weight:800;margin-top:48px;margin-bottom:24px">📌 Resources That Help</h2>
+<div class="resource-links">
+  <a href="education.html" class="resource-link">
+    <h4>📚 T1D Education Center</h4>
+    <p>Understand the basics: key terms, daily management, technology, and emergencies.</p>
+  </a>
+  <a href="assistance-programs.html" class="resource-link">
+    <h4>💰 Assistance Programs</h4>
+    <p>Directory of real programs for insulin, CGMs, pumps, and supplies.</p>
+  </a>
+  <a href="https://beyondtype1.org" target="_blank" class="resource-link">
+    <h4>🌐 Beyond Type 1</h4>
+    <p>Global community, resources, and stories from people living with T1D.</p>
+  </a>
+  <a href="https://www.jdrf.org" target="_blank" class="resource-link">
+    <h4>🔬 JDRF (Breakthrough T1D)</h4>
+    <p>Leading T1D research organization. Local chapters, events, and support.</p>
+  </a>
+  <a href="https://www.childrenwithdiabetes.com" target="_blank" class="resource-link">
+    <h4>👨‍👩‍👧 Children with Diabetes</h4>
+    <p>Parent forums, conferences, and resources specifically for T1D families.</p>
+  </a>
+  <a href="https://www.facebook.com/groups/typeonegrownups" target="_blank" class="resource-link">
+    <h4>💬 T1D Parent Groups</h4>
+    <p>Facebook communities where you can ask questions and find support 24/7.</p>
+  </a>
+</div>
+
+</div>
+</section>
+
+<footer>
+<div class="footer-bottom">
+  <span>© 2025 AVA Type 1. All rights reserved.</span>
+  <span>Made with 💙 for the T1D community</span>
+</div>
+</footer>
+
+</body>
+</html>

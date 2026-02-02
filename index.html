@@ -442,13 +442,40 @@ Download on App Store
 <div class="newsletter-box">
 <h2>Join the <span style="background:var(--gradient-text);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">AVA Community</span></h2>
 <p>Updates on app releases, AVA Drive, new resources, and T1D family stories. No spam, ever.</p>
-<form class="newsletter-form" action="https://formspree.io/f/xanlwdpq" method="POST">
+<form class="newsletter-form" id="ava-contact-form">
 <textarea name="message" placeholder="Share your T1D story, ask a question, or just say hi... 💙" rows="3"></textarea>
 <div class="form-row">
 <input type="email" name="email" placeholder="your@email.com" required>
-<button type="submit">Subscribe</button>
+<button type="submit" id="ava-submit-btn">Subscribe</button>
+</div>
+<div id="form-success" style="display:none;text-align:center;padding:20px 0">
+<div style="font-size:2.5rem;margin-bottom:10px;animation:float 2s ease-in-out infinite">💙</div>
+<p style="font-size:1.1rem;font-weight:700;background:var(--gradient-text);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">You're in! Check your inbox 🫶</p>
+<p style="font-size:.85rem;color:var(--text-dim);margin-top:6px">Kam reads every message personally.</p>
 </div>
 </form>
+<script>
+document.getElementById('ava-contact-form').addEventListener('submit',async function(e){
+e.preventDefault();
+const btn=document.getElementById('ava-submit-btn');
+const form=this;
+const email=form.querySelector('[name=email]').value;
+const message=form.querySelector('[name=message]').value;
+btn.disabled=true;btn.textContent='Sending...';
+try{
+const r=await fetch('https://contact-form.kameronmartinllc.workers.dev',{
+method:'POST',headers:{'Content-Type':'application/json'},
+body:JSON.stringify({email,message})
+});
+const d=await r.json();
+if(d.success){
+form.querySelector('textarea').style.display='none';
+form.querySelector('.form-row').style.display='none';
+document.getElementById('form-success').style.display='block';
+}else{btn.textContent='Try Again';btn.disabled=false;}
+}catch(err){btn.textContent='Try Again';btn.disabled=false;}
+});
+</script>
 <div class="newsletter-social">
 <a href="https://x.com/avatype1" target="_blank" class="social-btn">𝕏 @avatype1</a>
 <a href="https://tiktok.com/@avatype1" target="_blank" class="social-btn">🎵 TikTok</a>

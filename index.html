@@ -134,7 +134,11 @@ section{padding:100px 0;position:relative}
 .newsletter-box{max-width:560px;margin:0 auto;background:var(--gradient-card);border:1px solid var(--glass-border);border-radius:var(--radius);padding:48px 40px;backdrop-filter:blur(10px)}
 .newsletter-box h2{font-size:1.8rem;font-weight:800;margin-bottom:10px}
 .newsletter-box p{color:var(--text-dim);margin-bottom:28px;font-size:.95rem}
-.newsletter-form{display:flex;gap:12px}
+.newsletter-form{display:flex;flex-direction:column;gap:12px}
+.newsletter-form .form-row{display:flex;gap:12px}
+.newsletter-form textarea{width:100%;padding:14px 20px;border-radius:16px;border:1px solid var(--glass-border);background:rgba(255,255,255,0.05);color:#fff;font-size:.95rem;font-family:inherit;outline:none;transition:border-color .2s;resize:vertical;min-height:80px}
+.newsletter-form textarea:focus{border-color:var(--cyan)}
+.newsletter-form textarea::placeholder{color:var(--text-dim)}
 .newsletter-form input{flex:1;padding:14px 20px;border-radius:50px;border:1px solid var(--glass-border);background:rgba(255,255,255,0.05);color:#fff;font-size:.95rem;font-family:inherit;outline:none;transition:border-color .2s}
 .newsletter-form input:focus{border-color:var(--cyan)}
 .newsletter-form input::placeholder{color:var(--text-dim)}
@@ -422,8 +426,11 @@ Download on App Store
 <h2>Join the <span style="background:var(--gradient-text);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">AVA Community</span></h2>
 <p>Updates on app releases, AVA Drive, new resources, and T1D family stories. No spam, ever.</p>
 <form class="newsletter-form" action="https://formspree.io/f/xanlwdpq" method="POST">
+<textarea name="message" placeholder="Share your T1D story, ask a question, or just say hi... 💙" rows="3"></textarea>
+<div class="form-row">
 <input type="email" name="email" placeholder="your@email.com" required>
 <button type="submit">Subscribe</button>
+</div>
 </form>
 <div class="newsletter-social">
 <a href="https://x.com/avatype1" target="_blank" class="social-btn">𝕏 @avatype1</a>

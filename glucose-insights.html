@@ -221,6 +221,57 @@ nav .container{display:flex;align-items:center;justify-content:space-between}
 .endo-report-btn{background:linear-gradient(135deg,#00b4d8,#4ade80)!important;box-shadow:0 6px 30px rgba(0,180,216,0.35)!important}
 .endo-report-btn:hover{box-shadow:0 10px 40px rgba(0,180,216,0.45)!important}
 
+/* INSURANCE DOCS BUTTON */
+.insurance-docs-btn{background:linear-gradient(135deg,#f59e0b,#ef4444)!important;box-shadow:0 6px 30px rgba(245,158,11,0.35)!important}
+.insurance-docs-btn:hover{box-shadow:0 10px 40px rgba(245,158,11,0.45)!important}
+
+/* INSURANCE MODAL */
+.ins-modal-overlay{position:fixed;inset:0;z-index:10000;background:rgba(0,0,0,0.7);backdrop-filter:blur(10px);display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .3s;pointer-events:none}
+.ins-modal-overlay.visible{opacity:1;pointer-events:all}
+.ins-modal{background:var(--navy-light);border:1px solid var(--glass-border);border-radius:var(--radius);padding:36px;max-width:560px;width:92%;max-height:90vh;overflow-y:auto;animation:fadeUp .4s ease-out}
+.ins-modal h3{font-size:1.4rem;font-weight:800;margin-bottom:6px;text-align:center}
+.ins-modal .ins-modal-sub{text-align:center;color:var(--text-dim);font-size:.88rem;margin-bottom:24px;line-height:1.6}
+.ins-doc-option{display:flex;align-items:flex-start;gap:14px;padding:16px;border:1px solid var(--glass-border);border-radius:14px;margin-bottom:12px;cursor:pointer;transition:all .25s;background:var(--glass)}
+.ins-doc-option:hover{border-color:rgba(245,158,11,0.5);background:rgba(245,158,11,0.06);transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,0.2)}
+.ins-doc-option .ins-doc-icon{font-size:1.6rem;flex-shrink:0;margin-top:2px}
+.ins-doc-option .ins-doc-info h4{font-size:.95rem;font-weight:700;margin-bottom:3px;color:var(--text)}
+.ins-doc-option .ins-doc-info p{font-size:.8rem;color:var(--text-dim);line-height:1.5}
+.ins-modal-close{display:block;width:100%;padding:12px;border:1px solid var(--glass-border);border-radius:50px;background:rgba(255,255,255,0.04);color:var(--text-dim);font-family:'Inter',sans-serif;font-size:.9rem;font-weight:600;cursor:pointer;transition:all .25s;margin-top:8px;text-align:center}
+.ins-modal-close:hover{background:rgba(255,255,255,0.08)}
+
+/* INSURANCE PATIENT INFO FORM MODAL */
+.ins-form-overlay{position:fixed;inset:0;z-index:10001;background:rgba(0,0,0,0.7);backdrop-filter:blur(10px);display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .3s;pointer-events:none}
+.ins-form-overlay.visible{opacity:1;pointer-events:all}
+.ins-form{background:var(--navy-light);border:1px solid var(--glass-border);border-radius:var(--radius);padding:36px;max-width:520px;width:92%;max-height:90vh;overflow-y:auto;animation:fadeUp .4s ease-out}
+.ins-form h3{font-size:1.2rem;font-weight:800;margin-bottom:6px;text-align:center}
+.ins-form .ins-form-sub{text-align:center;color:var(--text-dim);font-size:.85rem;margin-bottom:20px;line-height:1.5}
+.ins-field{margin-bottom:14px}
+.ins-field label{display:block;font-size:.78rem;font-weight:600;color:var(--text-dim);text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px}
+.ins-field input{width:100%;padding:12px 16px;background:rgba(255,255,255,0.06);border:1px solid var(--glass-border);border-radius:10px;color:var(--text);font-family:'Inter',sans-serif;font-size:.92rem;transition:border-color .2s}
+.ins-field input:focus{outline:none;border-color:var(--cyan)}
+.ins-field input::placeholder{color:var(--text-dim);opacity:.4}
+.ins-form-btns{display:flex;gap:12px;margin-top:20px}
+.ins-form-btns button{flex:1;padding:14px;border:none;border-radius:50px;font-family:'Inter',sans-serif;font-size:.95rem;font-weight:700;cursor:pointer;transition:all .25s}
+.ins-form-cancel{background:rgba(255,255,255,0.06)!important;color:var(--text-dim)!important;border:1px solid var(--glass-border)!important}
+.ins-form-cancel:hover{background:rgba(255,255,255,0.1)!important}
+.ins-form-generate{background:linear-gradient(135deg,#f59e0b,#ef4444)!important;color:#fff!important}
+.ins-form-generate:hover{transform:translateY(-2px);box-shadow:0 6px 24px rgba(245,158,11,0.35)}
+
+/* PAYWALL MODAL */
+.paywall-overlay{position:fixed;inset:0;z-index:10002;background:rgba(0,0,0,0.75);backdrop-filter:blur(12px);display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .3s;pointer-events:none}
+.paywall-overlay.visible{opacity:1;pointer-events:all}
+.paywall-modal{background:var(--navy-light);border:1px solid rgba(245,158,11,0.3);border-radius:var(--radius);padding:40px;max-width:460px;width:92%;text-align:center;animation:fadeUp .4s ease-out}
+.paywall-modal .paywall-icon{font-size:3rem;margin-bottom:16px}
+.paywall-modal h3{font-size:1.4rem;font-weight:800;margin-bottom:8px}
+.paywall-modal p{color:var(--text-dim);font-size:.9rem;line-height:1.7;margin-bottom:20px}
+.paywall-features{text-align:left;margin:0 auto 24px;max-width:320px}
+.paywall-features div{display:flex;align-items:center;gap:10px;padding:8px 0;font-size:.88rem;color:var(--text)}
+.paywall-features div span:first-child{color:#4ade80}
+.paywall-modal .paywall-btn{display:inline-block;padding:14px 36px;background:linear-gradient(135deg,#f59e0b,#ef4444);color:#fff;border:none;border-radius:50px;font-family:'Inter',sans-serif;font-size:1rem;font-weight:700;cursor:pointer;transition:all .3s;margin-bottom:12px}
+.paywall-modal .paywall-btn:hover{transform:translateY(-2px);box-shadow:0 8px 30px rgba(245,158,11,0.4)}
+.paywall-modal .paywall-dismiss{display:block;color:var(--text-dim);font-size:.82rem;cursor:pointer;transition:color .2s;background:none;border:none;font-family:'Inter',sans-serif;margin:0 auto}
+.paywall-modal .paywall-dismiss:hover{color:var(--text)}
+
 /* ENDO REPORT DIALOG OVERLAY */
 .endo-dialog-overlay{position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,0.6);backdrop-filter:blur(8px);display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .3s;pointer-events:none}
 .endo-dialog-overlay.visible{opacity:1;pointer-events:all}
@@ -282,6 +333,227 @@ footer{padding:48px 0 32px;border-top:1px solid var(--glass-border)}
 .time-range-btn{padding:6px 12px;font-size:.75rem}
 .insulin-stats-grid{grid-template-columns:repeat(auto-fit,minmax(140px,1fr))}
 }
+
+/* ========== DATA CHAT STYLES ========== */
+.chat-fab{
+  position:fixed;bottom:24px;right:24px;z-index:1000;
+  width:60px;height:60px;border-radius:50%;border:none;
+  background:linear-gradient(135deg,#7b2ff7,#00d4ff);
+  color:#fff;font-size:1.5rem;cursor:pointer;
+  box-shadow:0 6px 30px rgba(123,47,247,0.4);
+  transition:all .3s;display:none;align-items:center;justify-content:center;
+}
+.chat-fab.visible{display:flex}
+.chat-fab:hover{transform:scale(1.08);box-shadow:0 8px 40px rgba(123,47,247,0.55)}
+.chat-fab .chat-fab-badge{
+  position:absolute;top:-2px;right:-2px;width:18px;height:18px;
+  background:#ff4757;border-radius:50%;font-size:.65rem;font-weight:700;
+  display:flex;align-items:center;justify-content:center;
+  border:2px solid var(--navy);
+}
+
+.chat-panel{
+  position:fixed;bottom:24px;right:24px;z-index:1001;
+  width:380px;max-height:520px;
+  background:var(--navy-light);border:1px solid var(--glass-border);
+  border-radius:20px;overflow:hidden;
+  display:none;flex-direction:column;
+  box-shadow:0 20px 60px rgba(0,0,0,0.5);
+  animation:chatSlideUp .3s ease-out;
+}
+.chat-panel.open{display:flex}
+@keyframes chatSlideUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+
+.chat-header{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:16px 18px;
+  background:linear-gradient(135deg,rgba(123,47,247,0.15),rgba(0,212,255,0.1));
+  border-bottom:1px solid var(--glass-border);
+}
+.chat-header-left{display:flex;align-items:center;gap:10px}
+.chat-header-avatar{
+  width:34px;height:34px;border-radius:50%;
+  background:linear-gradient(135deg,#7b2ff7,#00d4ff);
+  display:flex;align-items:center;justify-content:center;font-size:.95rem;
+}
+.chat-header-info h4{font-size:.88rem;font-weight:700;color:#fff;line-height:1.2}
+.chat-header-info span{font-size:.72rem;color:var(--text-dim)}
+.chat-close{
+  background:none;border:none;color:var(--text-dim);font-size:1.2rem;cursor:pointer;
+  padding:4px;transition:color .2s;line-height:1;
+}
+.chat-close:hover{color:#fff}
+
+.chat-messages{
+  flex:1;overflow-y:auto;padding:16px;
+  max-height:320px;min-height:200px;
+  display:flex;flex-direction:column;gap:10px;
+  scrollbar-width:thin;scrollbar-color:rgba(255,255,255,0.1) transparent;
+}
+.chat-messages::-webkit-scrollbar{width:5px}
+.chat-messages::-webkit-scrollbar-track{background:transparent}
+.chat-messages::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.1);border-radius:3px}
+
+.chat-msg{max-width:85%;animation:fadeUp .3s ease-out}
+.chat-msg.ai{align-self:flex-start}
+.chat-msg.user{align-self:flex-end}
+.chat-msg-bubble{
+  padding:10px 14px;border-radius:16px;font-size:.85rem;line-height:1.55;
+  word-wrap:break-word;
+}
+.chat-msg.ai .chat-msg-bubble{
+  background:rgba(255,255,255,0.06);border:1px solid var(--glass-border);
+  color:var(--text);border-bottom-left-radius:4px;
+}
+.chat-msg.user .chat-msg-bubble{
+  background:linear-gradient(135deg,rgba(123,47,247,0.3),rgba(0,212,255,0.2));
+  border:1px solid rgba(0,212,255,0.2);
+  color:#fff;border-bottom-right-radius:4px;
+}
+.chat-msg-time{font-size:.65rem;color:var(--text-dim);margin-top:3px;opacity:.6}
+.chat-msg.user .chat-msg-time{text-align:right}
+
+.chat-msg-bubble.blurred{
+  filter:blur(5px);user-select:none;pointer-events:none;
+}
+.chat-paywall-banner{
+  text-align:center;padding:16px;
+  background:linear-gradient(135deg,rgba(123,47,247,0.1),rgba(0,212,255,0.05));
+  border:1px solid rgba(123,47,247,0.2);border-radius:12px;
+  margin:8px 0;
+}
+.chat-paywall-banner p{font-size:.82rem;color:var(--text);font-weight:600;margin-bottom:8px}
+.chat-paywall-banner button{
+  padding:8px 20px;border:none;border-radius:50px;
+  background:linear-gradient(135deg,#7b2ff7,#00d4ff);
+  color:#fff;font-family:'Inter',sans-serif;font-size:.8rem;font-weight:700;
+  cursor:pointer;transition:all .2s;
+}
+.chat-paywall-banner button:hover{transform:translateY(-1px);box-shadow:0 4px 16px rgba(123,47,247,0.4)}
+
+.chat-typing{
+  display:flex;align-items:center;gap:4px;padding:8px 14px;
+  align-self:flex-start;
+}
+.chat-typing-dot{
+  width:7px;height:7px;border-radius:50%;background:var(--text-dim);
+  animation:typingBounce 1.4s infinite;
+}
+.chat-typing-dot:nth-child(2){animation-delay:.2s}
+.chat-typing-dot:nth-child(3){animation-delay:.4s}
+@keyframes typingBounce{
+  0%,60%,100%{transform:translateY(0);opacity:.4}
+  30%{transform:translateY(-6px);opacity:1}
+}
+
+.chat-suggestions{
+  display:flex;flex-wrap:wrap;gap:6px;padding:0 16px 10px;
+}
+.chat-suggest-btn{
+  padding:6px 12px;border-radius:50px;font-size:.73rem;font-weight:600;
+  background:rgba(255,255,255,0.04);border:1px solid var(--glass-border);
+  color:var(--text-dim);cursor:pointer;font-family:'Inter',sans-serif;
+  transition:all .2s;white-space:nowrap;
+}
+.chat-suggest-btn:hover{
+  border-color:rgba(0,212,255,0.4);color:var(--cyan);
+  background:rgba(0,212,255,0.06);
+}
+
+.chat-input-area{
+  display:flex;align-items:center;gap:8px;
+  padding:12px 16px;border-top:1px solid var(--glass-border);
+  background:rgba(0,0,0,0.15);
+}
+.chat-input{
+  flex:1;padding:10px 14px;border-radius:50px;
+  background:rgba(255,255,255,0.06);border:1px solid var(--glass-border);
+  color:var(--text);font-family:'Inter',sans-serif;font-size:.85rem;
+  outline:none;transition:border-color .2s;
+}
+.chat-input:focus{border-color:rgba(0,212,255,0.4)}
+.chat-input::placeholder{color:var(--text-dim);opacity:.5}
+.chat-send{
+  width:38px;height:38px;border-radius:50%;border:none;
+  background:linear-gradient(135deg,#7b2ff7,#00d4ff);
+  color:#fff;font-size:1rem;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  transition:all .2s;flex-shrink:0;
+}
+.chat-send:hover{transform:scale(1.05)}
+.chat-send:disabled{opacity:.4;cursor:not-allowed;transform:none}
+
+.chat-footer{
+  text-align:center;padding:6px;
+  font-size:.62rem;color:var(--text-dim);opacity:.5;
+  border-top:1px solid rgba(255,255,255,0.03);
+}
+
+@media(max-width:480px){
+  .chat-panel{width:calc(100vw - 16px);right:8px;bottom:8px;max-height:70vh}
+  .chat-fab{bottom:16px;right:16px;width:54px;height:54px;font-size:1.3rem}
+}
+
+/* ========== INDEXEDDB PERSISTENCE BANNER ========== */
+.session-banner{background:linear-gradient(135deg,rgba(0,212,255,0.08),rgba(123,47,247,0.08));border:1px solid rgba(0,212,255,0.2);border-radius:var(--radius);padding:24px 28px;text-align:center;max-width:700px;margin:24px auto 0;animation:fadeUp .5s ease-out;display:none}
+.session-banner.visible{display:block}
+.session-banner h3{font-size:1.1rem;font-weight:700;margin-bottom:6px}
+.session-banner p{color:var(--text-dim);font-size:.9rem;margin-bottom:16px}
+.session-banner-btns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+.session-banner-btns button{padding:12px 28px;border:none;border-radius:50px;font-family:'Inter',sans-serif;font-size:.9rem;font-weight:700;cursor:pointer;transition:all .25s}
+.btn-load-prev{background:linear-gradient(135deg,var(--cyan),var(--purple));color:#fff}
+.btn-load-prev:hover{transform:translateY(-2px);box-shadow:0 6px 24px rgba(0,212,255,0.35)}
+.btn-new-upload{background:rgba(255,255,255,0.06);color:var(--text);border:1px solid var(--glass-border)!important}
+.btn-new-upload:hover{background:rgba(255,255,255,0.1)}
+
+.session-picker-wrap{max-width:700px;margin:16px auto 0;display:none}
+.session-picker-wrap.visible{display:block}
+.session-picker-wrap label{font-size:.85rem;font-weight:600;color:var(--text-dim);margin-right:10px}
+.session-picker{background:rgba(255,255,255,0.06);border:1px solid var(--glass-border);border-radius:10px;padding:10px 16px;color:var(--text);font-family:'Inter',sans-serif;font-size:.88rem;cursor:pointer;min-width:300px;appearance:none;-webkit-appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%238899b0'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center;padding-right:36px}
+.session-picker option{background:var(--navy);color:var(--text)}
+
+/* CLEAR DATA / PRIVACY SECTION */
+.settings-section{max-width:700px;margin:40px auto;padding:24px;background:var(--gradient-card);border:1px solid var(--glass-border);border-radius:var(--radius);backdrop-filter:blur(10px)}
+.settings-section h4{font-size:.95rem;font-weight:700;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.settings-section p{font-size:.85rem;color:var(--text-dim);margin-bottom:16px;line-height:1.6}
+.btn-clear-data{padding:10px 24px;border:1px solid rgba(255,107,107,0.3);border-radius:50px;background:rgba(255,107,107,0.08);color:#ff6b6b;font-family:'Inter',sans-serif;font-size:.85rem;font-weight:600;cursor:pointer;transition:all .25s}
+.btn-clear-data:hover{background:rgba(255,107,107,0.15);border-color:rgba(255,107,107,0.5)}
+
+/* ========== PAYWALL / PRO FEATURES ========== */
+.pro-section-wrap{position:relative}
+.pro-overlay{position:absolute;inset:0;z-index:10;display:flex;flex-direction:column;align-items:center;justify-content:center;background:rgba(10,22,40,0.4);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-radius:var(--radius);cursor:pointer;transition:all .3s}
+.pro-overlay:hover{background:rgba(10,22,40,0.35)}
+.pro-overlay-content{text-align:center;padding:24px}
+.pro-lock-icon{font-size:2.5rem;margin-bottom:12px;display:block}
+.pro-badge{display:inline-flex;align-items:center;gap:6px;background:linear-gradient(135deg,#7b2ff7,#00d4ff);color:#fff;font-size:.75rem;font-weight:800;text-transform:uppercase;letter-spacing:1.5px;padding:6px 16px;border-radius:50px;margin-bottom:12px}
+.pro-badge-sm{display:inline-flex;align-items:center;gap:4px;background:linear-gradient(135deg,#7b2ff7,#00d4ff);color:#fff;font-size:.6rem;font-weight:800;text-transform:uppercase;letter-spacing:1px;padding:3px 8px;border-radius:50px;margin-left:8px;vertical-align:middle}
+.pro-overlay-text{color:#fff;font-size:1rem;font-weight:600;margin-bottom:16px;text-shadow:0 2px 8px rgba(0,0,0,0.5)}
+.btn-unlock{display:inline-flex;align-items:center;gap:8px;padding:14px 32px;border:none;border-radius:50px;font-family:'Inter',sans-serif;font-size:.95rem;font-weight:700;cursor:pointer;color:#fff;background:linear-gradient(135deg,#7b2ff7,#00d4ff);box-shadow:0 6px 30px rgba(123,47,247,0.35);transition:all .3s}
+.btn-unlock:hover{transform:translateY(-3px);box-shadow:0 10px 40px rgba(123,47,247,0.5)}
+
+/* PAYWALL MODAL */
+.paywall-modal-overlay{position:fixed;inset:0;z-index:10000;background:rgba(0,0,0,0.6);backdrop-filter:blur(8px);display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .3s;pointer-events:none}
+.paywall-modal-overlay.visible{opacity:1;pointer-events:all}
+.paywall-modal{background:var(--navy-light);border:1px solid var(--glass-border);border-radius:var(--radius);padding:40px;max-width:480px;width:90%;text-align:center;animation:fadeUp .4s ease-out}
+.paywall-modal h2{font-size:1.6rem;font-weight:900;margin-bottom:8px}
+.paywall-modal h2 .gradient{background:var(--gradient-text);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.paywall-modal .price{font-size:2rem;font-weight:900;background:var(--gradient-text);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin:16px 0 8px}
+.paywall-modal .price-sub{color:var(--text-dim);font-size:.85rem;margin-bottom:20px}
+.paywall-benefits{text-align:left;margin-bottom:24px}
+.paywall-benefit{display:flex;align-items:center;gap:10px;padding:8px 0;font-size:.92rem;color:var(--text)}
+.paywall-benefit .check{color:#4ade80;font-weight:700;font-size:1.1rem}
+.paywall-modal input[type=email]{width:100%;padding:14px 18px;background:rgba(255,255,255,0.06);border:1px solid var(--glass-border);border-radius:12px;color:var(--text);font-family:'Inter',sans-serif;font-size:1rem;margin-bottom:16px;text-align:center;transition:border-color .2s}
+.paywall-modal input[type=email]:focus{outline:none;border-color:var(--cyan)}
+.paywall-modal input::placeholder{color:var(--text-dim);opacity:.5}
+.btn-subscribe{display:block;width:100%;padding:16px;border:none;border-radius:14px;font-family:'Inter',sans-serif;font-size:1.05rem;font-weight:800;cursor:pointer;color:#fff;background:linear-gradient(135deg,#7b2ff7,#00d4ff);box-shadow:0 6px 30px rgba(123,47,247,0.35);transition:all .3s;margin-bottom:12px}
+.btn-subscribe:hover{transform:translateY(-2px);box-shadow:0 10px 40px rgba(123,47,247,0.5)}
+.btn-subscribe:disabled{opacity:.5;cursor:not-allowed;transform:none}
+.paywall-modal .cancel-link{color:var(--text-dim);font-size:.85rem;cursor:pointer;transition:color .2s}
+.paywall-modal .cancel-link:hover{color:var(--text)}
+
+/* Manage subscription footer link */
+.manage-sub-link{display:inline-flex;align-items:center;gap:6px;color:var(--cyan);font-weight:600;font-size:.85rem;cursor:pointer;transition:opacity .2s}
+.manage-sub-link:hover{opacity:.8}
 </style>
 </head>
 <body>
@@ -308,6 +580,26 @@ footer{padding:48px 0 32px;border-top:1px solid var(--glass-border)}
   <h1>Glucose <span class="gradient">Insights</span> 📊</h1>
   <p>Upload your CGM export and get instant visualizations — time in range, estimated A1C, daily patterns, insulin analysis, and more. No sign-up. No cloud. Everything stays on your device.</p>
   <div class="privacy-banner">🔒 Your data never leaves your device. All processing happens locally in your browser.</div>
+</div>
+</section>
+
+<!-- SESSION RESTORE BANNER -->
+<section class="upload-section" style="padding-bottom:0">
+<div class="container">
+  <div class="session-banner" id="session-banner">
+    <h3 id="session-banner-title">📊 Welcome back!</h3>
+    <p id="session-banner-text">Your last upload is still here.</p>
+    <div class="session-banner-btns">
+      <button class="btn-load-prev" onclick="loadLatestSession()">Load Previous Data</button>
+      <button class="btn-new-upload" onclick="dismissSessionBanner()">Upload New Data</button>
+    </div>
+  </div>
+  <div class="session-picker-wrap" id="session-picker-wrap">
+    <label for="session-picker">📂 Previous uploads:</label>
+    <select class="session-picker" id="session-picker" onchange="loadSessionById(this.value)">
+      <option value="">Select a session...</option>
+    </select>
+  </div>
 </div>
 </section>
 
@@ -412,11 +704,12 @@ footer{padding:48px 0 32px;border-top:1px solid var(--glass-border)}
     </div>
   </div>
 
-  <!-- PATTERN ANALYSIS -->
+  <!-- PATTERN ANALYSIS (PRO) -->
+  <div class="pro-section-wrap" id="pro-patterns">
   <div class="pattern-section" id="pattern-section">
     <div style="text-align:center;margin-bottom:32px">
       <span class="section-label">Pattern Analysis</span>
-      <h2 class="section-title">Your <span class="gradient">Glucose Patterns</span></h2>
+      <h2 class="section-title">Your <span class="gradient">Glucose Patterns</span> <span class="pro-badge-sm" id="pro-badge-patterns">✦ PRO</span></h2>
     </div>
     <div class="pattern-cards">
       <div class="pattern-card" id="pattern-highs">
@@ -441,7 +734,19 @@ footer{padding:48px 0 32px;border-top:1px solid var(--glass-border)}
     </div>
   </div>
 
-  <!-- INSULIN SECTION (only shown when insulin data exists) -->
+  <!-- Pro overlay for patterns -->
+  <div class="pro-overlay" id="pro-overlay-patterns" onclick="showPaywallModal()">
+    <div class="pro-overlay-content">
+      <span class="pro-lock-icon">🔒</span>
+      <div class="pro-badge">✦ PRO Feature</div>
+      <div class="pro-overlay-text">Unlock Pattern Analysis & Heatmap</div>
+      <button class="btn-unlock">Unlock — $4.99/mo</button>
+    </div>
+  </div>
+  </div><!-- /pro-section-wrap patterns -->
+
+  <!-- INSULIN SECTION (PRO, only shown when insulin data exists) -->
+  <div class="pro-section-wrap" id="pro-insulin">
   <div class="insulin-section" id="insulin-section">
     <div style="text-align:center;margin-bottom:32px;margin-top:48px">
       <span class="section-label">Insulin Analytics</span>
@@ -467,7 +772,19 @@ footer{padding:48px 0 32px;border-top:1px solid var(--glass-border)}
     <div class="insulin-analysis-grid" id="insulin-analysis-grid"></div>
   </div>
 
-  <!-- AI INSIGHTS BUTTON + ENDO REPORT BUTTON -->
+  <!-- Pro overlay for insulin -->
+  <div class="pro-overlay" id="pro-overlay-insulin" onclick="showPaywallModal()">
+    <div class="pro-overlay-content">
+      <span class="pro-lock-icon">🔒</span>
+      <div class="pro-badge">✦ PRO Feature</div>
+      <div class="pro-overlay-text">Unlock Insulin Analytics</div>
+      <button class="btn-unlock">Unlock — $4.99/mo</button>
+    </div>
+  </div>
+  </div><!-- /pro-section-wrap insulin -->
+
+  <!-- AI INSIGHTS BUTTON + ENDO REPORT BUTTON (PRO) -->
+  <div class="pro-section-wrap" id="pro-ai">
   <div class="ai-btn-wrap" id="ai-btn-wrap" style="display:none">
     <div style="display:flex;flex-wrap:wrap;gap:16px;justify-content:center">
       <div style="text-align:center">
@@ -483,6 +800,13 @@ footer{padding:48px 0 32px;border-top:1px solid var(--glass-border)}
           <span>Generate Endo Report</span>
         </button>
         <div class="ai-btn-sub">Print-friendly report for your endocrinologist</div>
+      </div>
+      <div style="text-align:center">
+        <button class="ai-btn insurance-docs-btn" id="insurance-docs-btn" onclick="openInsuranceDocsModal()">
+          <span class="ai-btn-icon">🏥</span>
+          <span>Insurance Documents</span>
+        </button>
+        <div class="ai-btn-sub">Letters of Medical Necessity, Prior Auth & more</div>
       </div>
     </div>
   </div>
@@ -523,6 +847,47 @@ footer{padding:48px 0 32px;border-top:1px solid var(--glass-border)}
     </div>
   </div>
 
+  <!-- Pro overlay for AI insights -->
+  <div class="pro-overlay" id="pro-overlay-ai" onclick="showPaywallModal()">
+    <div class="pro-overlay-content">
+      <span class="pro-lock-icon">🔒</span>
+      <div class="pro-badge">✦ PRO Feature</div>
+      <div class="pro-overlay-text">Unlock AI Insights & Endo Report</div>
+      <button class="btn-unlock">Unlock — $4.99/mo</button>
+    </div>
+  </div>
+  </div><!-- /pro-section-wrap ai -->
+
+</div>
+</section>
+
+<!-- PAYWALL MODAL -->
+<div class="paywall-modal-overlay" id="paywall-modal">
+  <div class="paywall-modal">
+    <h2>Unlock <span class="gradient">AVA Insights Pro</span></h2>
+    <div class="price">$4.99/month</div>
+    <div class="price-sub">Cancel anytime · 100% browser-based</div>
+    <div class="paywall-benefits">
+      <div class="paywall-benefit"><span class="check">✓</span> AI-Powered Glucose Analysis</div>
+      <div class="paywall-benefit"><span class="check">✓</span> Endocrinologist-Ready Report</div>
+      <div class="paywall-benefit"><span class="check">✓</span> Pattern Analysis & Heatmap</div>
+      <div class="paywall-benefit"><span class="check">✓</span> Insulin Analytics & Effectiveness</div>
+      <div class="paywall-benefit"><span class="check">✓</span> Unlimited Session History</div>
+    </div>
+    <input type="email" id="paywall-email" placeholder="Enter your email" autocomplete="email">
+    <button class="btn-subscribe" id="btn-subscribe" onclick="startSubscription()">Subscribe — $4.99/mo</button>
+    <div class="cancel-link" onclick="closePaywallModal()">Maybe later</div>
+  </div>
+</div>
+
+<!-- SETTINGS / PRIVACY / CLEAR DATA -->
+<section style="padding:0 0 40px">
+<div class="container">
+  <div class="settings-section" id="settings-section">
+    <h4>⚙️ Data & Privacy</h4>
+    <p>Your glucose data is stored locally in your browser using IndexedDB. It never leaves your device. You can clear all saved sessions at any time.</p>
+    <button class="btn-clear-data" onclick="clearAllSessions()">🗑️ Clear All My Data</button>
+  </div>
 </div>
 </section>
 
@@ -565,12 +930,395 @@ footer{padding:48px 0 32px;border-top:1px solid var(--glass-border)}
 </div>
 </footer>
 
+<!-- DATA CHAT FAB + PANEL -->
+<button class="chat-fab" id="chat-fab" onclick="toggleChat()">
+  💬
+  <span class="chat-fab-badge" id="chat-badge" style="display:none">1</span>
+</button>
+
+<div class="chat-panel" id="chat-panel">
+  <div class="chat-header">
+    <div class="chat-header-left">
+      <div class="chat-header-avatar">🤖</div>
+      <div class="chat-header-info">
+        <h4>Data Chat</h4>
+        <span>Ask about your glucose patterns</span>
+      </div>
+    </div>
+    <button class="chat-close" onclick="toggleChat()">✕</button>
+  </div>
+  <div class="chat-messages" id="chat-messages"></div>
+  <div class="chat-suggestions" id="chat-suggestions"></div>
+  <div class="chat-input-area">
+    <input type="text" class="chat-input" id="chat-input" placeholder="Ask about your data..." autocomplete="off">
+    <button class="chat-send" id="chat-send" onclick="sendChatMessage()">➤</button>
+  </div>
+  <div class="chat-footer">Powered by AVA Type 1 · AI-generated, not medical advice</div>
+</div>
+
 <script>
+// ========== PAYWALL CONFIG ==========
+const PAYWALL_WORKER_URL = 'https://glucose-paywall.kameronmartinllc.workers.dev';
+const PRO_FEATURES = ['pro-patterns', 'pro-insulin', 'pro-ai'];
+
+// ========== INDEXEDDB PERSISTENCE ==========
+const DB_NAME = 'ava-glucose-insights';
+const DB_STORE = 'sessions';
+const DB_VERSION = 1;
+const MAX_SESSIONS = 10;
+
+function openDB() {
+  return new Promise((resolve, reject) => {
+    const req = indexedDB.open(DB_NAME, DB_VERSION);
+    req.onupgradeneeded = (e) => {
+      const db = e.target.result;
+      if (!db.objectStoreNames.contains(DB_STORE)) {
+        db.createObjectStore(DB_STORE, { keyPath: 'id', autoIncrement: true });
+      }
+    };
+    req.onsuccess = () => resolve(req.result);
+    req.onerror = () => reject(req.error);
+  });
+}
+
+async function saveSession(readings, glookoData, hasInsulin, fileName) {
+  const db = await openDB();
+  const tx = db.transaction(DB_STORE, 'readwrite');
+  const store = tx.objectStore(DB_STORE);
+
+  const session = {
+    readings,
+    glooko: glookoData,
+    hasInsulinData: hasInsulin,
+    fileName: fileName || 'Unknown',
+    timestamp: Date.now(),
+    readingCount: readings.length,
+  };
+
+  // Add new session
+  const addReq = store.add(session);
+  addReq.onsuccess = () => {
+    const newId = addReq.result;
+    // Store "latest" pointer in localStorage
+    localStorage.setItem('ava-gi-latest-session', String(newId));
+  };
+
+  // Prune old sessions (keep last MAX_SESSIONS)
+  const allReq = store.getAll();
+  allReq.onsuccess = () => {
+    const all = allReq.result;
+    if (all.length > MAX_SESSIONS) {
+      const toRemove = all.sort((a, b) => a.timestamp - b.timestamp).slice(0, all.length - MAX_SESSIONS);
+      toRemove.forEach(s => store.delete(s.id));
+    }
+  };
+
+  return new Promise((resolve, reject) => {
+    tx.oncomplete = () => { db.close(); resolve(); };
+    tx.onerror = () => { db.close(); reject(tx.error); };
+  });
+}
+
+async function getAllSessions() {
+  const db = await openDB();
+  const tx = db.transaction(DB_STORE, 'readonly');
+  const store = tx.objectStore(DB_STORE);
+  return new Promise((resolve, reject) => {
+    const req = store.getAll();
+    req.onsuccess = () => { db.close(); resolve(req.result.sort((a, b) => b.timestamp - a.timestamp)); };
+    req.onerror = () => { db.close(); reject(req.error); };
+  });
+}
+
+async function getSessionById(id) {
+  const db = await openDB();
+  const tx = db.transaction(DB_STORE, 'readonly');
+  const store = tx.objectStore(DB_STORE);
+  return new Promise((resolve, reject) => {
+    const req = store.get(Number(id));
+    req.onsuccess = () => { db.close(); resolve(req.result); };
+    req.onerror = () => { db.close(); reject(req.error); };
+  });
+}
+
+async function clearAllSessionsDB() {
+  const db = await openDB();
+  const tx = db.transaction(DB_STORE, 'readwrite');
+  const store = tx.objectStore(DB_STORE);
+  store.clear();
+  return new Promise((resolve, reject) => {
+    tx.oncomplete = () => {
+      db.close();
+      localStorage.removeItem('ava-gi-latest-session');
+      resolve();
+    };
+    tx.onerror = () => { db.close(); reject(tx.error); };
+  });
+}
+
+// Restore session data and render
+function restoreSession(session) {
+  allReadings = session.readings;
+  glooko = session.glooko || { bolus: [], basal: [], daily: [], carbs: [], alarms: [], bgManual: [] };
+  hasInsulinData = session.hasInsulinData || false;
+  currentRange = 'all';
+  document.querySelectorAll('.time-range-btn').forEach(btn => btn.classList.toggle('active', btn.dataset.range === 'all'));
+
+  const stats = computeStats(allReadings);
+  allStats = stats;
+  renderDashboard(allReadings, stats);
+  drawAllCharts(allReadings, stats);
+
+  // Update upload zone
+  const uploadZone = document.getElementById('upload-zone');
+  uploadZone.querySelector('.upload-icon').textContent = '✅';
+  uploadZone.querySelector('h3').textContent = 'Data loaded from saved session!';
+  uploadZone.querySelector('p').textContent = `${session.fileName} — ${allReadings.length.toLocaleString()} readings`;
+
+  updatePaywallState();
+  updateSessionPicker();
+}
+
+async function loadLatestSession() {
+  try {
+    const latestId = localStorage.getItem('ava-gi-latest-session');
+    if (!latestId) return;
+    const session = await getSessionById(Number(latestId));
+    if (!session) return;
+    document.getElementById('session-banner').classList.remove('visible');
+    restoreSession(session);
+  } catch (e) {
+    console.error('Failed to load session:', e);
+  }
+}
+
+async function loadSessionById(id) {
+  if (!id) return;
+  try {
+    const session = await getSessionById(Number(id));
+    if (!session) return;
+    restoreSession(session);
+  } catch (e) {
+    console.error('Failed to load session:', e);
+  }
+}
+
+function dismissSessionBanner() {
+  document.getElementById('session-banner').classList.remove('visible');
+}
+
+async function updateSessionPicker() {
+  try {
+    const sessions = await getAllSessions();
+    const picker = document.getElementById('session-picker');
+    const wrap = document.getElementById('session-picker-wrap');
+    if (sessions.length < 2) { wrap.classList.remove('visible'); return; }
+    wrap.classList.add('visible');
+    picker.innerHTML = '<option value="">Select a session...</option>';
+    sessions.forEach(s => {
+      const d = new Date(s.timestamp);
+      const dateStr = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit' });
+      const opt = document.createElement('option');
+      opt.value = s.id;
+      opt.textContent = `${s.fileName} — ${s.readingCount.toLocaleString()} readings (${dateStr})`;
+      picker.appendChild(opt);
+    });
+  } catch (e) {
+    console.error('Failed to update session picker:', e);
+  }
+}
+
+async function clearAllSessions() {
+  if (!confirm('Are you sure you want to delete all saved glucose data from this browser?')) return;
+  try {
+    await clearAllSessionsDB();
+    document.getElementById('session-banner').classList.remove('visible');
+    document.getElementById('session-picker-wrap').classList.remove('visible');
+    alert('All saved data has been cleared.');
+  } catch (e) {
+    console.error('Failed to clear sessions:', e);
+    alert('Failed to clear data. Please try again.');
+  }
+}
+
+// Check for saved sessions on page load
+async function checkSavedSessions() {
+  try {
+    const sessions = await getAllSessions();
+    if (sessions.length === 0) return;
+
+    const latest = sessions[0];
+    const d = new Date(latest.timestamp);
+    const dateStr = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+
+    document.getElementById('session-banner-title').textContent = '📊 Welcome back!';
+    document.getElementById('session-banner-text').textContent =
+      `Your last upload (${latest.fileName}, ${dateStr}) is still here.`;
+    document.getElementById('session-banner').classList.add('visible');
+
+    updateSessionPicker();
+  } catch (e) {
+    // IndexedDB not available, silently fail
+    console.error('IndexedDB check failed:', e);
+  }
+}
+
+// ========== PAYWALL STATE ==========
+function isProUser() {
+  const sub = localStorage.getItem('ava-pro-subscription');
+  if (!sub) return false;
+  try {
+    const data = JSON.parse(sub);
+    return data.active === true;
+  } catch { return false; }
+}
+
+function getProEmail() {
+  try {
+    const sub = JSON.parse(localStorage.getItem('ava-pro-subscription') || '{}');
+    return sub.email || '';
+  } catch { return ''; }
+}
+
+function updatePaywallState() {
+  const isPro = isProUser();
+  PRO_FEATURES.forEach(id => {
+    const overlay = document.getElementById('pro-overlay-' + id.replace('pro-', ''));
+    if (overlay) overlay.style.display = isPro ? 'none' : 'flex';
+  });
+
+  // Update PRO badges
+  document.querySelectorAll('.pro-badge-sm').forEach(el => {
+    el.style.display = isPro ? 'none' : 'inline-flex';
+  });
+
+  // Show manage subscription link
+  const manageWrap = document.getElementById('manage-sub-wrap');
+  if (manageWrap) manageWrap.style.display = isPro ? 'inline' : 'none';
+}
+
+function showPaywallModal() {
+  const overlay = document.getElementById('paywall-modal');
+  overlay.classList.add('visible');
+  const emailInput = document.getElementById('paywall-email');
+  const savedEmail = getProEmail();
+  if (savedEmail) emailInput.value = savedEmail;
+  setTimeout(() => emailInput.focus(), 100);
+}
+
+function closePaywallModal() {
+  document.getElementById('paywall-modal').classList.remove('visible');
+}
+
+// Close modal on overlay click
+document.addEventListener('click', e => {
+  const modal = document.getElementById('paywall-modal');
+  if (e.target === modal) closePaywallModal();
+});
+
+async function startSubscription() {
+  const email = document.getElementById('paywall-email').value.trim();
+  if (!email || !email.includes('@')) {
+    alert('Please enter a valid email address.');
+    return;
+  }
+  const btn = document.getElementById('btn-subscribe');
+  btn.disabled = true;
+  btn.textContent = 'Redirecting...';
+
+  try {
+    const resp = await fetch(PAYWALL_WORKER_URL + '/create-checkout', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email }),
+    });
+    const data = await resp.json();
+    if (data.url) {
+      // Store email for later verification
+      localStorage.setItem('ava-pro-pending-email', email);
+      window.location.href = data.url;
+    } else {
+      throw new Error(data.error || 'Failed to create checkout session');
+    }
+  } catch (err) {
+    alert('Subscription error: ' + err.message);
+    btn.disabled = false;
+    btn.textContent = 'Subscribe — $4.99/mo';
+  }
+}
+
+async function verifySubscription() {
+  const email = getProEmail();
+  if (!email) return;
+
+  try {
+    const resp = await fetch(PAYWALL_WORKER_URL + '/verify', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email }),
+    });
+    const data = await resp.json();
+    if (data.active) {
+      localStorage.setItem('ava-pro-subscription', JSON.stringify({
+        active: true,
+        email,
+        verifiedAt: Date.now(),
+        currentPeriodEnd: data.currentPeriodEnd,
+      }));
+    } else {
+      // Subscription no longer active
+      localStorage.removeItem('ava-pro-subscription');
+    }
+    updatePaywallState();
+  } catch (e) {
+    // Network error — keep current state to avoid locking out offline users
+    console.error('Subscription verification failed:', e);
+  }
+}
+
+async function openManageSubscription() {
+  const email = getProEmail();
+  if (!email) return;
+  try {
+    const resp = await fetch(PAYWALL_WORKER_URL + '/portal?email=' + encodeURIComponent(email));
+    const data = await resp.json();
+    if (data.url) window.open(data.url, '_blank');
+    else alert(data.error || 'Could not open subscription portal.');
+  } catch (e) {
+    alert('Failed to open subscription portal.');
+  }
+}
+
+// Check for payment success redirect
+function checkPaymentRedirect() {
+  const params = new URLSearchParams(window.location.search);
+  if (params.get('payment') === 'success') {
+    const pendingEmail = localStorage.getItem('ava-pro-pending-email');
+    if (pendingEmail) {
+      localStorage.setItem('ava-pro-subscription', JSON.stringify({
+        active: true,
+        email: pendingEmail,
+        verifiedAt: Date.now(),
+      }));
+      localStorage.removeItem('ava-pro-pending-email');
+      updatePaywallState();
+      // Clean URL
+      window.history.replaceState({}, '', window.location.pathname);
+      // Show success message
+      setTimeout(() => alert('🎉 Welcome to AVA Insights Pro! All features are now unlocked.'), 500);
+    }
+  }
+  if (params.get('payment') === 'cancelled') {
+    window.history.replaceState({}, '', window.location.pathname);
+  }
+}
+
 // ========== GLOBAL STATE ==========
 let allReadings = [];
 let allStats = null;
 let currentRange = 'all';
 let bgChartMeta = null;
+let lastUploadFileName = 'Unknown';
 
 // Glooko / insulin data
 let glooko = {
@@ -2258,6 +3006,8 @@ const AI_WORKER_URL = 'https://glucose-ai-insights.kameronmartinllc.workers.dev/
 
 function showAIButton() {
   document.getElementById('ai-btn-wrap').style.display = 'block';
+  // Also show the chat FAB
+  showChatFab();
 }
 
 function collectAIStats(readings, stats) {
@@ -2429,6 +3179,267 @@ function escapeHtml(text) {
   div.textContent = text;
   return div.innerHTML;
 }
+
+// ========== DATA CHAT ==========
+const CHAT_WORKER_URL = 'https://glucose-ai-insights.kameronmartinllc.workers.dev/chat';
+let chatHistory = []; // {role, content}
+let chatOpen = false;
+let chatInitialized = false;
+let chatPaywalled = false;
+let chatMessageCount = 0;
+
+function isChatSubscribed() {
+  // Check subscription status via localStorage (same as paywall)
+  try {
+    const sub = localStorage.getItem('ava_glucose_subscription');
+    if (sub) {
+      const data = JSON.parse(sub);
+      if (data.active && data.expiresAt && new Date(data.expiresAt) > new Date()) return true;
+    }
+    // Also check for 'ava_subscribed' key
+    if (localStorage.getItem('ava_subscribed') === 'true') return true;
+    // Check for any subscription-related key
+    if (localStorage.getItem('glucose_insights_paid') === 'true') return true;
+  } catch (_) {}
+  return false;
+}
+
+function showChatFab() {
+  document.getElementById('chat-fab').classList.add('visible');
+}
+
+function toggleChat() {
+  chatOpen = !chatOpen;
+  const panel = document.getElementById('chat-panel');
+  const fab = document.getElementById('chat-fab');
+  const badge = document.getElementById('chat-badge');
+
+  if (chatOpen) {
+    panel.classList.add('open');
+    fab.style.display = 'none';
+    badge.style.display = 'none';
+    document.getElementById('chat-input').focus();
+    if (!chatInitialized) {
+      chatInitialized = true;
+      startChatConversation();
+    }
+  } else {
+    panel.classList.remove('open');
+    fab.style.display = 'flex';
+  }
+}
+
+function startChatConversation() {
+  if (!allReadings.length || !allStats) return;
+  const stats = collectAIStats(allReadings, allStats);
+  // Build an auto-start message based on data patterns
+  let autoMsg = 'Introduce yourself briefly as AVA, their data chat assistant. ';
+  autoMsg += `They have ${stats.daysOfData} days of glucose data. Their avg BG is ${stats.avgBG} and TIR is ${stats.timeInRange}%. `;
+  if (stats.highHours && stats.highHours.length > 0) {
+    const fmtH = h => h === 0 ? '12 AM' : h === 12 ? '12 PM' : h < 12 ? h + ' AM' : (h - 12) + ' PM';
+    autoMsg += `Their highs tend to cluster around ${stats.highHours.map(fmtH).join(' and ')}. `;
+    autoMsg += 'Mention this pattern and ask if they usually eat or do something specific around that time. ';
+  }
+  if (stats.timeLow > 5) {
+    autoMsg += `They spend ${stats.timeLow}% of time low — mention this gently. `;
+  }
+  autoMsg += 'Keep it to 2-3 sentences. Be warm and curious, not clinical. End with a question about their routine.';
+
+  sendToAI(autoMsg, true);
+  renderSuggestions(stats);
+}
+
+function renderSuggestions(stats) {
+  const container = document.getElementById('chat-suggestions');
+  const suggestions = [];
+
+  // Contextual suggestions based on data patterns
+  if (stats.timeLow > 3 || (stats.lowHours && stats.lowHours.length > 0)) {
+    suggestions.push('When do I go low?');
+  }
+  if (stats.timeHigh > 20 || (stats.highHours && stats.highHours.length > 0)) {
+    suggestions.push('Why do I spike?');
+  }
+  if (stats.avgDailyInsulin) {
+    suggestions.push("How's my insulin working?");
+  }
+  if (stats.bestDays && stats.worstDays) {
+    suggestions.push('Best vs worst days?');
+  }
+  suggestions.push('What affects my BG most?');
+  suggestions.push('Am I snacking too late?');
+
+  // Limit to 4
+  const shown = suggestions.slice(0, 4);
+  container.innerHTML = shown.map(s =>
+    `<button class="chat-suggest-btn" onclick="sendSuggestion(this)">${s}</button>`
+  ).join('');
+}
+
+function sendSuggestion(btn) {
+  const text = btn.textContent;
+  document.getElementById('chat-input').value = text;
+  sendChatMessage();
+}
+
+function addChatMessage(role, content, blurred) {
+  const container = document.getElementById('chat-messages');
+  const now = new Date();
+  const timeStr = now.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+
+  const msgDiv = document.createElement('div');
+  msgDiv.className = `chat-msg ${role}`;
+
+  const bubbleDiv = document.createElement('div');
+  bubbleDiv.className = 'chat-msg-bubble' + (blurred ? ' blurred' : '');
+  bubbleDiv.innerHTML = formatChatText(content);
+
+  const timeDiv = document.createElement('div');
+  timeDiv.className = 'chat-msg-time';
+  timeDiv.textContent = timeStr;
+
+  msgDiv.appendChild(bubbleDiv);
+  msgDiv.appendChild(timeDiv);
+  container.appendChild(msgDiv);
+  container.scrollTop = container.scrollHeight;
+
+  return msgDiv;
+}
+
+function formatChatText(text) {
+  // Basic formatting: bold, italic, line breaks
+  let html = text
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+    .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+    .replace(/\*(.+?)\*/g, '<em>$1</em>')
+    .replace(/\n/g, '<br>');
+  return html;
+}
+
+function showTypingIndicator() {
+  const container = document.getElementById('chat-messages');
+  const typing = document.createElement('div');
+  typing.className = 'chat-typing';
+  typing.id = 'chat-typing';
+  typing.innerHTML = '<div class="chat-typing-dot"></div><div class="chat-typing-dot"></div><div class="chat-typing-dot"></div>';
+  container.appendChild(typing);
+  container.scrollTop = container.scrollHeight;
+}
+
+function hideTypingIndicator() {
+  const el = document.getElementById('chat-typing');
+  if (el) el.remove();
+}
+
+function showPaywallInChat() {
+  chatPaywalled = true;
+  const container = document.getElementById('chat-messages');
+  const banner = document.createElement('div');
+  banner.className = 'chat-paywall-banner';
+  banner.innerHTML = `
+    <p>🔒 Subscribe to continue chatting with your data</p>
+    <button onclick="window.open('https://avatype1.com/pricing','_blank')">Unlock Data Chat</button>
+  `;
+  container.appendChild(banner);
+  container.scrollTop = container.scrollHeight;
+
+  // Disable input
+  document.getElementById('chat-input').disabled = true;
+  document.getElementById('chat-input').placeholder = 'Subscribe to chat...';
+  document.getElementById('chat-send').disabled = true;
+  document.getElementById('chat-suggestions').innerHTML = '';
+}
+
+async function sendChatMessage() {
+  const input = document.getElementById('chat-input');
+  const text = input.value.trim();
+  if (!text || chatPaywalled) return;
+  if (!allReadings.length || !allStats) return;
+
+  input.value = '';
+  addChatMessage('user', text);
+  chatHistory.push({ role: 'user', content: text });
+
+  // Hide suggestions after first user message
+  document.getElementById('chat-suggestions').innerHTML = '';
+
+  await sendToAI(text, false);
+}
+
+async function sendToAI(message, isAutoStart) {
+  const sendBtn = document.getElementById('chat-send');
+  const input = document.getElementById('chat-input');
+  sendBtn.disabled = true;
+  input.disabled = true;
+  showTypingIndicator();
+
+  try {
+    const filtered = filterReadings(allReadings, currentRange);
+    const stats = computeStats(filtered);
+    const aiStats = collectAIStats(filtered, stats);
+
+    const resp = await fetch(CHAT_WORKER_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        message: message,
+        stats: aiStats,
+        history: chatHistory.slice(-10),
+      }),
+    });
+
+    hideTypingIndicator();
+
+    if (!resp.ok) {
+      const err = await resp.json().catch(() => ({}));
+      throw new Error(err.error || 'Server error');
+    }
+
+    const data = await resp.json();
+    const reply = data.reply || 'Hmm, I had trouble with that. Try asking again!';
+
+    chatMessageCount++;
+
+    // Check paywall for non-subscribers after first AI message (teaser)
+    const subscribed = isChatSubscribed();
+    const shouldBlur = !subscribed && chatMessageCount > 1;
+
+    addChatMessage('ai', reply, shouldBlur);
+    chatHistory.push({ role: 'assistant', content: reply });
+
+    if (shouldBlur) {
+      showPaywallInChat();
+      return;
+    }
+
+    // Show badge if chat is closed
+    if (!chatOpen && !isAutoStart) {
+      const badge = document.getElementById('chat-badge');
+      badge.style.display = 'flex';
+    }
+
+  } catch (err) {
+    hideTypingIndicator();
+    addChatMessage('ai', "Sorry, I ran into an issue connecting. Try again in a sec! 😅");
+  } finally {
+    sendBtn.disabled = false;
+    input.disabled = false;
+    if (chatOpen) input.focus();
+  }
+}
+
+// Chat input keyboard handling
+document.getElementById('chat-input').addEventListener('keydown', e => {
+  if (e.key === 'Enter' && !e.shiftKey) {
+    e.preventDefault();
+    sendChatMessage();
+  }
+});
+
+// Escape to close chat
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape' && chatOpen) toggleChat();
+});
 
 // Handle resize
 let resizeTimer;

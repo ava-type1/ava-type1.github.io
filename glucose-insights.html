@@ -2345,12 +2345,38 @@ async function requestAIInsights() {
     // Render detailed analysis
     const analysisText = document.getElementById('ai-analysis-text');
     let insights = data.insights || 'No detailed analysis available.';
-    // Convert markdown bold/italic to HTML
-    insights = escapeHtml(insights);
-    insights = insights.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
-    insights = insights.replace(/\*(.+?)\*/g, '<em>$1</em>');
-    insights = insights.replace(/\\n/g, '\n');
-    analysisText.innerHTML = insights;
+
+    if (typeof insights === 'object') {
+      // AI returned structured sections
+      let html = '';
+      for (const [section, content] of Object.entries(insights)) {
+        const sectionTitle = escapeHtml(section);
+        html += `<div style="margin-bottom:20px"><strong style="font-size:1.05rem;display:block;margin-bottom:8px">📌 ${sectionTitle}</strong>`;
+        if (Array.isArray(content)) {
+          html += '<ul style="margin:0;padding-left:20px;list-style:disc">';
+          content.forEach(item => {
+            let t = escapeHtml(item);
+            t = t.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+            html += `<li style="margin-bottom:6px">${t}</li>`;
+          });
+          html += '</ul>';
+        } else {
+          let t = escapeHtml(String(content));
+          t = t.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+          t = t.replace(/\*(.+?)\*/g, '<em>$1</em>');
+          html += `<p style="margin:0">${t}</p>`;
+        }
+        html += '</div>';
+      }
+      analysisText.innerHTML = html;
+    } else {
+      // Plain string
+      insights = escapeHtml(insights);
+      insights = insights.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+      insights = insights.replace(/\*(.+?)\*/g, '<em>$1</em>');
+      insights = insights.replace(/\\n/g, '\n');
+      analysisText.innerHTML = insights;
+    }
 
     loading.classList.remove('visible');
     results.classList.add('visible');

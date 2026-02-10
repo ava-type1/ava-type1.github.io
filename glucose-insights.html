@@ -1150,6 +1150,10 @@ async function checkSavedSessions() {
 
 // ========== PAYWALL STATE ==========
 function isProUser() {
+  // TOGGLE: Set to false to re-enable paywall for launch
+  const TESTING_MODE = true;
+  if (TESTING_MODE) return true;
+  
   const sub = localStorage.getItem('ava-pro-subscription');
   if (!sub) return false;
   try {
@@ -3190,16 +3194,17 @@ let chatPaywalled = false;
 let chatMessageCount = 0;
 
 function isChatSubscribed() {
-  // Check subscription status via localStorage (same as paywall)
+  // TOGGLE: Set to false to re-enable paywall for launch
+  const TESTING_MODE = true;
+  if (TESTING_MODE) return true;
+  
   try {
     const sub = localStorage.getItem('ava_glucose_subscription');
     if (sub) {
       const data = JSON.parse(sub);
       if (data.active && data.expiresAt && new Date(data.expiresAt) > new Date()) return true;
     }
-    // Also check for 'ava_subscribed' key
     if (localStorage.getItem('ava_subscribed') === 'true') return true;
-    // Check for any subscription-related key
     if (localStorage.getItem('glucose_insights_paid') === 'true') return true;
   } catch (_) {}
   return false;
@@ -4297,12 +4302,15 @@ function buildReportHTML(data) {
 // ========== INSURANCE DOCUMENTATION GENERATOR ==========
 
 function isInsuranceSubscribed() {
+  // TOGGLE: Set to false to re-enable paywall for launch
+  const TESTING_MODE = true;
+  if (TESTING_MODE) return true;
+  
   try {
     const sub = JSON.parse(localStorage.getItem('ava_subscription') || '{}');
     if (sub.active === true) return true;
     if (sub.plan === 'pro' || sub.plan === 'premium') return true;
     if (sub.insuranceDocs === true) return true;
-    // Also check simple key
     if (localStorage.getItem('ava_premium') === 'true') return true;
     return false;
   } catch (e) { return false; }

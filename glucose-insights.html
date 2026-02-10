@@ -2374,7 +2374,8 @@ async function requestAIInsights() {
       insights = escapeHtml(insights);
       insights = insights.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
       insights = insights.replace(/\*(.+?)\*/g, '<em>$1</em>');
-      insights = insights.replace(/\\n/g, '\n');
+      insights = insights.replace(/\\n/g, '<br>');
+      insights = insights.replace(/\n/g, '<br>');
       analysisText.innerHTML = insights;
     }
 

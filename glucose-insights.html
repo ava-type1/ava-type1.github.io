@@ -299,7 +299,7 @@ footer{padding:48px 0 32px;border-top:1px solid var(--glass-border)}
     <h3>Drag & drop your CGM export here</h3>
     <p>Or click to browse your files</p>
     <div class="formats">Supports Dexcom Clarity CSV, FreeStyle Libre CSV, Glooko ZIP export, and generic CSVs</div>
-    <input type="file" id="file-input" accept=".csv,.txt,.tsv,.xls,.xlsx,.zip">
+    <input type="file" id="file-input" accept=".csv,.txt,.tsv,.xls,.xlsx,.zip,application/zip,application/x-zip-compressed">
     <div style="margin-top:16px;font-size:.85rem;color:var(--text-dim)">
       On mobile? <span id="paste-toggle" style="color:var(--cyan);cursor:pointer;text-decoration:underline">Paste data manually</span>
     </div>
@@ -2139,7 +2139,15 @@ async function processFile(file) {
   uploadZone.querySelector('h3').textContent = 'Processing your data...';
 
   try {
-    if (file.name.toLowerCase().endsWith('.zip')) {
+    const isZip = file.name.toLowerCase().endsWith('.zip') || file.type === 'application/zip' || file.type === 'application/x-zip-compressed' || file.type === 'application/x-zip';
+    // Also check magic bytes for ZIP (PK header)
+    let looksLikeZip = isZip;
+    if (!looksLikeZip && file.size > 4) {
+      const header = await file.slice(0, 4).arrayBuffer();
+      const bytes = new Uint8Array(header);
+      looksLikeZip = (bytes[0] === 0x50 && bytes[1] === 0x4B); // PK magic bytes
+    }
+    if (looksLikeZip) {
       // ZIP file — Glooko export
       const readings = await processZipFile(file);
       if (readings.length < 10) {

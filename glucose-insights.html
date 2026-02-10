@@ -4294,6 +4294,1114 @@ function buildReportHTML(data) {
 }
 
 
+// ========== INSURANCE DOCUMENTATION GENERATOR ==========
+
+function isInsuranceSubscribed() {
+  try {
+    const sub = JSON.parse(localStorage.getItem('ava_subscription') || '{}');
+    if (sub.active === true) return true;
+    if (sub.plan === 'pro' || sub.plan === 'premium') return true;
+    if (sub.insuranceDocs === true) return true;
+    // Also check simple key
+    if (localStorage.getItem('ava_premium') === 'true') return true;
+    return false;
+  } catch (e) { return false; }
+}
+
+function showPaywall() {
+  let overlay = document.getElementById('paywall-overlay');
+  if (!overlay) {
+    overlay = document.createElement('div');
+    overlay.id = 'paywall-overlay';
+    overlay.className = 'paywall-overlay';
+    overlay.innerHTML = `
+      <div class="paywall-modal">
+        <div class="paywall-icon">🔒</div>
+        <h3>Premium Feature</h3>
+        <p>Insurance Documentation Generator is a premium feature that helps you create professional medical documents for insurance approval.</p>
+        <div class="paywall-features">
+          <div><span>✅</span> Letters of Medical Necessity</div>
+          <div><span>✅</span> Prior Authorization Reports</div>
+          <div><span>✅</span> Hypoglycemia Documentation</div>
+          <div><span>✅</span> Supply Justification Reports</div>
+          <div><span>✅</span> ADA Guidelines Citations</div>
+        </div>
+        <button class="paywall-btn" onclick="activateInsuranceTrial()">Start Free Trial</button>
+        <button class="paywall-dismiss" onclick="closePaywall()">Maybe later</button>
+      </div>
+    `;
+    overlay.addEventListener('click', e => { if (e.target === overlay) closePaywall(); });
+    document.body.appendChild(overlay);
+  }
+  requestAnimationFrame(() => overlay.classList.add('visible'));
+}
+
+function closePaywall() {
+  const overlay = document.getElementById('paywall-overlay');
+  if (overlay) overlay.classList.remove('visible');
+}
+
+function activateInsuranceTrial() {
+  // Activate a trial subscription
+  const sub = JSON.parse(localStorage.getItem('ava_subscription') || '{}');
+  sub.active = true;
+  sub.insuranceDocs = true;
+  sub.trialStart = Date.now();
+  sub.plan = 'trial';
+  localStorage.setItem('ava_subscription', JSON.stringify(sub));
+  localStorage.setItem('ava_premium', 'true');
+  closePaywall();
+  // Re-open the insurance modal
+  openInsuranceDocsModal();
+}
+
+function openInsuranceDocsModal() {
+  if (!allReadings.length) return;
+
+  // Check subscription
+  if (!isInsuranceSubscribed()) {
+    showPaywall();
+    return;
+  }
+
+  let overlay = document.getElementById('ins-modal-overlay');
+  if (!overlay) {
+    overlay = document.createElement('div');
+    overlay.id = 'ins-modal-overlay';
+    overlay.className = 'ins-modal-overlay';
+    overlay.innerHTML = `
+      <div class="ins-modal">
+        <h3>🏥 Insurance Documents</h3>
+        <div class="ins-modal-sub">Generate professional insurance documentation pre-filled with your glucose data. All processing stays on your device.</div>
+
+        <div class="ins-doc-option" onclick="selectInsuranceDoc('lmn-cgm')">
+          <div class="ins-doc-icon">📄</div>
+          <div class="ins-doc-info">
+            <h4>Letter of Medical Necessity — CGM</h4>
+            <p>Professional letter justifying continuous glucose monitor with your clinical data, ADA guidelines, and ICD-10 codes.</p>
+          </div>
+        </div>
+
+        <div class="ins-doc-option" onclick="selectInsuranceDoc('lmn-pump')">
+          <div class="ins-doc-icon">📄</div>
+          <div class="ins-doc-info">
+            <h4>Letter of Medical Necessity — Insulin Pump</h4>
+            <p>Documentation supporting insulin pump therapy with dawn phenomenon evidence, variability data, and post-meal analysis.</p>
+          </div>
+        </div>
+
+        <div class="ins-doc-option" onclick="selectInsuranceDoc('prior-auth')">
+          <div class="ins-doc-icon">📊</div>
+          <div class="ins-doc-info">
+            <h4>Prior Authorization Support Report</h4>
+            <p>Comprehensive data summary with statistics, hypoglycemia log, variability charts, and device compliance.</p>
+          </div>
+        </div>
+
+        <div class="ins-doc-option" onclick="selectInsuranceDoc('hypo-doc')">
+          <div class="ins-doc-icon">🚨</div>
+          <div class="ins-doc-info">
+            <h4>Hypoglycemia Documentation</h4>
+            <p>Every low event with timestamps, severity breakdown, cluster analysis, and time-of-day patterns. Critical for approval.</p>
+          </div>
+        </div>
+
+        <div class="ins-doc-option" onclick="selectInsuranceDoc('supply-justification')">
+          <div class="ins-doc-icon">📦</div>
+          <div class="ins-doc-info">
+            <h4>Supply Justification Report</h4>
+            <p>Justification for test strips, sensors, and supplies based on testing frequency and clinical need.</p>
+          </div>
+        </div>
+
+        <button class="ins-modal-close" onclick="closeInsuranceModal()">Cancel</button>
+      </div>
+    `;
+    overlay.addEventListener('click', e => { if (e.target === overlay) closeInsuranceModal(); });
+    document.body.appendChild(overlay);
+  }
+  requestAnimationFrame(() => overlay.classList.add('visible'));
+}
+
+function closeInsuranceModal() {
+  const overlay = document.getElementById('ins-modal-overlay');
+  if (overlay) overlay.classList.remove('visible');
+}
+
+let selectedInsDocType = '';
+
+function selectInsuranceDoc(docType) {
+  closeInsuranceModal();
+  selectedInsDocType = docType;
+  showInsuranceForm(docType);
+}
+
+function showInsuranceForm(docType) {
+  const titles = {
+    'lmn-cgm': 'Letter of Medical Necessity — CGM',
+    'lmn-pump': 'Letter of Medical Necessity — Insulin Pump',
+    'prior-auth': 'Prior Authorization Support Report',
+    'hypo-doc': 'Hypoglycemia Documentation',
+    'supply-justification': 'Supply Justification Report'
+  };
+
+  let overlay = document.getElementById('ins-form-overlay');
+  if (!overlay) {
+    overlay = document.createElement('div');
+    overlay.id = 'ins-form-overlay';
+    overlay.className = 'ins-form-overlay';
+    document.body.appendChild(overlay);
+  }
+
+  overlay.innerHTML = `
+    <div class="ins-form">
+      <h3>${titles[docType] || 'Insurance Document'}</h3>
+      <div class="ins-form-sub">Fill in patient details below. These fields are optional and editable in the final document.</div>
+
+      <div class="ins-field">
+        <label>Patient Name</label>
+        <input type="text" id="ins-patient-name" placeholder="Full legal name" autocomplete="name">
+      </div>
+      <div class="ins-field">
+        <label>Date of Birth</label>
+        <input type="text" id="ins-patient-dob" placeholder="MM/DD/YYYY">
+      </div>
+      <div class="ins-field">
+        <label>Date of Diagnosis</label>
+        <input type="text" id="ins-diagnosis-date" placeholder="MM/DD/YYYY or Year">
+      </div>
+      <div class="ins-field">
+        <label>Insurance ID / Member Number</label>
+        <input type="text" id="ins-insurance-id" placeholder="Insurance member ID">
+      </div>
+      <div class="ins-field">
+        <label>Insurance Company</label>
+        <input type="text" id="ins-insurance-company" placeholder="e.g., UnitedHealthcare, Aetna, BCBS">
+      </div>
+      <div class="ins-field">
+        <label>Physician Name</label>
+        <input type="text" id="ins-physician-name" placeholder="Prescribing physician name">
+      </div>
+      <div class="ins-field">
+        <label>Physician NPI</label>
+        <input type="text" id="ins-physician-npi" placeholder="National Provider Identifier">
+      </div>
+      ${docType === 'lmn-cgm' || docType === 'lmn-pump' ? `
+      <div class="ins-field">
+        <label>Current ${docType === 'lmn-cgm' ? 'CGM Device' : 'Insulin Pump'} (if any)</label>
+        <input type="text" id="ins-current-device" placeholder="e.g., ${docType === 'lmn-cgm' ? 'Dexcom G7, FreeStyle Libre 3' : 'Tandem t:slim X2, Omnipod 5'}">
+      </div>
+      <div class="ins-field">
+        <label>Requested ${docType === 'lmn-cgm' ? 'CGM Device' : 'Insulin Pump'}</label>
+        <input type="text" id="ins-requested-device" placeholder="e.g., ${docType === 'lmn-cgm' ? 'Dexcom G7, FreeStyle Libre 3' : 'Tandem t:slim X2, Omnipod 5'}">
+      </div>
+      ` : ''}
+
+      <div class="ins-form-btns">
+        <button class="ins-form-cancel" onclick="closeInsuranceForm()">Back</button>
+        <button class="ins-form-generate" onclick="generateInsuranceDoc('${docType}')">Generate Document</button>
+      </div>
+    </div>
+  `;
+
+  overlay.addEventListener('click', e => { if (e.target === overlay) closeInsuranceForm(); });
+  requestAnimationFrame(() => overlay.classList.add('visible'));
+  setTimeout(() => document.getElementById('ins-patient-name')?.focus(), 100);
+}
+
+function closeInsuranceForm() {
+  const overlay = document.getElementById('ins-form-overlay');
+  if (overlay) overlay.classList.remove('visible');
+}
+
+function getInsFormData() {
+  return {
+    patientName: document.getElementById('ins-patient-name')?.value?.trim() || '[PATIENT NAME]',
+    dob: document.getElementById('ins-patient-dob')?.value?.trim() || '[DATE OF BIRTH]',
+    diagnosisDate: document.getElementById('ins-diagnosis-date')?.value?.trim() || '[DIAGNOSIS DATE]',
+    insuranceId: document.getElementById('ins-insurance-id')?.value?.trim() || '[MEMBER ID]',
+    insuranceCompany: document.getElementById('ins-insurance-company')?.value?.trim() || '[INSURANCE COMPANY]',
+    physicianName: document.getElementById('ins-physician-name')?.value?.trim() || '[PHYSICIAN NAME]',
+    physicianNPI: document.getElementById('ins-physician-npi')?.value?.trim() || '[NPI NUMBER]',
+    currentDevice: document.getElementById('ins-current-device')?.value?.trim() || '',
+    requestedDevice: document.getElementById('ins-requested-device')?.value?.trim() || '',
+  };
+}
+
+function computeInsuranceStats(readings) {
+  const bgs = readings.map(r => r.bg);
+  const n = bgs.length;
+  const avg = bgs.reduce((s, v) => s + v, 0) / n;
+  const sd = Math.sqrt(bgs.reduce((s, v) => s + (v - avg) ** 2, 0) / n);
+  const cv = (sd / avg) * 100;
+  const a1c = (avg + 46.7) / 28.7;
+  const gmi = 3.31 + (0.02392 * avg);
+
+  const daysSpan = Math.max(1, (readings[readings.length-1].ts - readings[0].ts) / 86400000);
+
+  // Range counts
+  const veryLow = readings.filter(r => r.bg < 54);
+  const low = readings.filter(r => r.bg >= 54 && r.bg < 70);
+  const inRange = readings.filter(r => r.bg >= 70 && r.bg <= 180);
+  const high = readings.filter(r => r.bg > 180 && r.bg <= 250);
+  const veryHigh = readings.filter(r => r.bg > 250);
+
+  const allLows = readings.filter(r => r.bg < 70);
+
+  // Episode counting: group consecutive lows within 30 min into episodes
+  function countEpisodes(lowReadings, gapMinutes) {
+    if (lowReadings.length === 0) return 0;
+    let episodes = 1;
+    for (let i = 1; i < lowReadings.length; i++) {
+      if (lowReadings[i].ts - lowReadings[i-1].ts > gapMinutes * 60000) episodes++;
+    }
+    return episodes;
+  }
+
+  const hypoEpisodes = countEpisodes(allLows, 30);
+  const severeHypoEpisodes = countEpisodes(veryLow, 30);
+
+  // Hypo events by time of day
+  const hypoByPeriod = { overnight: [], morning: [], afternoon: [], evening: [] };
+  allLows.forEach(r => {
+    const h = new Date(r.ts).getHours();
+    if (h >= 0 && h < 6) hypoByPeriod.overnight.push(r);
+    else if (h >= 6 && h < 12) hypoByPeriod.morning.push(r);
+    else if (h >= 12 && h < 18) hypoByPeriod.afternoon.push(r);
+    else hypoByPeriod.evening.push(r);
+  });
+
+  // Dawn phenomenon: avg 2-4am vs avg 5-8am
+  const hourBuckets = Array.from({ length: 24 }, () => []);
+  readings.forEach(r => hourBuckets[new Date(r.ts).getHours()].push(r.bg));
+  const hourlyAvg = hourBuckets.map(arr => arr.length ? arr.reduce((s, v) => s + v, 0) / arr.length : null);
+
+  const preDawnAvgs = [2,3,4].map(h => hourlyAvg[h]).filter(v => v !== null);
+  const dawnAvgs = [5,6,7,8].map(h => hourlyAvg[h]).filter(v => v !== null);
+  const preDawnAvg = preDawnAvgs.length ? preDawnAvgs.reduce((s,v)=>s+v,0)/preDawnAvgs.length : null;
+  const dawnAvg = dawnAvgs.length ? dawnAvgs.reduce((s,v)=>s+v,0)/dawnAvgs.length : null;
+  const dawnRise = (preDawnAvg && dawnAvg) ? dawnAvg - preDawnAvg : null;
+
+  // Post-meal spikes (from hourly pattern)
+  const postMealHours = [8,9,13,14,19,20]; // typical post-meal hours
+  const postMealAvgs = postMealHours.map(h => hourlyAvg[h]).filter(v => v !== null);
+  const postMealAvg = postMealAvgs.length ? postMealAvgs.reduce((s,v)=>s+v,0)/postMealAvgs.length : null;
+
+  // Device compliance: estimate based on expected readings
+  const expectedReadings = daysSpan * 288; // 5 min intervals * 24 hours
+  const compliance = Math.min(100, (n / expectedReadings) * 100);
+
+  // Daily breakdown for hypo documentation
+  const dailyLows = {};
+  allLows.forEach(r => {
+    const day = new Date(r.ts).toISOString().slice(0, 10);
+    if (!dailyLows[day]) dailyLows[day] = [];
+    dailyLows[day].push(r);
+  });
+
+  return {
+    n, avg, sd, cv, a1c, gmi, daysSpan,
+    veryLow, low, inRange, high, veryHigh, allLows,
+    hypoEpisodes, severeHypoEpisodes,
+    hypoByPeriod, hourlyAvg,
+    preDawnAvg, dawnAvg, dawnRise,
+    postMealAvg,
+    compliance,
+    dailyLows,
+    tbrPct: ((veryLow.length + low.length) / n * 100),
+    tirPct: (inRange.length / n * 100),
+    tarPct: ((high.length + veryHigh.length) / n * 100),
+    veryLowPct: (veryLow.length / n * 100),
+    lowPct: (low.length / n * 100),
+    highPct: (high.length / n * 100),
+    veryHighPct: (veryHigh.length / n * 100),
+  };
+}
+
+function generateInsuranceDoc(docType) {
+  closeInsuranceForm();
+  const formData = getInsFormData();
+  const filtered = filterReadings(allReadings, currentRange);
+  if (filtered.length < 2) return;
+  const ins = computeInsuranceStats(filtered);
+
+  let html = '';
+  switch (docType) {
+    case 'lmn-cgm': html = generateLMN_CGM(formData, ins); break;
+    case 'lmn-pump': html = generateLMN_Pump(formData, ins); break;
+    case 'prior-auth': html = generatePriorAuth(formData, ins); break;
+    case 'hypo-doc': html = generateHypoDoc(formData, ins); break;
+    case 'supply-justification': html = generateSupplyJustification(formData, ins); break;
+  }
+
+  const reportWindow = window.open('', '_blank');
+  if (reportWindow) {
+    reportWindow.document.write(html);
+    reportWindow.document.close();
+  } else {
+    alert('Please allow popups to generate the document.');
+  }
+}
+
+function insDocStyles() {
+  return `
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    @page { size: letter; margin: 0.75in 1in; }
+    body {
+      font-family: 'Inter', -apple-system, sans-serif;
+      color: #1a1a1a; background: #fff; font-size: 11.5px; line-height: 1.6;
+      -webkit-print-color-adjust: exact; print-color-adjust: exact;
+    }
+    .doc-page { max-width: 780px; margin: 0 auto; padding: 24px; }
+    @media print {
+      .doc-page { max-width: none; padding: 0; }
+      .no-print { display: none !important; }
+      .page-break { page-break-before: always; }
+    }
+    .print-bar {
+      background: #fff3e0; border: 1px solid #ffe0b2; border-radius: 8px;
+      padding: 14px 20px; margin-bottom: 24px;
+      display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;
+    }
+    .print-bar p { font-size: 12px; color: #555; }
+    .print-bar button {
+      padding: 10px 24px; background: #e65100; color: #fff; border: none;
+      border-radius: 6px; font-family: 'Inter', sans-serif; font-size: 13px;
+      font-weight: 700; cursor: pointer;
+    }
+    .print-bar button:hover { background: #bf360c; }
+
+    .letterhead { border-bottom: 2px solid #333; padding-bottom: 16px; margin-bottom: 28px; }
+    .letterhead h1 { font-size: 18px; font-weight: 800; color: #1a1a1a; margin-bottom: 2px; }
+    .letterhead .doc-type { font-size: 14px; font-weight: 700; color: #e65100; margin-bottom: 10px; }
+    .letterhead-meta { font-size: 11px; color: #555; line-height: 1.8; }
+    .letterhead-meta strong { color: #333; }
+
+    .editable { background: #fffde7; border: 1px dashed #fbc02d; padding: 2px 6px; border-radius: 4px; min-width: 100px; display: inline-block; }
+    @media print { .editable { background: transparent; border: none; padding: 0; } }
+
+    .section { margin-bottom: 24px; }
+    .section-heading { font-size: 13px; font-weight: 800; color: #1a1a1a; border-bottom: 1px solid #ddd; padding-bottom: 4px; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.5px; }
+
+    .data-table { width: 100%; border-collapse: collapse; font-size: 11px; margin-bottom: 16px; }
+    .data-table th { background: #f5f5f5; font-weight: 700; text-align: left; padding: 8px 12px; border: 1px solid #ddd; font-size: 10px; text-transform: uppercase; letter-spacing: 0.3px; color: #555; }
+    .data-table td { padding: 7px 12px; border: 1px solid #ddd; }
+    .data-table tr:nth-child(even) td { background: #fafafa; }
+    .val-right { text-align: right; font-weight: 600; }
+    .highlight-row td { background: #fff3e0 !important; font-weight: 600; }
+    .critical-row td { background: #ffebee !important; font-weight: 700; color: #c62828; }
+
+    p { margin-bottom: 12px; line-height: 1.75; font-size: 11.5px; }
+    .clinical-text { font-size: 11.5px; line-height: 1.8; }
+    .clinical-text strong { color: #1a1a1a; }
+
+    .signature-block { margin-top: 40px; border-top: 1px solid #ddd; padding-top: 20px; }
+    .sig-line { border-bottom: 1px solid #333; width: 300px; height: 40px; margin: 8px 0; display: inline-block; }
+    .sig-label { font-size: 10px; color: #555; text-transform: uppercase; letter-spacing: 0.5px; }
+
+    .disclaimer-box {
+      margin-top: 32px; padding: 14px 18px; border: 1px solid #e0e0e0;
+      border-radius: 8px; background: #fffde7; font-size: 10px; color: #666;
+      line-height: 1.6; text-align: center;
+    }
+    .disclaimer-box strong { color: #f57f17; }
+
+    .footer-brand { text-align: center; margin-top: 16px; font-size: 9px; color: #bbb; }
+
+    .icd-code { font-family: monospace; font-weight: 700; background: #f5f5f5; padding: 2px 6px; border-radius: 3px; font-size: 11px; }
+
+    .ref-list { font-size: 10px; color: #555; line-height: 1.8; }
+    .ref-list li { margin-bottom: 4px; }
+
+    .hypo-event-table { width: 100%; border-collapse: collapse; font-size: 10px; margin-bottom: 16px; }
+    .hypo-event-table th { background: #ffebee; font-weight: 700; text-align: left; padding: 6px 10px; border: 1px solid #ddd; font-size: 9px; text-transform: uppercase; color: #c62828; }
+    .hypo-event-table td { padding: 5px 10px; border: 1px solid #ddd; font-size: 10px; }
+    .hypo-event-table .severe td { background: #ffcdd2; font-weight: 600; }
+    .hypo-event-table .mild td { background: #fff8e1; }
+  `;
+}
+
+function insDate() {
+  return new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+}
+function insFmtDate(ts) {
+  return new Date(ts).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+}
+function insFmtDateTime(ts) {
+  const d = new Date(ts);
+  return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) + ' ' +
+         d.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+}
+function insFmtTime(ts) {
+  return new Date(ts).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+}
+
+// ========== LMN: CGM ==========
+function generateLMN_CGM(form, ins) {
+  const e = s => escapeHtml(s);
+  return `<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Letter of Medical Necessity — CGM</title><style>${insDocStyles()}</style></head><body>
+<div class="doc-page">
+  <div class="print-bar no-print">
+    <p>💡 Review the document, edit yellow fields if needed, then <strong>Print → Save as PDF</strong></p>
+    <button onclick="window.print()">🖨️ Print / Save PDF</button>
+  </div>
+
+  <div class="letterhead">
+    <h1>Letter of Medical Necessity</h1>
+    <div class="doc-type">Continuous Glucose Monitor (CGM)</div>
+    <div class="letterhead-meta">
+      <strong>Date:</strong> ${insDate()}<br>
+      <strong>Patient:</strong> <span class="editable" contenteditable="true">${e(form.patientName)}</span><br>
+      <strong>Date of Birth:</strong> <span class="editable" contenteditable="true">${e(form.dob)}</span><br>
+      <strong>Date of Diagnosis:</strong> <span class="editable" contenteditable="true">${e(form.diagnosisDate)}</span><br>
+      <strong>Insurance Company:</strong> <span class="editable" contenteditable="true">${e(form.insuranceCompany)}</span><br>
+      <strong>Member ID:</strong> <span class="editable" contenteditable="true">${e(form.insuranceId)}</span><br>
+      ${form.requestedDevice ? `<strong>Requested Device:</strong> <span class="editable" contenteditable="true">${e(form.requestedDevice)}</span><br>` : ''}
+      ${form.currentDevice ? `<strong>Current Device:</strong> <span class="editable" contenteditable="true">${e(form.currentDevice)}</span><br>` : ''}
+    </div>
+  </div>
+
+  <p>To Whom It May Concern,</p>
+
+  <p class="clinical-text">I am writing to request authorization for a <strong>Continuous Glucose Monitoring (CGM) system</strong> for my patient, <strong><span class="editable" contenteditable="true">${e(form.patientName)}</span></strong>, who has been diagnosed with <strong>Type 1 Diabetes Mellitus</strong> (ICD-10: <span class="icd-code">E10.65</span> — Type 1 diabetes mellitus with hyperglycemia; <span class="icd-code">E10.649</span> — Type 1 diabetes mellitus with hypoglycemia without coma). This patient requires a CGM for the medical management of their diabetes.</p>
+
+  <div class="section">
+    <div class="section-heading">Clinical Data Summary</div>
+    <p class="clinical-text">The following clinical data is derived from <strong>${ins.n.toLocaleString()} glucose readings</strong> collected over <strong>${Math.round(ins.daysSpan)} days</strong> (${insFmtDate(allReadings[0].ts)} through ${insFmtDate(allReadings[allReadings.length-1].ts)}):</p>
+
+    <table class="data-table">
+      <tr><th>Clinical Metric</th><th style="text-align:right">Value</th><th>Clinical Significance</th></tr>
+      <tr><td>Estimated A1C (eA1C)</td><td class="val-right">${ins.a1c.toFixed(1)}%</td><td>${ins.a1c >= 7 ? 'Above ADA target of <7%' : 'At/near ADA target'}</td></tr>
+      <tr><td>Glucose Management Indicator (GMI)</td><td class="val-right">${ins.gmi.toFixed(1)}%</td><td>Lab-equivalent A1C estimate</td></tr>
+      <tr><td>Average Glucose</td><td class="val-right">${Math.round(ins.avg)} mg/dL</td><td>—</td></tr>
+      <tr><td>Standard Deviation</td><td class="val-right">${Math.round(ins.sd)} mg/dL</td><td>${ins.sd > ins.avg/3 ? 'Elevated variability' : 'Acceptable variability'}</td></tr>
+      <tr><td>Coefficient of Variation (CV)</td><td class="val-right">${ins.cv.toFixed(1)}%</td><td>${ins.cv > 36 ? 'Unstable glucose — above 36% threshold' : 'Within target ≤36%'}</td></tr>
+      <tr class="highlight-row"><td>Time in Range (70–180 mg/dL)</td><td class="val-right">${ins.tirPct.toFixed(1)}%</td><td>${ins.tirPct < 70 ? 'Below international target of ≥70%' : 'Meeting target ≥70%'}</td></tr>
+      <tr class="${ins.tbrPct > 4 ? 'critical-row' : ''}"><td>Time Below Range (<70 mg/dL)</td><td class="val-right">${ins.tbrPct.toFixed(1)}%</td><td>${ins.tbrPct > 4 ? 'EXCEEDS safe threshold of <4%' : 'Within target <4%'}</td></tr>
+      <tr class="${ins.veryLowPct > 1 ? 'critical-row' : ''}"><td>Time Very Low (<54 mg/dL)</td><td class="val-right">${ins.veryLowPct.toFixed(1)}%</td><td>${ins.veryLowPct > 1 ? 'EXCEEDS safe threshold of <1%' : 'Within target <1%'}</td></tr>
+      <tr><td>Time Above Range (>180 mg/dL)</td><td class="val-right">${ins.tarPct.toFixed(1)}%</td><td>${ins.tarPct > 25 ? 'Exceeds target of <25%' : 'Within target <25%'}</td></tr>
+    </table>
+  </div>
+
+  <div class="section">
+    <div class="section-heading">Hypoglycemia Documentation</div>
+    <table class="data-table">
+      <tr><th>Hypoglycemia Metric</th><th style="text-align:right">Count</th><th>Clinical Significance</th></tr>
+      <tr class="${ins.allLows.length > 0 ? 'critical-row' : ''}"><td>Total hypoglycemic readings (<70 mg/dL)</td><td class="val-right">${ins.allLows.length}</td><td>${ins.allLows.length > 0 ? 'Documented hypoglycemia present' : '—'}</td></tr>
+      <tr><td>Hypoglycemic episodes (distinct events)</td><td class="val-right">${ins.hypoEpisodes}</td><td>${ins.hypoEpisodes > 0 ? Math.round(ins.hypoEpisodes / ins.daysSpan * 7) + ' episodes/week' : '—'}</td></tr>
+      <tr class="${ins.severeHypoEpisodes > 0 ? 'critical-row' : ''}"><td>Severe hypoglycemic readings (<54 mg/dL)</td><td class="val-right">${ins.veryLow.length}</td><td>${ins.veryLow.length > 0 ? 'CLINICALLY SIGNIFICANT — risk of loss of consciousness' : '—'}</td></tr>
+      <tr><td>Severe hypoglycemic episodes</td><td class="val-right">${ins.severeHypoEpisodes}</td><td>${ins.severeHypoEpisodes > 0 ? 'Immediate clinical concern' : '—'}</td></tr>
+      <tr><td>Overnight lows (12am–6am)</td><td class="val-right">${ins.hypoByPeriod.overnight.length}</td><td>${ins.hypoByPeriod.overnight.length > 0 ? 'Nocturnal hypoglycemia — undetectable without CGM' : '—'}</td></tr>
+    </table>
+  </div>
+
+  <div class="section">
+    <div class="section-heading">Medical Justification</div>
+    <p class="clinical-text"><strong>Continuous Glucose Monitoring is medically necessary</strong> for this patient with Type 1 Diabetes Mellitus for the following reasons:</p>
+
+    <p class="clinical-text"><strong>1. Hypoglycemia Prevention and Detection:</strong> This patient has documented <strong>${ins.hypoEpisodes} hypoglycemic episodes</strong> over ${Math.round(ins.daysSpan)} days, including ${ins.severeHypoEpisodes} episodes of severe hypoglycemia (<54 mg/dL). CGM provides real-time glucose monitoring with customizable low glucose alerts, enabling the patient to detect and treat hypoglycemia before it becomes clinically dangerous. ${ins.hypoByPeriod.overnight.length > 0 ? `Notably, ${ins.hypoByPeriod.overnight.length} low readings occurred overnight (12am–6am) when the patient is sleeping and unable to detect symptoms — CGM is the ONLY way to detect these nocturnal hypoglycemic events.` : ''}</p>
+
+    <p class="clinical-text"><strong>2. Glucose Variability Management:</strong> The patient's Coefficient of Variation (CV) is <strong>${ins.cv.toFixed(1)}%</strong>${ins.cv > 36 ? ', which exceeds the international consensus threshold of 36%, indicating unstable diabetes' : ''}. A standard deviation of ${Math.round(ins.sd)} mg/dL demonstrates significant glucose fluctuations that cannot be adequately captured by intermittent fingerstick testing. CGM provides 288 glucose readings per day (every 5 minutes) compared to the 4–6 readings achievable with traditional blood glucose monitoring.</p>
+
+    <p class="clinical-text"><strong>3. Glycemic Control Optimization:</strong> ${ins.tirPct < 70 ? `The patient's Time in Range is currently ${ins.tirPct.toFixed(1)}%, below the international consensus target of ≥70%. CGM data and trend arrows allow for proactive insulin dosing adjustments to improve time in range while minimizing hypoglycemia risk.` : `While the patient's Time in Range is ${ins.tirPct.toFixed(1)}%, CGM is essential to maintain this level of control and prevent regression. Studies show that CGM discontinuation leads to worsening glycemic control within weeks.`}</p>
+
+    <p class="clinical-text"><strong>4. Type 1 Diabetes Standard of Care:</strong> The American Diabetes Association (ADA) Standards of Care 2024/2025 recommend CGM for ALL individuals with Type 1 Diabetes, regardless of insulin delivery method. CGM is considered the standard of care for Type 1 Diabetes management, not an optional accessory. The ADA states: <em>"CGM should be offered to all people with diabetes on intensive insulin regimens (multiple daily injections or insulin pump therapy)."</em></p>
+
+    <p class="clinical-text"><strong>5. Prevention of Long-Term Complications:</strong> Sustained hyperglycemia (this patient spent ${ins.tarPct.toFixed(1)}% of time above 180 mg/dL) significantly increases the risk of diabetic retinopathy, nephropathy, neuropathy, and cardiovascular disease. CGM has been shown in multiple randomized controlled trials (DIAMOND, GOLD, HypoDE) to reduce A1C by 0.3–0.6% and reduce time in hypoglycemia by 40–50%.</p>
+  </div>
+
+  <div class="section">
+    <div class="section-heading">Supporting Clinical Guidelines</div>
+    <ol class="ref-list">
+      <li>American Diabetes Association. <em>Standards of Care in Diabetes — 2025.</em> Diabetes Care 2025;48(Suppl.1). Section 7: Diabetes Technology.</li>
+      <li>Battelino T, et al. <em>Clinical Targets for Continuous Glucose Monitoring Data Interpretation.</em> Diabetes Care 2019;42:1593–1603. (International Consensus on TIR targets)</li>
+      <li>Beck RW, et al. <em>Effect of Continuous Glucose Monitoring on Glycemic Control in Adults With Type 1 Diabetes (DIAMOND Study).</em> JAMA 2017;317(4):371–378.</li>
+      <li>Lind M, et al. <em>Continuous Glucose Monitoring vs Conventional Therapy for Glycemic Control in Adults With Type 1 Diabetes (GOLD Study).</em> JAMA 2017;317(4):379–387.</li>
+      <li>Heinemann L, et al. <em>Real-time CGM in Type 1 Diabetes: Evidence and Clinical Practice.</em> Lancet Diabetes Endocrinol 2023.</li>
+      <li>American Association of Clinical Endocrinologists (AACE). <em>Consensus Statement on CGM.</em> Endocr Pract 2023.</li>
+    </ol>
+  </div>
+
+  <p class="clinical-text">Based on the clinical evidence presented above and current standards of care, a Continuous Glucose Monitor is <strong>medically necessary</strong> for this patient. Denial of this device would place the patient at increased risk of hypoglycemia, hyperglycemia, and long-term diabetic complications. I respectfully request that this authorization be approved.</p>
+
+  <p class="clinical-text">Please do not hesitate to contact me if further information is needed to support this request.</p>
+
+  <p>Sincerely,</p>
+
+  <div class="signature-block">
+    <div class="sig-line"></div><br>
+    <div class="sig-label">Physician Signature</div><br><br>
+    <strong><span class="editable" contenteditable="true">${e(form.physicianName)}</span></strong><br>
+    <span class="sig-label">NPI: <span class="editable" contenteditable="true">${e(form.physicianNPI)}</span></span><br>
+    <span class="sig-label">Date: ${insDate()}</span>
+  </div>
+
+  <div class="disclaimer-box">
+    <strong>⚠️ Disclaimer:</strong> This document is generated to assist with insurance communication. It is pre-filled with glucose data from patient-uploaded CGM exports. <strong>Review with your healthcare provider before submission.</strong> All data was processed locally on the patient's device — no data was transmitted to any server.
+  </div>
+  <div class="footer-brand">Generated by AVA Type 1 Glucose Insights — avatype1.com</div>
+</div></body></html>`;
+}
+
+// ========== LMN: INSULIN PUMP ==========
+function generateLMN_Pump(form, ins) {
+  const e = s => escapeHtml(s);
+  const insulinStats = hasInsulinData ? computeInsulinStats(filterReadings(allReadings, currentRange)) : null;
+
+  return `<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Letter of Medical Necessity — Insulin Pump</title><style>${insDocStyles()}</style></head><body>
+<div class="doc-page">
+  <div class="print-bar no-print">
+    <p>💡 Review the document, edit yellow fields if needed, then <strong>Print → Save as PDF</strong></p>
+    <button onclick="window.print()">🖨️ Print / Save PDF</button>
+  </div>
+
+  <div class="letterhead">
+    <h1>Letter of Medical Necessity</h1>
+    <div class="doc-type">Insulin Pump Therapy</div>
+    <div class="letterhead-meta">
+      <strong>Date:</strong> ${insDate()}<br>
+      <strong>Patient:</strong> <span class="editable" contenteditable="true">${e(form.patientName)}</span><br>
+      <strong>Date of Birth:</strong> <span class="editable" contenteditable="true">${e(form.dob)}</span><br>
+      <strong>Date of Diagnosis:</strong> <span class="editable" contenteditable="true">${e(form.diagnosisDate)}</span><br>
+      <strong>Insurance Company:</strong> <span class="editable" contenteditable="true">${e(form.insuranceCompany)}</span><br>
+      <strong>Member ID:</strong> <span class="editable" contenteditable="true">${e(form.insuranceId)}</span><br>
+      ${form.requestedDevice ? `<strong>Requested Device:</strong> <span class="editable" contenteditable="true">${e(form.requestedDevice)}</span><br>` : ''}
+      ${form.currentDevice ? `<strong>Current Device:</strong> <span class="editable" contenteditable="true">${e(form.currentDevice)}</span><br>` : ''}
+    </div>
+  </div>
+
+  <p>To Whom It May Concern,</p>
+
+  <p class="clinical-text">I am writing to request authorization for an <strong>Insulin Pump System (Continuous Subcutaneous Insulin Infusion — CSII)</strong> for my patient, <strong><span class="editable" contenteditable="true">${e(form.patientName)}</span></strong>, who has been diagnosed with <strong>Type 1 Diabetes Mellitus</strong> (ICD-10: <span class="icd-code">E10.65</span>). This patient requires insulin pump therapy for optimal management of their diabetes.</p>
+
+  <div class="section">
+    <div class="section-heading">Clinical Data Summary</div>
+    <p class="clinical-text">The following data is derived from <strong>${ins.n.toLocaleString()} glucose readings</strong> over <strong>${Math.round(ins.daysSpan)} days</strong>:</p>
+
+    <table class="data-table">
+      <tr><th>Clinical Metric</th><th style="text-align:right">Value</th><th>Clinical Significance</th></tr>
+      <tr><td>Estimated A1C</td><td class="val-right">${ins.a1c.toFixed(1)}%</td><td>${ins.a1c >= 7 ? 'Above ADA target — indicates need for therapy optimization' : 'At/near target but requires pump for maintenance'}</td></tr>
+      <tr><td>Average Glucose</td><td class="val-right">${Math.round(ins.avg)} mg/dL</td><td>—</td></tr>
+      <tr><td>Coefficient of Variation (CV)</td><td class="val-right">${ins.cv.toFixed(1)}%</td><td>${ins.cv > 36 ? 'Unstable — exceeds 36% threshold' : '—'}</td></tr>
+      <tr class="highlight-row"><td>Time in Range (70–180 mg/dL)</td><td class="val-right">${ins.tirPct.toFixed(1)}%</td><td>${ins.tirPct < 70 ? 'Below target ≥70%' : 'Meeting target'}</td></tr>
+      <tr class="${ins.tbrPct > 4 ? 'critical-row' : ''}"><td>Time Below Range (<70 mg/dL)</td><td class="val-right">${ins.tbrPct.toFixed(1)}%</td><td>${ins.tbrPct > 4 ? 'EXCEEDS safe threshold' : 'Within target'}</td></tr>
+      <tr><td>Time Above Range (>180 mg/dL)</td><td class="val-right">${ins.tarPct.toFixed(1)}%</td><td>${ins.tarPct > 25 ? 'Significant hyperglycemia burden' : '—'}</td></tr>
+      ${insulinStats?.avgDailyInsulin ? `<tr><td>Average Daily Insulin</td><td class="val-right">${insulinStats.avgDailyInsulin.toFixed(1)} units</td><td>—</td></tr>` : ''}
+      ${insulinStats?.avgCarbRatio ? `<tr><td>Average Carb Ratio</td><td class="val-right">1:${Math.round(insulinStats.avgCarbRatio)}</td><td>—</td></tr>` : ''}
+    </table>
+  </div>
+
+  <div class="section">
+    <div class="section-heading">Evidence of Basal Rate Variability Needs</div>
+    <p class="clinical-text">Analysis of this patient's glucose data demonstrates significant variability in basal insulin requirements throughout the day that <strong>cannot be adequately addressed by once or twice daily long-acting insulin injections</strong>:</p>
+
+    <table class="data-table">
+      <tr><th>Time Period</th><th style="text-align:right">Avg Glucose</th><th>Clinical Implication</th></tr>
+      <tr><td>Overnight (12am–5am)</td><td class="val-right">${ins.hourlyAvg[0] !== null ? Math.round([0,1,2,3,4].reduce((s,h) => s + (ins.hourlyAvg[h]||0), 0) / [0,1,2,3,4].filter(h => ins.hourlyAvg[h] !== null).length) : '—'} mg/dL</td><td>${ins.hypoByPeriod.overnight.length > 0 ? `${ins.hypoByPeriod.overnight.length} nocturnal lows — needs reduced basal` : 'Basal rate assessment needed'}</td></tr>
+      <tr class="${ins.dawnRise && ins.dawnRise > 20 ? 'highlight-row' : ''}"><td>Dawn Phenomenon (5am–9am)</td><td class="val-right">${ins.dawnAvg ? Math.round(ins.dawnAvg) : '—'} mg/dL</td><td>${ins.dawnRise && ins.dawnRise > 20 ? `+${Math.round(ins.dawnRise)} mg/dL rise — REQUIRES variable basal` : 'Monitoring needed'}</td></tr>
+      <tr><td>Daytime (9am–5pm)</td><td class="val-right">${ins.hourlyAvg[12] !== null ? Math.round([9,10,11,12,13,14,15,16].reduce((s,h) => s + (ins.hourlyAvg[h]||0), 0) / [9,10,11,12,13,14,15,16].filter(h => ins.hourlyAvg[h] !== null).length) : '—'} mg/dL</td><td>—</td></tr>
+      <tr><td>Evening (5pm–12am)</td><td class="val-right">${ins.hourlyAvg[20] !== null ? Math.round([17,18,19,20,21,22,23].reduce((s,h) => s + (ins.hourlyAvg[h]||0), 0) / [17,18,19,20,21,22,23].filter(h => ins.hourlyAvg[h] !== null).length) : '—'} mg/dL</td><td>—</td></tr>
+    </table>
+
+    ${ins.dawnRise && ins.dawnRise > 20 ? `
+    <p class="clinical-text"><strong>Dawn Phenomenon Evidence:</strong> Data shows a significant glucose rise of approximately <strong>+${Math.round(ins.dawnRise)} mg/dL</strong> between the pre-dawn period (2–4am) and early morning (5–8am). Pre-dawn average: ${Math.round(ins.preDawnAvg)} mg/dL; Early morning average: ${Math.round(ins.dawnAvg)} mg/dL. This dawn phenomenon <strong>cannot be managed with fixed-dose long-acting insulin</strong> — it requires the programmable basal rate profiles that only an insulin pump can provide. Increasing long-acting insulin to address the dawn rise would cause nocturnal hypoglycemia.</p>` : ''}
+  </div>
+
+  <div class="section">
+    <div class="section-heading">Post-Meal Glucose Excursions</div>
+    <p class="clinical-text">The patient demonstrates significant post-meal glucose variability that would benefit from the precise bolus delivery features of an insulin pump, including extended/dual-wave boluses and customizable insulin-to-carb ratios by time of day.</p>
+    ${ins.postMealAvg ? `<p class="clinical-text">Average post-meal glucose levels reach <strong>${Math.round(ins.postMealAvg)} mg/dL</strong>, with ${ins.tarPct.toFixed(1)}% of total time spent above target range. The ability to deliver extended boluses for high-fat/high-protein meals and adjust carb ratios by meal is critical for this patient's management.</p>` : ''}
+    ${insulinStats?.mealAvgSpike1h ? `<p class="clinical-text">Average post-meal BG spike at 1 hour: <strong>+${Math.round(insulinStats.mealAvgSpike1h)} mg/dL</strong>${insulinStats.mealAvgSpike2h !== undefined && insulinStats.mealAvgSpike2h !== null ? `; at 2 hours: ${insulinStats.mealAvgSpike2h > 0 ? '+' : ''}${Math.round(insulinStats.mealAvgSpike2h)} mg/dL` : ''}. These excursions demonstrate the need for precise bolus timing and extended delivery options available only with pump therapy.</p>` : ''}
+  </div>
+
+  <div class="section">
+    <div class="section-heading">Medical Justification for Insulin Pump Therapy</div>
+
+    <p class="clinical-text"><strong>1. Multiple Daily Injection Burden:</strong> Type 1 Diabetes requires intensive insulin therapy. On MDI (Multiple Daily Injections), the patient requires a minimum of 4-6 injections daily — at least one long-acting injection plus a rapid-acting injection before each meal and for corrections. An insulin pump reduces this to one infusion site change every 2-3 days, significantly improving quality of life, treatment adherence, and injection site rotation.</p>
+
+    <p class="clinical-text"><strong>2. Programmable Basal Rates:</strong> Unlike long-acting insulin injections which deliver a fixed rate over 24 hours, an insulin pump allows programming of variable basal rates throughout the day. This is essential for this patient${ins.dawnRise && ins.dawnRise > 20 ? `, who demonstrates a documented dawn phenomenon with a ${Math.round(ins.dawnRise)} mg/dL rise requiring increased early morning basal delivery` : ' to address varying insulin needs throughout the day'}.</p>
+
+    <p class="clinical-text"><strong>3. Precise Dosing:</strong> Insulin pumps deliver insulin in increments as small as 0.025 units, compared to the 0.5–1.0 unit increments of insulin pens. This precision is critical for patients with insulin sensitivity, particularly for correction doses and small carbohydrate loads.</p>
+
+    <p class="clinical-text"><strong>4. Hypoglycemia Reduction:</strong> ${ins.hypoEpisodes > 0 ? `This patient has experienced ${ins.hypoEpisodes} hypoglycemic episodes over ${Math.round(ins.daysSpan)} days. ` : ''}When used with CGM (sensor-augmented pump therapy), insulin pumps with predictive low glucose suspend features have been shown to reduce hypoglycemia by up to 70% (ASPIRE, PLGM studies).</p>
+
+    <p class="clinical-text"><strong>5. Clinical Evidence:</strong> Multiple randomized controlled trials demonstrate that CSII (pump therapy) reduces A1C by 0.3–0.5% compared to MDI, with simultaneous reduction in hypoglycemia. The STAR 3 study and SWITCH study confirm these benefits across all age groups.</p>
+  </div>
+
+  <div class="section">
+    <div class="section-heading">Supporting Clinical Guidelines</div>
+    <ol class="ref-list">
+      <li>American Diabetes Association. <em>Standards of Care in Diabetes — 2025.</em> Section 7: Diabetes Technology. "CSII should be considered for all individuals with T1D."</li>
+      <li>Pickup JC, Sutton AJ. <em>Severe hypoglycaemia and glycaemic control in Type 1 diabetes: meta-analysis of multiple daily insulin injections compared with CSII.</em> Diabet Med 2008;25:765-774.</li>
+      <li>Bergenstal RM, et al. <em>Sensor-Augmented Pump Therapy for A1C Reduction (STAR 3 Study).</em> N Engl J Med 2010;363:311-320.</li>
+      <li>AACE/ACE. <em>Consensus Statement on Insulin Pump Management.</em> Endocr Pract 2023.</li>
+      <li>NICE Guideline NG17. <em>Type 1 diabetes in adults: diagnosis and management.</em> 2022 update.</li>
+    </ol>
+  </div>
+
+  <p class="clinical-text">Based on the clinical data and evidence presented, insulin pump therapy is <strong>medically necessary</strong> for this patient with Type 1 Diabetes. I respectfully request authorization for this life-sustaining medical device.</p>
+
+  <p>Sincerely,</p>
+
+  <div class="signature-block">
+    <div class="sig-line"></div><br>
+    <div class="sig-label">Physician Signature</div><br><br>
+    <strong><span class="editable" contenteditable="true">${e(form.physicianName)}</span></strong><br>
+    <span class="sig-label">NPI: <span class="editable" contenteditable="true">${e(form.physicianNPI)}</span></span><br>
+    <span class="sig-label">Date: ${insDate()}</span>
+  </div>
+
+  <div class="disclaimer-box">
+    <strong>⚠️ Disclaimer:</strong> This document is generated to assist with insurance communication. It is pre-filled with glucose data from patient-uploaded CGM exports. <strong>Review with your healthcare provider before submission.</strong> All data was processed locally on the patient's device — no data was transmitted to any server.
+  </div>
+  <div class="footer-brand">Generated by AVA Type 1 Glucose Insights — avatype1.com</div>
+</div></body></html>`;
+}
+
+// ========== PRIOR AUTHORIZATION SUPPORT REPORT ==========
+function generatePriorAuth(form, ins) {
+  const e = s => escapeHtml(s);
+  const insulinStats = hasInsulinData ? computeInsulinStats(filterReadings(allReadings, currentRange)) : null;
+
+  // Build hypo event log (limited to 100 most recent)
+  const hypoEvents = ins.allLows.slice(-100).map(r => {
+    const d = new Date(r.ts);
+    return {
+      date: d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
+      time: d.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' }),
+      value: Math.round(r.bg),
+      severity: r.bg < 54 ? 'Severe' : 'Mild'
+    };
+  });
+
+  return `<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Prior Authorization Support Report</title><style>${insDocStyles()}</style></head><body>
+<div class="doc-page">
+  <div class="print-bar no-print">
+    <p>💡 Review, then <strong>Print → Save as PDF</strong></p>
+    <button onclick="window.print()">🖨️ Print / Save PDF</button>
+  </div>
+
+  <div class="letterhead">
+    <h1>Prior Authorization Support Report</h1>
+    <div class="doc-type">Clinical Data Summary for Insurance Review</div>
+    <div class="letterhead-meta">
+      <strong>Date Generated:</strong> ${insDate()}<br>
+      <strong>Patient:</strong> <span class="editable" contenteditable="true">${e(form.patientName)}</span> | 
+      <strong>DOB:</strong> <span class="editable" contenteditable="true">${e(form.dob)}</span><br>
+      <strong>Diagnosis:</strong> Type 1 Diabetes Mellitus (ICD-10: <span class="icd-code">E10.65</span>)<br>
+      <strong>Insurance:</strong> <span class="editable" contenteditable="true">${e(form.insuranceCompany)}</span> | 
+      <strong>Member ID:</strong> <span class="editable" contenteditable="true">${e(form.insuranceId)}</span><br>
+      <strong>Data Period:</strong> ${insFmtDate(allReadings[0].ts)} — ${insFmtDate(allReadings[allReadings.length-1].ts)} (${Math.round(ins.daysSpan)} days)<br>
+      <strong>Total Readings:</strong> ${ins.n.toLocaleString()} CGM glucose readings
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-heading">Summary Statistics</div>
+    <table class="data-table">
+      <tr><th>Metric</th><th style="text-align:right">Value</th><th>International Target</th><th>Status</th></tr>
+      <tr><td>Average Glucose</td><td class="val-right">${Math.round(ins.avg)} mg/dL</td><td>—</td><td>—</td></tr>
+      <tr><td>Estimated A1C (eA1C)</td><td class="val-right">${ins.a1c.toFixed(1)}%</td><td><7.0%</td><td>${ins.a1c < 7 ? '✅ Target' : '⚠️ Above'}</td></tr>
+      <tr><td>GMI</td><td class="val-right">${ins.gmi.toFixed(1)}%</td><td>—</td><td>—</td></tr>
+      <tr><td>Standard Deviation</td><td class="val-right">${Math.round(ins.sd)} mg/dL</td><td>≤${Math.round(ins.avg/3)}</td><td>${ins.sd <= ins.avg/3 ? '✅' : '⚠️'}</td></tr>
+      <tr><td>Coefficient of Variation</td><td class="val-right">${ins.cv.toFixed(1)}%</td><td>≤36%</td><td>${ins.cv <= 36 ? '✅ Stable' : '⚠️ Unstable'}</td></tr>
+    </table>
+
+    <div style="font-size:11px;font-weight:700;margin:14px 0 8px;color:#555">TIME IN RANGES (INTERNATIONAL CONSENSUS TARGETS)</div>
+    <table class="data-table">
+      <tr><th>Range</th><th style="text-align:right">%</th><th style="text-align:right">Hours/Day</th><th style="text-align:right">Readings</th><th>Target</th><th>Status</th></tr>
+      <tr class="${ins.veryLowPct > 1 ? 'critical-row' : ''}"><td>Very Low (<54 mg/dL)</td><td class="val-right">${ins.veryLowPct.toFixed(1)}%</td><td class="val-right">${(ins.veryLowPct/100*24).toFixed(1)}h</td><td class="val-right">${ins.veryLow.length}</td><td><1%</td><td>${ins.veryLowPct < 1 ? '✅' : '🚨 CRITICAL'}</td></tr>
+      <tr class="${ins.lowPct > 3 ? 'critical-row' : ''}"><td>Low (54–69 mg/dL)</td><td class="val-right">${ins.lowPct.toFixed(1)}%</td><td class="val-right">${(ins.lowPct/100*24).toFixed(1)}h</td><td class="val-right">${ins.low.length}</td><td><4% combined</td><td>${ins.tbrPct < 4 ? '✅' : '⚠️ Exceeds'}</td></tr>
+      <tr class="highlight-row"><td><strong>In Range (70–180 mg/dL)</strong></td><td class="val-right"><strong>${ins.tirPct.toFixed(1)}%</strong></td><td class="val-right">${(ins.tirPct/100*24).toFixed(1)}h</td><td class="val-right">${ins.inRange.length}</td><td>≥70%</td><td>${ins.tirPct >= 70 ? '✅ Target' : '⚠️ Below'}</td></tr>
+      <tr><td>High (181–250 mg/dL)</td><td class="val-right">${ins.highPct.toFixed(1)}%</td><td class="val-right">${(ins.highPct/100*24).toFixed(1)}h</td><td class="val-right">${ins.high.length}</td><td><25% combined</td><td>${ins.tarPct < 25 ? '✅' : '⚠️'}</td></tr>
+      <tr><td>Very High (>250 mg/dL)</td><td class="val-right">${ins.veryHighPct.toFixed(1)}%</td><td class="val-right">${(ins.veryHighPct/100*24).toFixed(1)}h</td><td class="val-right">${ins.veryHigh.length}</td><td><5%</td><td>${ins.veryHighPct < 5 ? '✅' : '⚠️ Exceeds'}</td></tr>
+    </table>
+  </div>
+
+  <div class="section">
+    <div class="section-heading">Device Usage Compliance</div>
+    <table class="data-table">
+      <tr><th>Metric</th><th style="text-align:right">Value</th></tr>
+      <tr><td>CGM Sensor Active Time</td><td class="val-right">${ins.compliance.toFixed(1)}%</td></tr>
+      <tr><td>Expected Readings (${Math.round(ins.daysSpan)} days × 288/day)</td><td class="val-right">${Math.round(ins.daysSpan * 288).toLocaleString()}</td></tr>
+      <tr><td>Actual Readings</td><td class="val-right">${ins.n.toLocaleString()}</td></tr>
+      <tr><td>Data Period</td><td class="val-right">${Math.round(ins.daysSpan)} days</td></tr>
+    </table>
+    <p style="font-size:10px;color:#555">Note: Compliance above 70% demonstrates consistent CGM use and patient engagement with diabetes technology.</p>
+  </div>
+
+  ${hypoEvents.length > 0 ? `
+  <div class="section page-break">
+    <div class="section-heading">Hypoglycemia Event Log</div>
+    <p style="font-size:11px;color:#555;margin-bottom:10px">Showing ${hypoEvents.length === 100 ? 'most recent 100' : 'all ' + hypoEvents.length} hypoglycemic readings (<70 mg/dL). Total: ${ins.allLows.length} readings, ${ins.hypoEpisodes} distinct episodes.</p>
+    <table class="hypo-event-table">
+      <tr><th>Date</th><th>Time</th><th style="text-align:right">Glucose (mg/dL)</th><th>Severity</th></tr>
+      ${hypoEvents.map(ev => `<tr class="${ev.severity === 'Severe' ? 'severe' : 'mild'}"><td>${ev.date}</td><td>${ev.time}</td><td class="val-right">${ev.value}</td><td>${ev.severity} ${ev.severity === 'Severe' ? '🚨' : ''}</td></tr>`).join('')}
+    </table>
+  </div>` : ''}
+
+  <div class="section">
+    <div class="section-heading">Glucose Variability Analysis</div>
+    <p class="clinical-text">Patient's CV of <strong>${ins.cv.toFixed(1)}%</strong> ${ins.cv > 36 ? 'exceeds the 36% threshold, indicating <strong>unstable diabetes</strong> with high glycemic variability. This level of instability' : 'is within the target range but still requires continuous monitoring. Glucose variability'} increases the risk of both acute complications (hypoglycemia, DKA) and long-term microvascular/macrovascular damage.</p>
+
+    <table class="data-table">
+      <tr><th>Time of Day</th><th style="text-align:right">Avg Glucose</th><th>Variability Assessment</th></tr>
+      ${[
+        { name: 'Overnight (12am–5am)', hours: [0,1,2,3,4] },
+        { name: 'Morning (6am–11am)', hours: [6,7,8,9,10,11] },
+        { name: 'Afternoon (12pm–5pm)', hours: [12,13,14,15,16,17] },
+        { name: 'Evening (6pm–11pm)', hours: [18,19,20,21,22,23] },
+      ].map(period => {
+        const vals = period.hours.map(h => ins.hourlyAvg[h]).filter(v => v !== null);
+        const avg = vals.length ? vals.reduce((s,v)=>s+v,0)/vals.length : null;
+        const range = vals.length > 1 ? Math.round(Math.max(...vals) - Math.min(...vals)) : 0;
+        return `<tr><td>${period.name}</td><td class="val-right">${avg ? Math.round(avg) + ' mg/dL' : '—'}</td><td>${range > 40 ? '⚠️ High variability (±' + range + ' mg/dL)' : range > 0 ? 'Moderate (±' + range + ' mg/dL)' : '—'}</td></tr>`;
+      }).join('')}
+    </table>
+  </div>
+
+  ${insulinStats ? `
+  <div class="section">
+    <div class="section-heading">Insulin Data Summary</div>
+    <table class="data-table">
+      <tr><th>Metric</th><th style="text-align:right">Value</th></tr>
+      ${insulinStats.avgDailyInsulin ? `<tr><td>Average Daily Total Insulin</td><td class="val-right">${insulinStats.avgDailyInsulin.toFixed(1)} units</td></tr>` : ''}
+      ${insulinStats.avgDailyBolus ? `<tr><td>Average Daily Bolus</td><td class="val-right">${insulinStats.avgDailyBolus.toFixed(1)} units (${Math.round(insulinStats.bolusPct)}%)</td></tr>` : ''}
+      ${insulinStats.avgDailyBasal ? `<tr><td>Average Daily Basal</td><td class="val-right">${insulinStats.avgDailyBasal.toFixed(1)} units (${Math.round(insulinStats.basalPct)}%)</td></tr>` : ''}
+      ${insulinStats.totalBoluses ? `<tr><td>Total Boluses in Period</td><td class="val-right">${insulinStats.totalBoluses}</td></tr>` : ''}
+      ${insulinStats.mealBoluses !== undefined ? `<tr><td>Meal Boluses</td><td class="val-right">${insulinStats.mealBoluses}</td></tr>` : ''}
+      ${insulinStats.correctionBoluses !== undefined ? `<tr><td>Correction Boluses</td><td class="val-right">${insulinStats.correctionBoluses}</td></tr>` : ''}
+    </table>
+  </div>` : ''}
+
+  <div class="section">
+    <div class="section-heading">Clinical References</div>
+    <ol class="ref-list">
+      <li>American Diabetes Association. <em>Standards of Care in Diabetes — 2025.</em> Diabetes Care 2025;48(Suppl.1).</li>
+      <li>Battelino T, et al. <em>Clinical Targets for CGM Data Interpretation: International Consensus.</em> Diabetes Care 2019;42:1593–1603.</li>
+      <li>AACE/ACE Consensus Statement. <em>CGM and Diabetes Technology.</em> Endocr Pract 2023.</li>
+    </ol>
+  </div>
+
+  <div class="signature-block">
+    <strong>Prepared for review by:</strong><br>
+    <span class="editable" contenteditable="true">${e(form.physicianName)}</span><br>
+    <span class="sig-label">NPI: <span class="editable" contenteditable="true">${e(form.physicianNPI)}</span></span>
+  </div>
+
+  <div class="disclaimer-box">
+    <strong>⚠️ Disclaimer:</strong> This document is generated to assist with insurance communication. It is pre-filled with glucose data from patient-uploaded CGM exports. <strong>Review with your healthcare provider before submission.</strong> All data was processed locally — no data was transmitted to any server.
+  </div>
+  <div class="footer-brand">Generated by AVA Type 1 Glucose Insights — avatype1.com</div>
+</div></body></html>`;
+}
+
+// ========== HYPOGLYCEMIA DOCUMENTATION ==========
+function generateHypoDoc(form, ins) {
+  const e = s => escapeHtml(s);
+
+  // Group lows into episodes (within 30 min = same episode)
+  function groupEpisodes(lows) {
+    if (lows.length === 0) return [];
+    const episodes = [];
+    let currentEp = [lows[0]];
+    for (let i = 1; i < lows.length; i++) {
+      if (lows[i].ts - lows[i-1].ts <= 30 * 60000) {
+        currentEp.push(lows[i]);
+      } else {
+        episodes.push(currentEp);
+        currentEp = [lows[i]];
+      }
+    }
+    episodes.push(currentEp);
+    return episodes;
+  }
+
+  const episodes = groupEpisodes(ins.allLows);
+  const severeEpisodes = groupEpisodes(ins.veryLow);
+
+  // Cluster analysis by day
+  const dailyEpCounts = {};
+  episodes.forEach(ep => {
+    const day = new Date(ep[0].ts).toISOString().slice(0, 10);
+    dailyEpCounts[day] = (dailyEpCounts[day] || 0) + 1;
+  });
+  const daysWithLows = Object.keys(dailyEpCounts).length;
+  const daysWithMultiple = Object.values(dailyEpCounts).filter(c => c >= 2).length;
+
+  // Time-of-day analysis
+  const periodCounts = {
+    'Overnight (12am–6am)': ins.hypoByPeriod.overnight.length,
+    'Morning (6am–12pm)': ins.hypoByPeriod.morning.length,
+    'Afternoon (12pm–6pm)': ins.hypoByPeriod.afternoon.length,
+    'Evening (6pm–12am)': ins.hypoByPeriod.evening.length,
+  };
+  const totalLowReadings = ins.allLows.length;
+
+  // Build event list (all lows)
+  const allLowEvents = ins.allLows.map(r => {
+    const d = new Date(r.ts);
+    return {
+      date: d.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' }),
+      time: d.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' }),
+      value: Math.round(r.bg),
+      severity: r.bg < 54 ? 'SEVERE' : 'Mild',
+      isSevere: r.bg < 54
+    };
+  });
+
+  return `<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Hypoglycemia Documentation</title><style>${insDocStyles()}
+  .summary-box { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 20px; }
+  .summary-item { border: 1px solid #e0e0e0; border-radius: 8px; padding: 14px; text-align: center; }
+  .summary-item.critical { border-color: #ef9a9a; background: #ffebee; }
+  .summary-item .big-num { font-size: 28px; font-weight: 800; line-height: 1.1; }
+  .summary-item .big-num.red { color: #c62828; }
+  .summary-item .big-num.orange { color: #e65100; }
+  .summary-item .sm-label { font-size: 10px; font-weight: 600; color: #777; text-transform: uppercase; margin-top: 4px; letter-spacing: 0.5px; }
+</style></head><body>
+<div class="doc-page">
+  <div class="print-bar no-print">
+    <p>💡 This is your most important insurance document. <strong>Print → Save as PDF</strong></p>
+    <button onclick="window.print()">🖨️ Print / Save PDF</button>
+  </div>
+
+  <div class="letterhead">
+    <h1>Hypoglycemia Documentation Report</h1>
+    <div class="doc-type">Comprehensive Low Glucose Event Analysis</div>
+    <div class="letterhead-meta">
+      <strong>Patient:</strong> <span class="editable" contenteditable="true">${e(form.patientName)}</span> | 
+      <strong>DOB:</strong> <span class="editable" contenteditable="true">${e(form.dob)}</span><br>
+      <strong>Diagnosis:</strong> Type 1 Diabetes Mellitus (ICD-10: <span class="icd-code">E10.649</span> — T1D with hypoglycemia)<br>
+      <strong>Insurance:</strong> <span class="editable" contenteditable="true">${e(form.insuranceCompany)}</span> | 
+      <strong>Member ID:</strong> <span class="editable" contenteditable="true">${e(form.insuranceId)}</span><br>
+      <strong>Data Period:</strong> ${insFmtDate(allReadings[0].ts)} — ${insFmtDate(allReadings[allReadings.length-1].ts)} (${Math.round(ins.daysSpan)} days)<br>
+      <strong>Date Generated:</strong> ${insDate()}
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-heading">Hypoglycemia Summary</div>
+    <div class="summary-box">
+      <div class="summary-item ${ins.hypoEpisodes > 0 ? 'critical' : ''}">
+        <div class="big-num ${ins.hypoEpisodes > 0 ? 'red' : ''}">${ins.hypoEpisodes}</div>
+        <div class="sm-label">Hypo Episodes<br>(<70 mg/dL)</div>
+      </div>
+      <div class="summary-item ${ins.severeHypoEpisodes > 0 ? 'critical' : ''}">
+        <div class="big-num ${ins.severeHypoEpisodes > 0 ? 'red' : ''}">${ins.severeHypoEpisodes}</div>
+        <div class="sm-label">Severe Episodes<br>(<54 mg/dL)</div>
+      </div>
+      <div class="summary-item">
+        <div class="big-num orange">${totalLowReadings}</div>
+        <div class="sm-label">Total Low<br>Readings</div>
+      </div>
+      <div class="summary-item">
+        <div class="big-num orange">${(ins.hypoEpisodes / ins.daysSpan * 7).toFixed(1)}</div>
+        <div class="sm-label">Episodes<br>Per Week</div>
+      </div>
+    </div>
+
+    <p class="clinical-text"><strong>Patient experienced ${ins.hypoEpisodes} distinct hypoglycemic episodes over ${Math.round(ins.daysSpan)} days</strong>, averaging <strong>${(ins.hypoEpisodes / ins.daysSpan * 7).toFixed(1)} episodes per week</strong>. ${ins.severeHypoEpisodes > 0 ? `Of these, <strong>${ins.severeHypoEpisodes} were clinically severe</strong> (glucose below 54 mg/dL), placing the patient at risk for seizure, loss of consciousness, and death.` : ''} ${ins.hypoByPeriod.overnight.length > 0 ? `<strong>${ins.hypoByPeriod.overnight.length} low readings occurred during overnight hours</strong> (12am–6am) when the patient is sleeping and unable to detect hypoglycemic symptoms.` : ''}</p>
+  </div>
+
+  <div class="section">
+    <div class="section-heading">Severity Breakdown</div>
+    <table class="data-table">
+      <tr><th>Severity Level</th><th>Glucose Range</th><th style="text-align:right">Readings</th><th style="text-align:right">Episodes</th><th>Clinical Risk</th></tr>
+      <tr class="critical-row"><td><strong>Level 2 — Severe</strong></td><td><54 mg/dL</td><td class="val-right">${ins.veryLow.length}</td><td class="val-right">${ins.severeHypoEpisodes}</td><td>🚨 Immediate danger — seizure, LOC risk</td></tr>
+      <tr><td><strong>Level 1 — Mild/Moderate</strong></td><td>54–69 mg/dL</td><td class="val-right">${ins.low.length}</td><td class="val-right">${ins.hypoEpisodes - ins.severeHypoEpisodes}</td><td>⚠️ Requires treatment — cognitive impairment</td></tr>
+      <tr style="font-weight:700"><td><strong>TOTAL</strong></td><td><70 mg/dL</td><td class="val-right"><strong>${totalLowReadings}</strong></td><td class="val-right"><strong>${ins.hypoEpisodes}</strong></td><td>—</td></tr>
+    </table>
+  </div>
+
+  <div class="section">
+    <div class="section-heading">Time-of-Day Analysis</div>
+    <table class="data-table">
+      <tr><th>Time Period</th><th style="text-align:right">Low Readings</th><th style="text-align:right">% of All Lows</th><th>Clinical Note</th></tr>
+      ${Object.entries(periodCounts).map(([period, count]) => {
+        const pct = totalLowReadings > 0 ? (count / totalLowReadings * 100).toFixed(1) : '0.0';
+        const isOvernight = period.includes('Overnight');
+        return `<tr class="${isOvernight && count > 0 ? 'critical-row' : ''}"><td>${period}</td><td class="val-right">${count}</td><td class="val-right">${pct}%</td><td>${isOvernight && count > 0 ? '🚨 Nocturnal — cannot self-treat while asleep' : count > totalLowReadings * 0.3 ? '⚠️ Peak low period' : '—'}</td></tr>`;
+      }).join('')}
+    </table>
+    ${ins.hypoByPeriod.overnight.length > 0 ? `<p class="clinical-text" style="margin-top:10px"><strong>⚠️ CRITICAL: Nocturnal Hypoglycemia Detected.</strong> ${ins.hypoByPeriod.overnight.length} low glucose readings occurred between 12am and 6am. During sleep, patients cannot recognize hypoglycemic symptoms (tremor, sweating, confusion). Without CGM with low glucose alerts, these events can progress to seizure, loss of consciousness, or death. This is the strongest clinical justification for CGM authorization.</p>` : ''}
+  </div>
+
+  <div class="section">
+    <div class="section-heading">Cluster Analysis</div>
+    <table class="data-table">
+      <tr><th>Metric</th><th style="text-align:right">Value</th></tr>
+      <tr><td>Days with at least one low</td><td class="val-right">${daysWithLows} of ${Math.round(ins.daysSpan)} days (${(daysWithLows/ins.daysSpan*100).toFixed(0)}%)</td></tr>
+      <tr><td>Days with multiple low episodes</td><td class="val-right">${daysWithMultiple} days</td></tr>
+      <tr><td>Average episodes per day (on days with lows)</td><td class="val-right">${daysWithLows > 0 ? (ins.hypoEpisodes / daysWithLows).toFixed(1) : '0'}</td></tr>
+      <tr><td>Longest streak without a low</td><td class="val-right">${(() => {
+        const days = Object.keys(ins.dailyLows).sort();
+        if (days.length === 0) return Math.round(ins.daysSpan) + ' days';
+        let maxGap = 0;
+        for (let i = 1; i < days.length; i++) {
+          const gap = (new Date(days[i]) - new Date(days[i-1])) / 86400000;
+          if (gap > maxGap) maxGap = gap;
+        }
+        return Math.round(maxGap) + ' days';
+      })()} </td></tr>
+      <tr><td>Time below range (%)</td><td class="val-right">${ins.tbrPct.toFixed(1)}% (target: <4%)</td></tr>
+    </table>
+  </div>
+
+  <div class="section page-break">
+    <div class="section-heading">Complete Hypoglycemia Event Log</div>
+    <p style="font-size:10px;color:#555;margin-bottom:8px">Every glucose reading below 70 mg/dL in the data period. ${allLowEvents.length > 200 ? 'Showing most recent 200 events.' : allLowEvents.length + ' events total.'}</p>
+    <table class="hypo-event-table">
+      <tr><th>#</th><th>Date</th><th>Time</th><th style="text-align:right">Glucose (mg/dL)</th><th>Severity</th></tr>
+      ${allLowEvents.slice(-200).map((ev, i) => `<tr class="${ev.isSevere ? 'severe' : 'mild'}"><td>${i+1}</td><td>${ev.date}</td><td>${ev.time}</td><td class="val-right">${ev.value}</td><td>${ev.severity} ${ev.isSevere ? '🚨' : ''}</td></tr>`).join('')}
+    </table>
+  </div>
+
+  <div class="section">
+    <div class="section-heading">Clinical References</div>
+    <ol class="ref-list">
+      <li>ADA Standards of Care 2025, Section 6: "Hypoglycemia is the major limiting factor in the glycemic management of type 1 diabetes."</li>
+      <li>International Hypoglycaemia Study Group. <em>Glucose Concentrations of Less Than 3.0 mmol/L (54 mg/dL) Should Be Reported in Clinical Trials.</em> Diabetes Care 2017;40:155-157.</li>
+      <li>Battelino T, et al. <em>Clinical Targets for CGM Data Interpretation.</em> Diabetes Care 2019. Time below range target: <4% (<70), <1% (<54).</li>
+      <li>Heinemann L, et al. <em>Real-time CGM reduces hypoglycemia in T1D.</em> Lancet Diabetes Endocrinol 2023.</li>
+    </ol>
+  </div>
+
+  <div class="signature-block">
+    <strong>Physician Review:</strong><br>
+    <div class="sig-line"></div><br>
+    <span class="sig-label">Signature</span><br><br>
+    <strong><span class="editable" contenteditable="true">${e(form.physicianName)}</span></strong> | NPI: <span class="editable" contenteditable="true">${e(form.physicianNPI)}</span>
+  </div>
+
+  <div class="disclaimer-box">
+    <strong>⚠️ Disclaimer:</strong> This document is generated to assist with insurance communication. It is pre-filled with glucose data from patient-uploaded CGM exports. <strong>Review with your healthcare provider before submission.</strong> All data was processed locally — no data was transmitted to any server.
+  </div>
+  <div class="footer-brand">Generated by AVA Type 1 Glucose Insights — avatype1.com</div>
+</div></body></html>`;
+}
+
+// ========== SUPPLY JUSTIFICATION REPORT ==========
+function generateSupplyJustification(form, ins) {
+  const e = s => escapeHtml(s);
+
+  // Calculate testing/sensor needs
+  const readingsPerDay = ins.n / ins.daysSpan;
+  const sensorsPerMonth = 30 / 10; // Dexcom: 10-day sensor
+  const sensorsPerMonthLibre = 30 / 14; // Libre: 14-day sensor
+  const transmittersPerQuarter = 1; // Dexcom G7 integrated
+
+  return `<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Supply Justification Report</title><style>${insDocStyles()}</style></head><body>
+<div class="doc-page">
+  <div class="print-bar no-print">
+    <p>💡 Review supply quantities, then <strong>Print → Save as PDF</strong></p>
+    <button onclick="window.print()">🖨️ Print / Save PDF</button>
+  </div>
+
+  <div class="letterhead">
+    <h1>Supply Justification Report</h1>
+    <div class="doc-type">Medical Supply Necessity Documentation</div>
+    <div class="letterhead-meta">
+      <strong>Date:</strong> ${insDate()}<br>
+      <strong>Patient:</strong> <span class="editable" contenteditable="true">${e(form.patientName)}</span> | 
+      <strong>DOB:</strong> <span class="editable" contenteditable="true">${e(form.dob)}</span><br>
+      <strong>Diagnosis:</strong> Type 1 Diabetes Mellitus (ICD-10: <span class="icd-code">E10.65</span>)<br>
+      <strong>Insurance:</strong> <span class="editable" contenteditable="true">${e(form.insuranceCompany)}</span> | 
+      <strong>Member ID:</strong> <span class="editable" contenteditable="true">${e(form.insuranceId)}</span>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-heading">Patient Clinical Profile</div>
+    <p class="clinical-text">The patient has <strong>Type 1 Diabetes Mellitus</strong>, an autoimmune condition requiring lifelong insulin therapy and continuous glucose monitoring. The following clinical data supports the supply quantities requested.</p>
+
+    <table class="data-table">
+      <tr><th>Clinical Metric</th><th style="text-align:right">Value</th><th>Relevance to Supply Need</th></tr>
+      <tr><td>Estimated A1C</td><td class="val-right">${ins.a1c.toFixed(1)}%</td><td>${ins.a1c >= 7 ? 'Above target — frequent monitoring essential' : 'At target — monitoring critical to maintain'}</td></tr>
+      <tr><td>Time Below Range</td><td class="val-right">${ins.tbrPct.toFixed(1)}%</td><td>${ins.tbrPct > 1 ? 'Hypoglycemia present — confirmatory fingersticks needed' : 'Monitoring prevents future lows'}</td></tr>
+      <tr><td>Glucose Variability (CV)</td><td class="val-right">${ins.cv.toFixed(1)}%</td><td>${ins.cv > 36 ? 'Unstable — requires more frequent monitoring' : 'Monitoring maintains stability'}</td></tr>
+      <tr><td>Hypoglycemic Episodes</td><td class="val-right">${ins.hypoEpisodes} in ${Math.round(ins.daysSpan)} days</td><td>Each episode requires confirmatory test + treatment verification</td></tr>
+      <tr><td>Severe Hypoglycemia (<54)</td><td class="val-right">${ins.severeHypoEpisodes} episodes</td><td>Critical events requiring immediate testing</td></tr>
+      <tr><td>CGM Active Time</td><td class="val-right">${ins.compliance.toFixed(1)}%</td><td>Demonstrates consistent device utilization</td></tr>
+    </table>
+  </div>
+
+  <div class="section">
+    <div class="section-heading">CGM Sensor Supply Justification</div>
+    <table class="data-table">
+      <tr><th>CGM System</th><th style="text-align:right">Sensor Life</th><th style="text-align:right">Monthly Need</th><th style="text-align:right">Quarterly Need</th></tr>
+      <tr><td>Dexcom G6/G7</td><td class="val-right">10 days</td><td class="val-right">3 sensors</td><td class="val-right">9 sensors</td></tr>
+      <tr><td>FreeStyle Libre 2/3</td><td class="val-right">14 days</td><td class="val-right">~2.2 sensors</td><td class="val-right">~7 sensors</td></tr>
+      <tr><td>Medtronic Guardian 4</td><td class="val-right">7 days</td><td class="val-right">~4.3 sensors</td><td class="val-right">~13 sensors</td></tr>
+    </table>
+
+    <p class="clinical-text"><strong>Justification:</strong> CGM provides ${Math.round(readingsPerDay)} glucose data points per day (every 5 minutes), compared to 4–8 with fingerstick testing alone. This patient has demonstrated consistent CGM utilization (${ins.compliance.toFixed(1)}% active time), confirming the medical necessity of uninterrupted sensor supply. Any gap in CGM coverage exposes the patient to undetected hypoglycemia${ins.hypoByPeriod.overnight.length > 0 ? ', particularly the documented nocturnal episodes that cannot be detected without CGM' : ''}.</p>
+  </div>
+
+  <div class="section">
+    <div class="section-heading">Blood Glucose Test Strip Justification</div>
+    <p class="clinical-text">Even with CGM, Type 1 Diabetes patients require blood glucose test strips for the following clinical reasons:</p>
+
+    <table class="data-table">
+      <tr><th>Clinical Scenario</th><th style="text-align:right">Est. Tests/Day</th><th>Justification</th></tr>
+      <tr><td>CGM calibration (if required)</td><td class="val-right">0–2</td><td>Some CGM systems require fingerstick calibration</td></tr>
+      <tr><td>CGM sensor warmup/failure</td><td class="val-right">0–4</td><td>2-hour warmup on insertion; sensor failures require backup testing</td></tr>
+      <tr><td>Hypoglycemia confirmation</td><td class="val-right">1–2</td><td>${ins.hypoEpisodes > 0 ? `Patient averages ${(ins.hypoEpisodes/ins.daysSpan).toFixed(1)} episodes/day requiring confirmation` : 'Confirm low readings before treatment'}</td></tr>
+      <tr><td>Post-treatment verification</td><td class="val-right">1–2</td><td>Verify glucose recovery after treating lows</td></tr>
+      <tr><td>Insulin dosing decisions</td><td class="val-right">1–2</td><td>Verify BG before correction doses when CGM uncertain</td></tr>
+      <tr><td>Illness/exercise</td><td class="val-right">2–4</td><td>Increased testing during illness, intense exercise, or stress</td></tr>
+      <tr style="font-weight:700;background:#f5f5f5"><td><strong>TOTAL ESTIMATED</strong></td><td class="val-right"><strong>4–10/day</strong></td><td><strong>Minimum 150–300 strips/month</strong></td></tr>
+    </table>
+
+    <p class="clinical-text"><strong>Requested quantity: <span class="editable" contenteditable="true">200–300</span> test strips per month.</strong> This is consistent with ADA Standards of Care which recommend that "SMBG frequency and timing should be individualized based on the patient's specific needs" and "people on intensive insulin regimens should test ≥4 times daily."</p>
+  </div>
+
+  <div class="section">
+    <div class="section-heading">Additional Supply Needs</div>
+    <table class="data-table">
+      <tr><th>Supply Item</th><th style="text-align:right">Monthly Quantity</th><th>Clinical Justification</th></tr>
+      <tr><td>Lancets</td><td class="val-right"><span class="editable" contenteditable="true">200–300</span></td><td>One per fingerstick test (single-use per ADA/FDA)</td></tr>
+      <tr><td>Alcohol swabs</td><td class="val-right"><span class="editable" contenteditable="true">200</span></td><td>Site prep for testing and injection/infusion sites</td></tr>
+      <tr><td>Insulin pen needles (if MDI)</td><td class="val-right"><span class="editable" contenteditable="true">120–180</span></td><td>4–6 injections daily, single-use per FDA guidance</td></tr>
+      <tr><td>Pump infusion sets (if pump)</td><td class="val-right"><span class="editable" contenteditable="true">10</span></td><td>Change every 2–3 days per manufacturer guidelines</td></tr>
+      <tr><td>Pump reservoirs/cartridges</td><td class="val-right"><span class="editable" contenteditable="true">10</span></td><td>One per infusion set change</td></tr>
+      <tr><td>Glucose tablets/gels</td><td class="val-right"><span class="editable" contenteditable="true">As needed</span></td><td>${ins.hypoEpisodes > 0 ? `${ins.hypoEpisodes} episodes in ${Math.round(ins.daysSpan)} days — active hypo treatment needed` : 'Emergency hypoglycemia treatment'}</td></tr>
+      <tr><td>Glucagon emergency kit</td><td class="val-right">1 (annual)</td><td>Emergency treatment for severe hypoglycemia — all T1D patients must carry</td></tr>
+    </table>
+  </div>
+
+  <div class="section">
+    <div class="section-heading">Clinical Evidence & Guidelines</div>
+    <ol class="ref-list">
+      <li>ADA Standards of Care 2025: "Most people using intensive insulin regimens (MDI or insulin pump therapy) should assess glucose levels using CGM and/or BGM prior to meals and snacks, at bedtime, prior to exercise, when they suspect low blood glucose, after treating low blood glucose, and prior to critical tasks such as driving."</li>
+      <li>ADA Standards of Care 2025: "CGM should be offered to all people with diabetes on intensive insulin regimens."</li>
+      <li>Endocrine Society Clinical Practice Guideline on Diabetes Technology 2023: Recommends uninterrupted CGM sensor supply for all T1D patients.</li>
+      <li>FDA Guidance: Lancets and pen needles are single-use medical devices.</li>
+    </ol>
+  </div>
+
+  <p class="clinical-text">These supplies are <strong>medically necessary</strong> for the safe management of Type 1 Diabetes. Reducing supply quantities would compromise the patient's ability to manage their blood glucose safely and increase the risk of acute complications (hypoglycemia, DKA) and long-term diabetic complications.</p>
+
+  <div class="signature-block">
+    <div class="sig-line"></div><br>
+    <div class="sig-label">Physician Signature</div><br><br>
+    <strong><span class="editable" contenteditable="true">${e(form.physicianName)}</span></strong><br>
+    <span class="sig-label">NPI: <span class="editable" contenteditable="true">${e(form.physicianNPI)}</span></span><br>
+    <span class="sig-label">Date: ${insDate()}</span>
+  </div>
+
+  <div class="disclaimer-box">
+    <strong>⚠️ Disclaimer:</strong> This document is generated to assist with insurance communication. It is pre-filled with glucose data from patient-uploaded CGM exports. <strong>Review with your healthcare provider before submission.</strong> All data was processed locally — no data was transmitted to any server.
+  </div>
+  <div class="footer-brand">Generated by AVA Type 1 Glucose Insights — avatype1.com</div>
+</div></body></html>`;
+}
+
 </script>
 </body>
 </html>

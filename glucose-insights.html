@@ -257,21 +257,6 @@ nav .container{display:flex;align-items:center;justify-content:space-between}
 .ins-form-generate{background:linear-gradient(135deg,#f59e0b,#ef4444)!important;color:#fff!important}
 .ins-form-generate:hover{transform:translateY(-2px);box-shadow:0 6px 24px rgba(245,158,11,0.35)}
 
-/* PAYWALL MODAL */
-.paywall-overlay{position:fixed;inset:0;z-index:10002;background:rgba(0,0,0,0.75);backdrop-filter:blur(12px);display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .3s;pointer-events:none}
-.paywall-overlay.visible{opacity:1;pointer-events:all}
-.paywall-modal{background:var(--navy-light);border:1px solid rgba(245,158,11,0.3);border-radius:var(--radius);padding:40px;max-width:460px;width:92%;text-align:center;animation:fadeUp .4s ease-out}
-.paywall-modal .paywall-icon{font-size:3rem;margin-bottom:16px}
-.paywall-modal h3{font-size:1.4rem;font-weight:800;margin-bottom:8px}
-.paywall-modal p{color:var(--text-dim);font-size:.9rem;line-height:1.7;margin-bottom:20px}
-.paywall-features{text-align:left;margin:0 auto 24px;max-width:320px}
-.paywall-features div{display:flex;align-items:center;gap:10px;padding:8px 0;font-size:.88rem;color:var(--text)}
-.paywall-features div span:first-child{color:#4ade80}
-.paywall-modal .paywall-btn{display:inline-block;padding:14px 36px;background:linear-gradient(135deg,#f59e0b,#ef4444);color:#fff;border:none;border-radius:50px;font-family:'Inter',sans-serif;font-size:1rem;font-weight:700;cursor:pointer;transition:all .3s;margin-bottom:12px}
-.paywall-modal .paywall-btn:hover{transform:translateY(-2px);box-shadow:0 8px 30px rgba(245,158,11,0.4)}
-.paywall-modal .paywall-dismiss{display:block;color:var(--text-dim);font-size:.82rem;cursor:pointer;transition:color .2s;background:none;border:none;font-family:'Inter',sans-serif;margin:0 auto}
-.paywall-modal .paywall-dismiss:hover{color:var(--text)}
-
 /* ENDO REPORT DIALOG OVERLAY */
 .endo-dialog-overlay{position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,0.6);backdrop-filter:blur(8px);display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .3s;pointer-events:none}
 .endo-dialog-overlay.visible{opacity:1;pointer-events:all}
@@ -750,7 +735,7 @@ footer{padding:48px 0 32px;border-top:1px solid var(--glass-border)}
   <div class="insulin-section" id="insulin-section">
     <div style="text-align:center;margin-bottom:32px;margin-top:48px">
       <span class="section-label">Insulin Analytics</span>
-      <h2 class="section-title">Your <span class="gradient">Insulin Data</span> 💉</h2>
+      <h2 class="section-title">Your <span class="gradient">Insulin Data</span> 💉 <span class="pro-badge-sm" id="pro-badge-insulin">✦ PRO</span></h2>
     </div>
 
     <!-- Insulin Stats Cards -->
@@ -2897,12 +2882,18 @@ document.getElementById('paste-submit').addEventListener('click', () => {
       return;
     }
     allReadings = readings;
+    lastUploadFileName = 'Pasted Data';
     currentRange = 'all';
     document.querySelectorAll('.time-range-btn').forEach(btn => btn.classList.toggle('active', btn.dataset.range === 'all'));
     const stats = computeStats(readings);
     allStats = stats;
     renderDashboard(readings, stats);
     drawAllCharts(readings, stats);
+
+    // Auto-save to IndexedDB
+    saveSession(readings, glooko, hasInsulinData, 'Pasted Data').then(() => updateSessionPicker()).catch(e => console.error('Save failed:', e));
+    updatePaywallState();
+
     uploadZone.classList.remove('processing');
     uploadZone.querySelector('.upload-icon').textContent = '✅';
     uploadZone.querySelector('h3').textContent = 'Data loaded from pasted text!';
@@ -2934,12 +2925,17 @@ async function processFile(file) {
         return;
       }
       allReadings = readings;
+      lastUploadFileName = file.name;
       currentRange = 'all';
       document.querySelectorAll('.time-range-btn').forEach(btn => btn.classList.toggle('active', btn.dataset.range === 'all'));
       const stats = computeStats(readings);
       allStats = stats;
       renderDashboard(readings, stats);
       drawAllCharts(readings, stats);
+
+      // Auto-save to IndexedDB
+      saveSession(readings, glooko, hasInsulinData, file.name).then(() => updateSessionPicker()).catch(e => console.error('Save failed:', e));
+      updatePaywallState();
 
       uploadZone.classList.remove('processing');
       uploadZone.querySelector('.upload-icon').textContent = '✅';
@@ -2962,12 +2958,17 @@ async function processFile(file) {
             return;
           }
           allReadings = readings;
+          lastUploadFileName = file.name;
           currentRange = 'all';
           document.querySelectorAll('.time-range-btn').forEach(btn => btn.classList.toggle('active', btn.dataset.range === 'all'));
           const stats = computeStats(readings);
           allStats = stats;
           renderDashboard(readings, stats);
           drawAllCharts(readings, stats);
+
+          // Auto-save to IndexedDB
+          saveSession(readings, glooko, hasInsulinData, file.name).then(() => updateSessionPicker()).catch(e => console.error('Save failed:', e));
+          updatePaywallState();
 
           uploadZone.classList.remove('processing');
           uploadZone.querySelector('.upload-icon').textContent = '✅';
@@ -3732,6 +3733,22 @@ function buildDailyPatternSVG(hourly) {
 
   svg += '</svg>';
   return svg;
+}
+
+// ========== INITIALIZATION ==========
+// Run on page load
+checkPaymentRedirect();
+updatePaywallState();
+checkSavedSessions();
+
+// Verify subscription periodically (if pro user)
+if (isProUser()) {
+  // Verify on load but don't block — re-verify every 24h
+  const sub = JSON.parse(localStorage.getItem('ava-pro-subscription') || '{}');
+  const lastVerified = sub.verifiedAt || 0;
+  if (Date.now() - lastVerified > 24 * 3600 * 1000) {
+    verifySubscription();
+  }
 }
 
 function buildReportHTML(data) {

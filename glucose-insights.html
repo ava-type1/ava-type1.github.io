@@ -7,6 +7,7 @@
 <meta name="description" content="Upload your CGM data and get instant glucose insights — time in range, estimated A1C, daily patterns, and more. 100% private, runs entirely in your browser.">
 <link rel="icon" href="images/AvaLogo.png">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 <style>
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
 :root{
@@ -18,6 +19,7 @@
 --glass:rgba(255,255,255,0.04);--glass-border:rgba(255,255,255,0.08);
 --text:#e8edf5;--text-dim:#8899b0;--radius:20px;
 --range-vlow:#cc3333;--range-low:#ff6b6b;--range-ok:#4ade80;--range-high:#ffaa33;--range-vhigh:#cc3333;
+--insulin-color:#00e5ff;--carb-color:#ff9800;
 }
 html{scroll-behavior:smooth}
 body{font-family:'Inter',system-ui,sans-serif;background:var(--navy);color:var(--text);overflow-x:hidden;line-height:1.6}
@@ -108,6 +110,13 @@ nav .container{display:flex;align-items:center;justify-content:space-between}
 .bg-tooltip.visible{opacity:1}
 .bg-tooltip .tt-value{font-size:1.15rem;font-weight:800;margin-bottom:2px}
 .bg-tooltip .tt-time{color:var(--text-dim);font-size:.78rem}
+.bg-tooltip .tt-insulin{color:var(--insulin-color);font-size:.82rem;font-weight:600;margin-top:4px}
+.bg-tooltip .tt-carbs{color:var(--carb-color);font-size:.82rem;font-weight:600}
+
+/* CHART LEGEND */
+.chart-legend{display:flex;flex-wrap:wrap;gap:16px;margin-bottom:12px;font-size:.78rem;font-weight:600;color:var(--text-dim)}
+.chart-legend-item{display:flex;align-items:center;gap:6px}
+.chart-legend-swatch{width:12px;height:12px;border-radius:3px;flex-shrink:0}
 
 /* TIR SECTION */
 .tir-content{display:flex;gap:32px;align-items:center;flex-wrap:wrap}
@@ -150,6 +159,24 @@ nav .container{display:flex;align-items:center;justify-content:space-between}
 .heatmap-tooltip{position:absolute;pointer-events:none;background:rgba(10,22,40,0.92);backdrop-filter:blur(12px);border:1px solid rgba(0,212,255,0.35);border-radius:10px;padding:10px 14px;font-size:.82rem;line-height:1.5;color:var(--text);white-space:nowrap;z-index:10;opacity:0;transition:opacity .15s;box-shadow:0 8px 32px rgba(0,0,0,0.4)}
 .heatmap-tooltip.visible{opacity:1}
 
+/* INSULIN SECTION */
+.insulin-section{margin-top:24px;display:none}
+.insulin-section.visible{display:block}
+.insulin-stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:20px;margin-bottom:24px}
+.insulin-stat-card{background:var(--gradient-card);border:1px solid rgba(0,229,255,0.12);border-radius:var(--radius);padding:24px;text-align:center;backdrop-filter:blur(10px);animation:fadeUp .5s ease-out both}
+.insulin-stat-card .stat-value{font-size:2rem;font-weight:900;background:linear-gradient(135deg,#00e5ff,#00b4d8);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1.2;margin-bottom:4px}
+.insulin-stat-card .stat-label{font-size:.78rem;font-weight:600;color:var(--text-dim);text-transform:uppercase;letter-spacing:1px}
+.insulin-stat-card .stat-sub{font-size:.73rem;color:var(--text-dim);opacity:.6;margin-top:4px}
+
+.insulin-analysis-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:24px}
+.insulin-analysis-card{background:var(--gradient-card);border:1px solid var(--glass-border);border-radius:var(--radius);padding:24px;backdrop-filter:blur(10px)}
+.insulin-analysis-card h4{font-size:.92rem;font-weight:700;margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.insulin-analysis-card .analysis-value{font-size:1.8rem;font-weight:900;line-height:1.2;margin-bottom:6px}
+.insulin-analysis-card .analysis-detail{font-size:.82rem;color:var(--text-dim);line-height:1.6}
+.analysis-value.positive{color:#ff6b6b}
+.analysis-value.negative{color:#4ade80}
+.analysis-value.neutral{color:var(--insulin-color)}
+
 /* CTA SECTION */
 .cta-section{padding:40px 0 80px}
 .cta-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:24px}
@@ -174,6 +201,7 @@ footer{padding:48px 0 32px;border-top:1px solid var(--glass-border)}
 .bw-grid{grid-template-columns:1fr}
 .stats-grid{grid-template-columns:repeat(auto-fit,minmax(150px,1fr))}
 .pattern-cards{grid-template-columns:1fr}
+.insulin-analysis-grid{grid-template-columns:1fr}
 .time-range-bar{gap:6px}
 .time-range-btn{padding:7px 14px;font-size:.78rem}
 }
@@ -183,6 +211,7 @@ footer{padding:48px 0 32px;border-top:1px solid var(--glass-border)}
 .footer-bottom{flex-direction:column;text-align:center}
 .cta-grid{grid-template-columns:1fr}
 .time-range-btn{padding:6px 12px;font-size:.75rem}
+.insulin-stats-grid{grid-template-columns:repeat(auto-fit,minmax(140px,1fr))}
 }
 </style>
 </head>
@@ -208,7 +237,7 @@ footer{padding:48px 0 32px;border-top:1px solid var(--glass-border)}
 <div class="container">
   <a href="index.html" class="back-link">← Back to Home</a>
   <h1>Glucose <span class="gradient">Insights</span> 📊</h1>
-  <p>Upload your CGM export and get instant visualizations — time in range, estimated A1C, daily patterns, and more. No sign-up. No cloud. Everything stays on your device.</p>
+  <p>Upload your CGM export and get instant visualizations — time in range, estimated A1C, daily patterns, insulin analysis, and more. No sign-up. No cloud. Everything stays on your device.</p>
   <div class="privacy-banner">🔒 Your data never leaves your device. All processing happens locally in your browser.</div>
 </div>
 </section>
@@ -220,8 +249,8 @@ footer{padding:48px 0 32px;border-top:1px solid var(--glass-border)}
     <span class="upload-icon">📁</span>
     <h3>Drag & drop your CGM export here</h3>
     <p>Or click to browse your files</p>
-    <div class="formats">Supports Dexcom Clarity CSV, FreeStyle Libre CSV, and generic timestamp + glucose CSVs</div>
-    <input type="file" id="file-input" accept=".csv,.txt,.tsv,.xls,.xlsx">
+    <div class="formats">Supports Dexcom Clarity CSV, FreeStyle Libre CSV, Glooko ZIP export, and generic CSVs</div>
+    <input type="file" id="file-input" accept=".csv,.txt,.tsv,.xls,.xlsx,.zip">
     <div style="margin-top:16px;font-size:.85rem;color:var(--text-dim)">
       On mobile? <span id="paste-toggle" style="color:var(--cyan);cursor:pointer;text-decoration:underline">Paste data manually</span>
     </div>
@@ -267,11 +296,14 @@ footer{padding:48px 0 32px;border-top:1px solid var(--glass-border)}
   <div class="chart-row">
     <div class="chart-card full">
       <h3>📈 Glucose Over Time</h3>
+      <div class="chart-legend" id="bg-chart-legend"></div>
       <div class="bg-chart-wrap" id="bg-chart-wrap">
         <canvas id="chart-bg" height="300"></canvas>
         <div class="bg-tooltip" id="bg-tooltip">
           <div class="tt-value"></div>
           <div class="tt-time"></div>
+          <div class="tt-insulin"></div>
+          <div class="tt-carbs"></div>
         </div>
       </div>
     </div>
@@ -340,6 +372,32 @@ footer{padding:48px 0 32px;border-top:1px solid var(--glass-border)}
     </div>
   </div>
 
+  <!-- INSULIN SECTION (only shown when insulin data exists) -->
+  <div class="insulin-section" id="insulin-section">
+    <div style="text-align:center;margin-bottom:32px;margin-top:48px">
+      <span class="section-label">Insulin Analytics</span>
+      <h2 class="section-title">Your <span class="gradient">Insulin Data</span> 💉</h2>
+    </div>
+
+    <!-- Insulin Stats Cards -->
+    <div class="insulin-stats-grid" id="insulin-stats-grid"></div>
+
+    <!-- Bolus vs Basal Split + Bolus Timing -->
+    <div class="chart-row">
+      <div class="chart-card">
+        <h3>💉 Bolus vs Basal Split</h3>
+        <canvas id="chart-bolus-basal" width="300" height="220"></canvas>
+      </div>
+      <div class="chart-card">
+        <h3>⏰ Bolus Timing Distribution</h3>
+        <canvas id="chart-bolus-timing" height="220"></canvas>
+      </div>
+    </div>
+
+    <!-- Insulin Effectiveness Analysis -->
+    <div class="insulin-analysis-grid" id="insulin-analysis-grid"></div>
+  </div>
+
 </div>
 </section>
 
@@ -387,7 +445,18 @@ footer{padding:48px 0 32px;border-top:1px solid var(--glass-border)}
 let allReadings = [];
 let allStats = null;
 let currentRange = 'all';
-let bgChartMeta = null; // stores chart geometry + filtered data for hover
+let bgChartMeta = null;
+
+// Glooko / insulin data
+let glooko = {
+  bolus: [],    // { ts, insulinType, bgInput, carbsInput, carbsRatio, insulinDelivered, initialDelivery, extendedDelivery }
+  basal: [],    // { ts, insulinType, duration, pct, rate, insulinDelivered }
+  daily: [],    // { ts, totalBolus, totalInsulin, totalBasal }
+  carbs: [],    // { ts, carbs }
+  alarms: [],   // { ts, event }
+  bgManual: [], // { ts, bg, manual }
+};
+let hasInsulinData = false;
 
 // ========== CSV PARSING ==========
 function parseCSV(text) {
@@ -412,6 +481,7 @@ function parseCSV(text) {
   if (tsCol === -1) tsCol = headers.findIndex(h => h.includes('date'));
 
   let bgCol = headers.findIndex(h => h.includes('glucose value'));
+  if (bgCol === -1) bgCol = headers.findIndex(h => h.includes('cgm glucose value'));
   if (bgCol === -1) bgCol = headers.findIndex(h => h.includes('glucose') && !h.includes('event'));
   if (bgCol === -1) bgCol = headers.findIndex(h => h.includes('mg/dl'));
   if (bgCol === -1) bgCol = headers.findIndex(h => h.includes('reading'));
@@ -478,7 +548,213 @@ function parseTimestamp(s) {
     d = new Date(year, month - 1, day, hour, min, sec);
     if (!isNaN(d.getTime())) return d.getTime();
   }
+  // YYYY-MM-DD HH:MM
+  const m2 = s.match(/(\d{4})[-\/](\d{1,2})[-\/](\d{1,2})\s+(\d{1,2}):(\d{2})(?::(\d{2}))?/);
+  if (m2) {
+    const [, year, month, day, hour, min, sec] = m2;
+    d = new Date(parseInt(year), parseInt(month) - 1, parseInt(day), parseInt(hour), parseInt(min), parseInt(sec || 0));
+    if (!isNaN(d.getTime())) return d.getTime();
+  }
   return null;
+}
+
+// ========== GLOOKO CSV PARSERS ==========
+// Row 1 = metadata, Row 2 = headers, Row 3+ = data
+function parseGlookoCSV(text) {
+  const lines = text.split(/\r?\n/).filter(l => l.trim());
+  if (lines.length < 3) return { headers: [], rows: [] };
+  // Row 0 is metadata (Name:...,Date Range:...), Row 1 is header
+  const headerLine = lines[1];
+  const sep = ',';
+  const headers = splitCSVLine(headerLine, sep).map(h => h.trim().replace(/"/g, ''));
+  const rows = [];
+  for (let i = 2; i < lines.length; i++) {
+    const cols = splitCSVLine(lines[i], sep).map(c => c.trim().replace(/"/g, ''));
+    if (cols.length >= headers.length) {
+      const obj = {};
+      headers.forEach((h, idx) => obj[h] = cols[idx]);
+      rows.push(obj);
+    }
+  }
+  return { headers, rows };
+}
+
+function parseGlookoCGM(text) {
+  const { rows } = parseGlookoCSV(text);
+  const readings = [];
+  for (const row of rows) {
+    const ts = parseTimestamp(row['Timestamp']);
+    const bg = parseFloat(row['CGM Glucose Value (mg/dl)']);
+    if (ts && !isNaN(bg) && bg >= 20 && bg <= 500) {
+      readings.push({ ts, bg });
+    }
+  }
+  readings.sort((a, b) => a.ts - b.ts);
+  return readings;
+}
+
+function parseGlookoBolus(text) {
+  const { rows } = parseGlookoCSV(text);
+  const boluses = [];
+  for (const row of rows) {
+    const ts = parseTimestamp(row['Timestamp']);
+    if (!ts) continue;
+    boluses.push({
+      ts,
+      insulinType: row['Insulin Type'] || '',
+      bgInput: parseFloat(row['Blood Glucose Input (mg/dl)']) || 0,
+      carbsInput: parseFloat(row['Carbs Input (g)']) || 0,
+      carbsRatio: parseFloat(row['Carbs Ratio']) || 0,
+      insulinDelivered: parseFloat(row['Insulin Delivered (U)']) || 0,
+      initialDelivery: parseFloat(row['Initial Delivery (U)']) || 0,
+      extendedDelivery: parseFloat(row['Extended Delivery (U)']) || 0,
+    });
+  }
+  boluses.sort((a, b) => a.ts - b.ts);
+  return boluses;
+}
+
+function parseGlookoBasal(text) {
+  const { rows } = parseGlookoCSV(text);
+  const basals = [];
+  for (const row of rows) {
+    const ts = parseTimestamp(row['Timestamp']);
+    if (!ts) continue;
+    basals.push({
+      ts,
+      insulinType: row['Insulin Type'] || '',
+      duration: parseFloat(row['Duration (minutes)']) || 0,
+      pct: parseFloat(row['Percentage (%)']) || 0,
+      rate: parseFloat(row['Rate']) || 0,
+      insulinDelivered: parseFloat(row['Insulin Delivered (U)']) || 0,
+    });
+  }
+  basals.sort((a, b) => a.ts - b.ts);
+  return basals;
+}
+
+function parseGlookoDailyInsulin(text) {
+  const { rows } = parseGlookoCSV(text);
+  const daily = [];
+  for (const row of rows) {
+    const ts = parseTimestamp(row['Timestamp']);
+    if (!ts) continue;
+    daily.push({
+      ts,
+      totalBolus: parseFloat(row['Total Bolus (U)']) || 0,
+      totalInsulin: parseFloat(row['Total Insulin (U)']) || 0,
+      totalBasal: parseFloat(row['Total Basal (U)']) || 0,
+    });
+  }
+  daily.sort((a, b) => a.ts - b.ts);
+  return daily;
+}
+
+function parseGlookoCarbs(text) {
+  const { rows } = parseGlookoCSV(text);
+  const carbs = [];
+  for (const row of rows) {
+    const ts = parseTimestamp(row['Timestamp']);
+    const g = parseFloat(row['Carbs (g)']);
+    if (ts && !isNaN(g) && g > 0) {
+      carbs.push({ ts, carbs: g });
+    }
+  }
+  carbs.sort((a, b) => a.ts - b.ts);
+  return carbs;
+}
+
+function parseGlookokBG(text) {
+  const { rows } = parseGlookoCSV(text);
+  const readings = [];
+  for (const row of rows) {
+    const ts = parseTimestamp(row['Timestamp']);
+    const bg = parseFloat(row['Glucose Value (mg/dl)']);
+    if (ts && !isNaN(bg) && bg >= 20 && bg <= 500) {
+      readings.push({ ts, bg, manual: (row['Manual Reading'] || '').trim() });
+    }
+  }
+  readings.sort((a, b) => a.ts - b.ts);
+  return readings;
+}
+
+function parseGlookoAlarms(text) {
+  const { rows } = parseGlookoCSV(text);
+  const alarms = [];
+  for (const row of rows) {
+    const ts = parseTimestamp(row['Timestamp']);
+    if (!ts) continue;
+    alarms.push({ ts, event: row['Alarm/Event'] || '' });
+  }
+  alarms.sort((a, b) => a.ts - b.ts);
+  return alarms;
+}
+
+// ========== ZIP PROCESSING ==========
+async function processZipFile(file) {
+  const zip = await JSZip.loadAsync(file);
+  let cgmReadings = [];
+  let foundGlooko = false;
+
+  // Reset glooko data
+  glooko = { bolus: [], basal: [], daily: [], carbs: [], alarms: [], bgManual: [] };
+
+  // Iterate all files in the ZIP
+  const fileEntries = [];
+  zip.forEach((path, entry) => {
+    if (!entry.dir) fileEntries.push({ path: path.toLowerCase(), entry, originalPath: path });
+  });
+
+  for (const { path, entry, originalPath } of fileEntries) {
+    const text = await entry.async('string');
+    const basename = path.split('/').pop();
+
+    if (basename === 'cgm_data_1.csv' || basename.startsWith('cgm_data')) {
+      cgmReadings = cgmReadings.concat(parseGlookoCGM(text));
+      foundGlooko = true;
+    } else if (basename === 'bolus_data_1.csv' || basename.startsWith('bolus_data')) {
+      glooko.bolus = glooko.bolus.concat(parseGlookoBolus(text));
+      foundGlooko = true;
+    } else if (basename === 'basal_data_1.csv' || basename.startsWith('basal_data')) {
+      glooko.basal = glooko.basal.concat(parseGlookoBasal(text));
+    } else if (basename === 'insulin_data_1.csv' || basename.startsWith('insulin_data')) {
+      glooko.daily = glooko.daily.concat(parseGlookoDailyInsulin(text));
+    } else if (basename === 'carbs_data_1.csv' || basename.startsWith('carbs_data')) {
+      glooko.carbs = glooko.carbs.concat(parseGlookoCarbs(text));
+    } else if (basename === 'bg_data_1.csv' || basename.startsWith('bg_data')) {
+      glooko.bgManual = glooko.bgManual.concat(parseGlookokBG(text));
+    } else if (basename === 'alarms_data_1.csv' || basename.startsWith('alarms_data')) {
+      glooko.alarms = glooko.alarms.concat(parseGlookoAlarms(text));
+    } else if (basename.endsWith('.csv') && !foundGlooko) {
+      // Try generic CSV parse
+      const r = parseCSV(text);
+      if (r.length > cgmReadings.length) cgmReadings = r;
+    }
+  }
+
+  // Also extract carbs from bolus data if carbs_data was empty
+  if (glooko.carbs.length === 0 && glooko.bolus.length > 0) {
+    for (const b of glooko.bolus) {
+      if (b.carbsInput > 0) {
+        glooko.carbs.push({ ts: b.ts, carbs: b.carbsInput });
+      }
+    }
+  }
+
+  // Deduplicate and sort
+  cgmReadings.sort((a, b) => a.ts - b.ts);
+  // Remove exact dupes
+  if (cgmReadings.length > 1) {
+    const deduped = [cgmReadings[0]];
+    for (let i = 1; i < cgmReadings.length; i++) {
+      if (cgmReadings[i].ts !== cgmReadings[i-1].ts) deduped.push(cgmReadings[i]);
+    }
+    cgmReadings = deduped;
+  }
+
+  hasInsulinData = glooko.bolus.length > 0 || glooko.daily.length > 0;
+
+  return cgmReadings;
 }
 
 // ========== ANALYTICS ==========
@@ -527,6 +803,126 @@ function computeStats(readings) {
   return { avg, a1c, sd, cv, ranges, hourly, bestDay, worstDay, n, firstTs, lastTs };
 }
 
+// ========== INSULIN ANALYTICS ==========
+function computeInsulinStats(readings) {
+  const result = {};
+
+  // Daily averages from insulin_data
+  if (glooko.daily.length > 0) {
+    const totalBolus = glooko.daily.reduce((s, d) => s + d.totalBolus, 0);
+    const totalBasal = glooko.daily.reduce((s, d) => s + d.totalBasal, 0);
+    const totalInsulin = glooko.daily.reduce((s, d) => s + d.totalInsulin, 0);
+    const days = glooko.daily.length;
+    result.avgDailyInsulin = totalInsulin / days;
+    result.avgDailyBolus = totalBolus / days;
+    result.avgDailyBasal = totalBasal / days;
+    result.bolusPct = (totalBolus / totalInsulin) * 100;
+    result.basalPct = (totalBasal / totalInsulin) * 100;
+    result.days = days;
+  }
+
+  // Bolus timing analysis
+  if (glooko.bolus.length > 0) {
+    const hourCounts = Array.from({ length: 24 }, () => 0);
+    glooko.bolus.forEach(b => { hourCounts[new Date(b.ts).getHours()]++; });
+    result.bolusHourCounts = hourCounts;
+    result.totalBoluses = glooko.bolus.length;
+
+    // Average bolus size
+    const totalUnits = glooko.bolus.reduce((s, b) => s + b.insulinDelivered, 0);
+    result.avgBolusSize = totalUnits / glooko.bolus.length;
+
+    // Meal vs correction boluses
+    const mealBoluses = glooko.bolus.filter(b => b.carbsInput > 0);
+    const correctionBoluses = glooko.bolus.filter(b => b.carbsInput === 0 && b.insulinDelivered > 0);
+    result.mealBoluses = mealBoluses.length;
+    result.correctionBoluses = correctionBoluses.length;
+
+    // Average carb ratio
+    const ratios = glooko.bolus.filter(b => b.carbsRatio > 0).map(b => b.carbsRatio);
+    result.avgCarbRatio = ratios.length > 0 ? ratios.reduce((s, r) => s + r, 0) / ratios.length : 0;
+  }
+
+  // Insulin effectiveness analysis: BG change after bolus
+  if (glooko.bolus.length > 0 && readings.length > 100) {
+    const mealBoluses = glooko.bolus.filter(b => b.carbsInput > 0);
+    const correctionBoluses = glooko.bolus.filter(b => b.carbsInput === 0 && b.insulinDelivered > 0);
+
+    // For each bolus, find BG at time, +1hr, +2hr
+    function findBGAt(targetTs) {
+      // Binary search for nearest within 10 min
+      let lo = 0, hi = readings.length - 1;
+      while (lo < hi) {
+        const mid = (lo + hi) >> 1;
+        if (readings[mid].ts < targetTs) lo = mid + 1;
+        else hi = mid;
+      }
+      let best = lo;
+      if (lo > 0 && Math.abs(readings[lo - 1].ts - targetTs) < Math.abs(readings[lo].ts - targetTs)) best = lo - 1;
+      if (Math.abs(readings[best].ts - targetTs) < 10 * 60 * 1000) return readings[best].bg;
+      return null;
+    }
+
+    // Correction bolus effectiveness
+    const correctionChanges = [];
+    for (const b of correctionBoluses) {
+      const bgAt = b.bgInput || findBGAt(b.ts);
+      const bg2h = findBGAt(b.ts + 2 * 3600000);
+      if (bgAt && bg2h && b.insulinDelivered > 0) {
+        correctionChanges.push({
+          change: bg2h - bgAt,
+          perUnit: (bg2h - bgAt) / b.insulinDelivered,
+          units: b.insulinDelivered
+        });
+      }
+    }
+    if (correctionChanges.length > 0) {
+      result.correctionAvgChange = correctionChanges.reduce((s, c) => s + c.change, 0) / correctionChanges.length;
+      result.correctionAvgPerUnit = correctionChanges.reduce((s, c) => s + c.perUnit, 0) / correctionChanges.length;
+      result.correctionCount = correctionChanges.length;
+    }
+
+    // Meal bolus effectiveness (post-meal spike)
+    const mealSpikes = [];
+    for (const b of mealBoluses) {
+      const bgAt = b.bgInput || findBGAt(b.ts);
+      const bg1h = findBGAt(b.ts + 3600000);
+      const bg2h = findBGAt(b.ts + 2 * 3600000);
+      if (bgAt && bg1h) {
+        mealSpikes.push({
+          spike1h: bg1h - bgAt,
+          spike2h: bg2h !== null ? bg2h - bgAt : null,
+          carbs: b.carbsInput,
+          units: b.insulinDelivered,
+          bgStart: bgAt
+        });
+      }
+    }
+    if (mealSpikes.length > 0) {
+      result.mealAvgSpike1h = mealSpikes.reduce((s, m) => s + m.spike1h, 0) / mealSpikes.length;
+      const with2h = mealSpikes.filter(m => m.spike2h !== null);
+      result.mealAvgSpike2h = with2h.length > 0 ? with2h.reduce((s, m) => s + m.spike2h, 0) / with2h.length : null;
+      result.mealCount = mealSpikes.length;
+
+      // Carb ratio effectiveness: group by carb buckets
+      const carbBuckets = {};
+      for (const m of mealSpikes) {
+        if (m.carbs > 0 && m.spike2h !== null) {
+          const bucket = Math.round(m.carbs / 10) * 10;
+          if (!carbBuckets[bucket]) carbBuckets[bucket] = [];
+          carbBuckets[bucket].push(m.spike2h);
+        }
+      }
+      result.carbEffectiveness = {};
+      for (const [bucket, changes] of Object.entries(carbBuckets)) {
+        result.carbEffectiveness[bucket] = changes.reduce((s, v) => s + v, 0) / changes.length;
+      }
+    }
+  }
+
+  return result;
+}
+
 // ========== FILTER BY TIME RANGE ==========
 function filterReadings(readings, rangeDays) {
   if (rangeDays === 'all' || !readings.length) return readings;
@@ -534,6 +930,14 @@ function filterReadings(readings, rangeDays) {
   const maxTs = readings[readings.length - 1].ts;
   const cutoff = maxTs - days * 86400000;
   return readings.filter(r => r.ts >= cutoff);
+}
+
+function filterByTimeRange(arr, rangeDays, readings) {
+  if (rangeDays === 'all' || !readings.length) return arr;
+  const days = parseInt(rangeDays);
+  const maxTs = readings[readings.length - 1].ts;
+  const cutoff = maxTs - days * 86400000;
+  return arr.filter(item => item.ts >= cutoff);
 }
 
 // ========== CHART DRAWING ==========
@@ -571,8 +975,11 @@ function drawBGChart(canvas, readings) {
   function xFn(ts) { return pad.l + ((ts - minTs) / tsRange) * cw; }
   function yFn(bg) { return pad.t + ch - ((Math.min(Math.max(bg, minBG), maxBG) - minBG) / (maxBG - minBG)) * ch; }
 
-  // Store chart meta for hover interactions
-  bgChartMeta = { pad, cw, ch, minBG, maxBG, minTs, maxTs, tsRange, xFn, yFn, W, H: H + 40, readings, dpr };
+  // Get filtered insulin data for this range
+  const filteredBolus = filterByTimeRange(glooko.bolus, currentRange, allReadings);
+  const filteredCarbs = glooko.carbs.length > 0 ? filterByTimeRange(glooko.carbs, currentRange, allReadings) : [];
+
+  bgChartMeta = { pad, cw, ch, minBG, maxBG, minTs, maxTs, tsRange, xFn, yFn, W, H: H + 40, readings, dpr, filteredBolus, filteredCarbs };
 
   // Range bands
   const bands = [
@@ -617,19 +1024,12 @@ function drawBGChart(canvas, readings) {
   // X axis labels
   const dayMs = 86400000;
   const totalDays = (maxTs - minTs) / dayMs;
-  let step;
-  if (totalDays <= 1) step = 0; // hours
-  else if (totalDays <= 3) step = 0.5;
-  else if (totalDays <= 14) step = 1;
-  else if (totalDays <= 30) step = 3;
-  else step = 7;
 
   ctx.fillStyle = '#8899b0';
   ctx.font = '10px Inter';
   ctx.textAlign = 'center';
 
   if (totalDays <= 1.5) {
-    // Show hourly labels
     for (let h = 0; h <= 24; h += 3) {
       const t = minTs + (h / 24) * (maxTs - minTs);
       if (t > maxTs) break;
@@ -641,6 +1041,11 @@ function drawBGChart(canvas, readings) {
   } else {
     const startDay = new Date(minTs);
     startDay.setHours(0, 0, 0, 0);
+    let step;
+    if (totalDays <= 3) step = 1;
+    else if (totalDays <= 14) step = 1;
+    else if (totalDays <= 30) step = 3;
+    else step = 7;
     const actualStep = Math.max(1, Math.round(step));
     for (let t = startDay.getTime(); t <= maxTs; t += dayMs * actualStep) {
       const d = new Date(t);
@@ -675,6 +1080,77 @@ function drawBGChart(canvas, readings) {
     ctx.stroke();
   }
   ctx.globalAlpha = 1;
+
+  // ========== INSULIN OVERLAY ==========
+  if (hasInsulinData && filteredBolus.length > 0) {
+    const maxInsulin = Math.max(...filteredBolus.map(b => b.insulinDelivered), 1);
+
+    for (const b of filteredBolus) {
+      if (b.ts < minTs || b.ts > maxTs) continue;
+      const x = xFn(b.ts);
+      // Place triangle at the BG level if available, otherwise at top
+      const bgY = b.bgInput > 0 ? yFn(b.bgInput) : yFn(200);
+      const triSize = 6 + (b.insulinDelivered / maxInsulin) * 14; // 6-20px
+
+      // Downward triangle (insulin)
+      ctx.beginPath();
+      ctx.moveTo(x, bgY + triSize + 4);
+      ctx.lineTo(x - triSize * 0.6, bgY + 4);
+      ctx.lineTo(x + triSize * 0.6, bgY + 4);
+      ctx.closePath();
+      ctx.fillStyle = 'rgba(0,229,255,0.75)';
+      ctx.fill();
+      ctx.strokeStyle = 'rgba(0,229,255,0.9)';
+      ctx.lineWidth = 1;
+      ctx.stroke();
+    }
+  }
+
+  // Carb overlay (upward triangles)
+  if (filteredCarbs.length > 0) {
+    const maxCarbs = Math.max(...filteredCarbs.map(c => c.carbs), 1);
+    for (const c of filteredCarbs) {
+      if (c.ts < minTs || c.ts > maxTs) continue;
+      const x = xFn(c.ts);
+      // Find nearest BG
+      let nearBG = 150;
+      let lo = 0, hi = readings.length - 1;
+      while (lo < hi) { const mid = (lo + hi) >> 1; if (readings[mid].ts < c.ts) lo = mid + 1; else hi = mid; }
+      if (lo > 0 && Math.abs(readings[lo - 1].ts - c.ts) < Math.abs(readings[lo].ts - c.ts)) lo--;
+      if (Math.abs(readings[lo].ts - c.ts) < 30 * 60000) nearBG = readings[lo].bg;
+      const bgY = yFn(nearBG);
+      const triSize = 5 + (c.carbs / maxCarbs) * 12;
+
+      // Upward triangle (carbs)
+      ctx.beginPath();
+      ctx.moveTo(x, bgY - triSize - 4);
+      ctx.lineTo(x - triSize * 0.6, bgY - 4);
+      ctx.lineTo(x + triSize * 0.6, bgY - 4);
+      ctx.closePath();
+      ctx.fillStyle = 'rgba(255,152,0,0.7)';
+      ctx.fill();
+      ctx.strokeStyle = 'rgba(255,152,0,0.9)';
+      ctx.lineWidth = 1;
+      ctx.stroke();
+    }
+  }
+
+  // Update legend
+  updateBGChartLegend();
+}
+
+function updateBGChartLegend() {
+  const legend = document.getElementById('bg-chart-legend');
+  let html = '<div class="chart-legend-item"><div class="chart-legend-swatch" style="background:#4ade80"></div>In Range</div>';
+  html += '<div class="chart-legend-item"><div class="chart-legend-swatch" style="background:#ffaa33"></div>High</div>';
+  html += '<div class="chart-legend-item"><div class="chart-legend-swatch" style="background:#ff6b6b"></div>Low</div>';
+  if (hasInsulinData) {
+    html += '<div class="chart-legend-item"><div class="chart-legend-swatch" style="background:var(--insulin-color);clip-path:polygon(50% 100%,0 0,100% 0)"></div>Bolus</div>';
+    if (glooko.carbs.length > 0) {
+      html += '<div class="chart-legend-item"><div class="chart-legend-swatch" style="background:var(--carb-color);clip-path:polygon(50% 0,0 100%,100% 100%)"></div>Carbs</div>';
+    }
+  }
+  legend.innerHTML = html;
 }
 
 // ========== BG CHART HOVER / TOUCH ==========
@@ -688,7 +1164,7 @@ function setupBGChartInteraction() {
     const rect = canvas.getBoundingClientRect();
     const mx = clientX - rect.left;
     const my = clientY - rect.top;
-    const { pad, cw, ch, minTs, tsRange, xFn, yFn, W, H, readings, minBG, maxBG } = bgChartMeta;
+    const { pad, cw, ch, minTs, tsRange, xFn, yFn, W, H, readings, minBG, maxBG, filteredBolus, filteredCarbs } = bgChartMeta;
 
     if (mx < pad.l || mx > pad.l + cw || my < pad.t || my > pad.t + ch) {
       tooltip.classList.remove('visible');
@@ -696,7 +1172,6 @@ function setupBGChartInteraction() {
       return;
     }
 
-    // Find timestamp from x position
     const hoverTs = minTs + ((mx - pad.l) / cw) * tsRange;
 
     // Binary search for nearest reading
@@ -706,7 +1181,6 @@ function setupBGChartInteraction() {
       if (readings[mid].ts < hoverTs) lo = mid + 1;
       else hi = mid;
     }
-    // Check neighbors
     let nearest = lo;
     if (lo > 0 && Math.abs(readings[lo - 1].ts - hoverTs) < Math.abs(readings[lo].ts - hoverTs)) nearest = lo - 1;
 
@@ -714,7 +1188,6 @@ function setupBGChartInteraction() {
     const px = xFn(r.ts);
     const py = yFn(r.bg);
 
-    // Color based on range
     let color;
     if (r.bg < 54) color = '#cc3333';
     else if (r.bg < 70) color = '#ff6b6b';
@@ -729,9 +1202,33 @@ function setupBGChartInteraction() {
     tooltip.querySelector('.tt-value').textContent = Math.round(r.bg) + ' mg/dL';
     tooltip.querySelector('.tt-value').style.color = color;
     tooltip.querySelector('.tt-time').textContent = dateStr + ' · ' + timeStr;
+
+    // Check for nearby bolus
+    const ttInsulin = tooltip.querySelector('.tt-insulin');
+    const ttCarbs = tooltip.querySelector('.tt-carbs');
+    ttInsulin.textContent = '';
+    ttCarbs.textContent = '';
+
+    if (filteredBolus && filteredBolus.length > 0) {
+      const nearBolus = filteredBolus.find(b => Math.abs(b.ts - r.ts) < 15 * 60000);
+      if (nearBolus) {
+        let insulinText = `💉 Bolus: ${nearBolus.insulinDelivered.toFixed(2)}u`;
+        if (nearBolus.bgInput > 0) insulinText += ` | BG: ${Math.round(nearBolus.bgInput)}`;
+        if (nearBolus.carbsInput > 0) insulinText += ` | Carbs: ${nearBolus.carbsInput}g`;
+        if (nearBolus.carbsRatio > 0) insulinText += ` | Ratio: 1:${Math.round(nearBolus.carbsRatio)}`;
+        ttInsulin.textContent = insulinText;
+      }
+    }
+
+    if (filteredCarbs && filteredCarbs.length > 0) {
+      const nearCarb = filteredCarbs.find(c => Math.abs(c.ts - r.ts) < 15 * 60000);
+      if (nearCarb && !ttInsulin.textContent.includes('Carbs:')) {
+        ttCarbs.textContent = `🍽️ Carbs: ${nearCarb.carbs}g`;
+      }
+    }
+
     tooltip.classList.add('visible');
 
-    // Position tooltip
     const ttW = tooltip.offsetWidth;
     const ttH = tooltip.offsetHeight;
     let ttX = px + 14;
@@ -742,7 +1239,6 @@ function setupBGChartInteraction() {
     tooltip.style.left = ttX + 'px';
     tooltip.style.top = ttY + 'px';
 
-    // Draw crosshair overlay
     redrawBGOverlay({ px, py, color, bg: r.bg });
   }
 
@@ -769,7 +1265,6 @@ function setupBGChartInteraction() {
     ctx.clearRect(0, 0, W, H);
     if (!pt) return;
 
-    // Vertical crosshair
     ctx.strokeStyle = 'rgba(255,255,255,0.15)';
     ctx.lineWidth = 1;
     ctx.setLineDash([4, 3]);
@@ -779,14 +1274,12 @@ function setupBGChartInteraction() {
     ctx.stroke();
     ctx.setLineDash([]);
 
-    // Horizontal crosshair
     ctx.strokeStyle = 'rgba(255,255,255,0.08)';
     ctx.beginPath();
     ctx.moveTo(pad.l, pt.py);
     ctx.lineTo(pad.l + bgChartMeta.cw, pt.py);
     ctx.stroke();
 
-    // Dot
     ctx.beginPath();
     ctx.arc(pt.px, pt.py, 6, 0, Math.PI * 2);
     ctx.fillStyle = pt.color;
@@ -807,7 +1300,6 @@ function setupBGChartInteraction() {
     tooltip.classList.remove('visible');
     redrawBGOverlay(null);
   });
-  // Touch support
   canvas.addEventListener('touchstart', e => {
     e.preventDefault();
     const t = e.touches[0];
@@ -957,13 +1449,12 @@ function computePatterns(readings) {
   const lowByHour = Array.from({ length: 24 }, () => 0);
   const totalByHour = Array.from({ length: 24 }, () => 0);
 
-  // Heatmap: 7 days x 24 hours
   const heatmap = Array.from({ length: 7 }, () => Array.from({ length: 24 }, () => ({ sum: 0, count: 0, highs: 0, lows: 0 })));
 
   readings.forEach(r => {
     const d = new Date(r.ts);
     const h = d.getHours();
-    const dow = d.getDay(); // 0=Sun
+    const dow = d.getDay();
     totalByHour[h]++;
     if (r.bg > 180) highByHour[h]++;
     if (r.bg < 70) lowByHour[h]++;
@@ -973,11 +1464,9 @@ function computePatterns(readings) {
     if (r.bg < 70) heatmap[dow][h].lows++;
   });
 
-  // Cluster analysis: find top hours for highs/lows
   function findPeakHours(byHour, minThreshold) {
     const total = byHour.reduce((s, v) => s + v, 0);
     if (total < minThreshold) return { hours: [], counts: byHour };
-    // Find hours that are significantly above average
     const avg = total / 24;
     const peaks = [];
     for (let h = 0; h < 24; h++) {
@@ -1006,7 +1495,6 @@ function formatHour(h) {
 }
 
 function renderPatterns(patterns) {
-  // Highs
   const highTimesEl = document.getElementById('high-times');
   const highDetailEl = document.getElementById('high-detail');
   const highCountsEl = document.getElementById('high-counts');
@@ -1026,7 +1514,6 @@ function renderPatterns(patterns) {
     highCountsEl.innerHTML = '';
   }
 
-  // Lows
   const lowTimesEl = document.getElementById('low-times');
   const lowDetailEl = document.getElementById('low-detail');
   const lowCountsEl = document.getElementById('low-counts');
@@ -1069,7 +1556,6 @@ function drawHeatmap(canvas, heatmap) {
   const cellW = gridW / 24;
   const cellH = gridH / 7;
 
-  // Find global min/max avg
   let gMin = 999, gMax = 0;
   for (let dow = 0; dow < 7; dow++) {
     for (let h = 0; h < 24; h++) {
@@ -1085,7 +1571,6 @@ function drawHeatmap(canvas, heatmap) {
 
   heatmapMeta = { pad, cellW, cellH, heatmap, W, H, dayLabels, gMin, gMax, dpr };
 
-  // Color function: low=blue/cyan, in-range=green, high=orange/red
   function bgColor(avg) {
     if (avg <= 70) return `rgba(107,156,255,0.7)`;
     if (avg <= 100) {
@@ -1108,7 +1593,6 @@ function drawHeatmap(canvas, heatmap) {
 
   ctx.clearRect(0, 0, W, H);
 
-  // Hour labels at top
   ctx.fillStyle = '#8899b0';
   ctx.font = '500 9px Inter';
   ctx.textAlign = 'center';
@@ -1117,7 +1601,6 @@ function drawHeatmap(canvas, heatmap) {
     ctx.fillText(label, pad.l + h * cellW + cellW / 2, pad.t - 8);
   }
 
-  // Day labels
   ctx.textAlign = 'right';
   ctx.font = '600 10px Inter';
   for (let dow = 0; dow < 7; dow++) {
@@ -1125,7 +1608,6 @@ function drawHeatmap(canvas, heatmap) {
     ctx.fillText(dayLabels[dow], pad.l - 8, pad.t + dow * cellH + cellH / 2 + 4);
   }
 
-  // Draw cells
   for (let dow = 0; dow < 7; dow++) {
     for (let h = 0; h < 24; h++) {
       const cell = heatmap[dow][h];
@@ -1138,15 +1620,14 @@ function drawHeatmap(canvas, heatmap) {
         ctx.fillStyle = bgColor(avg);
       }
       ctx.beginPath();
-      const r = 3;
+      const rr = 3;
       const w = cellW - 1.5;
       const hh = cellH - 1.5;
-      ctx.roundRect(cx + 0.75, cy + 0.75, w, hh, r);
+      ctx.roundRect(cx + 0.75, cy + 0.75, w, hh, rr);
       ctx.fill();
     }
   }
 
-  // Legend bar at bottom
   const legX = pad.l;
   const legY = H - 18;
   const legW = gridW * 0.6;
@@ -1223,6 +1704,205 @@ function setupHeatmapInteraction() {
   canvas.addEventListener('touchend', () => { setTimeout(() => tooltip.classList.remove('visible'), 2000); });
 }
 
+// ========== INSULIN CHARTS ==========
+function drawBolusBasalChart(canvas, insulinStats) {
+  const ctx = canvas.getContext('2d');
+  const dpr = window.devicePixelRatio || 1;
+  const size = Math.min(220, canvas.parentElement.getBoundingClientRect().width - 56);
+  canvas.width = size * dpr;
+  canvas.height = size * dpr;
+  canvas.style.width = size + 'px';
+  canvas.style.height = size + 'px';
+  ctx.scale(dpr, dpr);
+
+  const cx = size / 2, cy = size / 2, r = size * 0.35, lineW = size * 0.12;
+  const bolusPct = insulinStats.bolusPct || 50;
+  const basalPct = insulinStats.basalPct || 50;
+
+  // Basal arc
+  const basalSweep = (basalPct / 100) * Math.PI * 2;
+  ctx.beginPath();
+  ctx.arc(cx, cy, r, -Math.PI / 2, -Math.PI / 2 + basalSweep);
+  ctx.strokeStyle = '#7b2ff7';
+  ctx.lineWidth = lineW;
+  ctx.lineCap = 'butt';
+  ctx.stroke();
+
+  // Bolus arc
+  ctx.beginPath();
+  ctx.arc(cx, cy, r, -Math.PI / 2 + basalSweep, -Math.PI / 2 + Math.PI * 2);
+  ctx.strokeStyle = '#00e5ff';
+  ctx.lineWidth = lineW;
+  ctx.lineCap = 'butt';
+  ctx.stroke();
+
+  // Center text
+  ctx.fillStyle = '#e8edf5';
+  ctx.font = `700 ${size * 0.1}px Inter`;
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText(insulinStats.avgDailyInsulin ? insulinStats.avgDailyInsulin.toFixed(1) + 'u' : '—', cx, cy - size * 0.04);
+  ctx.fillStyle = '#8899b0';
+  ctx.font = `500 ${size * 0.045}px Inter`;
+  ctx.fillText('avg daily', cx, cy + size * 0.06);
+
+  // Legend below
+  const legendY = cy + r + lineW / 2 + 16;
+  ctx.font = `600 ${size * 0.05}px Inter`;
+  ctx.textAlign = 'center';
+
+  ctx.fillStyle = '#00e5ff';
+  ctx.fillText(`● Bolus: ${Math.round(bolusPct)}% (${(insulinStats.avgDailyBolus || 0).toFixed(1)}u)`, cx, legendY);
+  ctx.fillStyle = '#7b2ff7';
+  ctx.fillText(`● Basal: ${Math.round(basalPct)}% (${(insulinStats.avgDailyBasal || 0).toFixed(1)}u)`, cx, legendY + size * 0.07);
+}
+
+function drawBolusTimingChart(canvas, hourCounts) {
+  if (!hourCounts) return;
+  const ctx = canvas.getContext('2d');
+  const dpr = window.devicePixelRatio || 1;
+  const rect = canvas.parentElement.getBoundingClientRect();
+  const W = rect.width - 56;
+  const H = 190;
+  canvas.width = (W + 56) * dpr;
+  canvas.height = (H + 40) * dpr;
+  canvas.style.width = (W + 56) + 'px';
+  canvas.style.height = (H + 40) + 'px';
+  ctx.scale(dpr, dpr);
+
+  const pad = { l: 40, r: 8, t: 10, b: 30 };
+  const cw = W + 56 - pad.l - pad.r;
+  const ch = H + 40 - pad.t - pad.b;
+  const maxCount = Math.max(...hourCounts, 1);
+  const barW = cw / 24 - 2;
+
+  // Grid lines
+  ctx.strokeStyle = 'rgba(255,255,255,0.05)';
+  ctx.lineWidth = 1;
+  for (let i = 1; i <= 4; i++) {
+    const y = pad.t + ch - (i / 4) * ch;
+    ctx.beginPath();
+    ctx.moveTo(pad.l, y);
+    ctx.lineTo(pad.l + cw, y);
+    ctx.stroke();
+  }
+
+  // Bars
+  for (let h = 0; h < 24; h++) {
+    const x = pad.l + (h / 24) * cw + 1;
+    const barH = (hourCounts[h] / maxCount) * ch;
+    const y = pad.t + ch - barH;
+
+    const grad = ctx.createLinearGradient(0, y, 0, pad.t + ch);
+    grad.addColorStop(0, 'rgba(0,229,255,0.8)');
+    grad.addColorStop(1, 'rgba(0,229,255,0.2)');
+    ctx.fillStyle = grad;
+    ctx.beginPath();
+    ctx.roundRect(x, y, barW, barH, [3, 3, 0, 0]);
+    ctx.fill();
+  }
+
+  // X labels
+  ctx.fillStyle = '#8899b0';
+  ctx.font = '9px Inter';
+  ctx.textAlign = 'center';
+  for (let h = 0; h < 24; h += 3) {
+    const label = h === 0 ? '12a' : h === 12 ? '12p' : h < 12 ? h + 'a' : (h - 12) + 'p';
+    ctx.fillText(label, pad.l + (h / 24) * cw + barW / 2, pad.t + ch + 16);
+  }
+
+  // Y label
+  ctx.fillStyle = '#8899b0';
+  ctx.font = '9px Inter';
+  ctx.textAlign = 'right';
+  ctx.fillText(maxCount, pad.l - 6, pad.t + 8);
+  ctx.fillText('0', pad.l - 6, pad.t + ch + 3);
+}
+
+function renderInsulinSection(readings, insulinStats) {
+  const section = document.getElementById('insulin-section');
+  if (!hasInsulinData) {
+    section.classList.remove('visible');
+    return;
+  }
+  section.classList.add('visible');
+
+  // Stats cards
+  const grid = document.getElementById('insulin-stats-grid');
+  let cardsHTML = '';
+
+  if (insulinStats.avgDailyInsulin) {
+    cardsHTML += `<div class="insulin-stat-card"><div class="stat-value">${insulinStats.avgDailyInsulin.toFixed(1)}u</div><div class="stat-label">Avg Daily Insulin</div><div class="stat-sub">${insulinStats.days} days</div></div>`;
+  }
+  if (insulinStats.totalBoluses) {
+    cardsHTML += `<div class="insulin-stat-card"><div class="stat-value">${insulinStats.totalBoluses}</div><div class="stat-label">Total Boluses</div><div class="stat-sub">${insulinStats.avgBolusSize ? insulinStats.avgBolusSize.toFixed(1) + 'u avg' : ''}</div></div>`;
+  }
+  if (insulinStats.mealBoluses !== undefined) {
+    cardsHTML += `<div class="insulin-stat-card"><div class="stat-value">${insulinStats.mealBoluses}</div><div class="stat-label">Meal Boluses</div><div class="stat-sub">${insulinStats.correctionBoluses} corrections</div></div>`;
+  }
+  if (insulinStats.avgCarbRatio) {
+    cardsHTML += `<div class="insulin-stat-card"><div class="stat-value">1:${Math.round(insulinStats.avgCarbRatio)}</div><div class="stat-label">Avg Carb Ratio</div><div class="stat-sub">grams per unit</div></div>`;
+  }
+  grid.innerHTML = cardsHTML;
+
+  // Draw charts
+  requestAnimationFrame(() => {
+    if (insulinStats.avgDailyInsulin) {
+      drawBolusBasalChart(document.getElementById('chart-bolus-basal'), insulinStats);
+    }
+    if (insulinStats.bolusHourCounts) {
+      drawBolusTimingChart(document.getElementById('chart-bolus-timing'), insulinStats.bolusHourCounts);
+    }
+  });
+
+  // Analysis cards
+  const analysisGrid = document.getElementById('insulin-analysis-grid');
+  let analysisHTML = '';
+
+  if (insulinStats.correctionAvgPerUnit !== undefined) {
+    const val = insulinStats.correctionAvgPerUnit;
+    const isNeg = val < 0;
+    analysisHTML += `<div class="insulin-analysis-card">
+      <h4>🎯 Correction Effectiveness</h4>
+      <div class="analysis-value ${isNeg ? 'negative' : 'positive'}">${val > 0 ? '+' : ''}${Math.round(val)} mg/dL per unit</div>
+      <div class="analysis-detail">
+        Avg BG change 2 hours after a correction bolus: <strong>${insulinStats.correctionAvgChange > 0 ? '+' : ''}${Math.round(insulinStats.correctionAvgChange)} mg/dL</strong><br>
+        Based on ${insulinStats.correctionCount} correction boluses
+      </div>
+    </div>`;
+  }
+
+  if (insulinStats.mealAvgSpike1h !== undefined) {
+    const spike = insulinStats.mealAvgSpike1h;
+    analysisHTML += `<div class="insulin-analysis-card">
+      <h4>🍽️ Post-Meal Spike</h4>
+      <div class="analysis-value ${spike > 30 ? 'positive' : spike > 0 ? 'neutral' : 'negative'}">+${Math.round(Math.abs(spike))} mg/dL</div>
+      <div class="analysis-detail">
+        Average BG rise 1 hour after a meal bolus${insulinStats.mealAvgSpike2h !== null ? `<br>At 2 hours: <strong>${insulinStats.mealAvgSpike2h > 0 ? '+' : ''}${Math.round(insulinStats.mealAvgSpike2h)} mg/dL</strong>` : ''}<br>
+        Based on ${insulinStats.mealCount} meal boluses
+      </div>
+    </div>`;
+  }
+
+  // Carb ratio effectiveness
+  if (insulinStats.carbEffectiveness && Object.keys(insulinStats.carbEffectiveness).length > 0) {
+    let carbHTML = '<div class="insulin-analysis-card" style="grid-column:1/-1"><h4>📊 Carb Ratio Effectiveness</h4><div class="analysis-detail" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px">';
+    const entries = Object.entries(insulinStats.carbEffectiveness).sort((a, b) => parseInt(a[0]) - parseInt(b[0]));
+    for (const [bucket, avgChange] of entries) {
+      const isUp = avgChange > 0;
+      carbHTML += `<div style="background:rgba(255,255,255,0.03);padding:12px;border-radius:10px;text-align:center">
+        <div style="font-size:.78rem;color:var(--text-dim)">~${bucket}g carbs</div>
+        <div style="font-size:1.2rem;font-weight:800;color:${isUp ? '#ffaa33' : '#4ade80'}">${isUp ? '+' : ''}${Math.round(avgChange)} mg/dL</div>
+        <div style="font-size:.72rem;color:var(--text-dim)">BG change at 2hr</div>
+      </div>`;
+    }
+    carbHTML += '</div></div>';
+    analysisHTML += carbHTML;
+  }
+
+  analysisGrid.innerHTML = analysisHTML;
+}
+
 // ========== RENDER DASHBOARD ==========
 function renderDashboard(readings, stats) {
   document.getElementById('stat-avg').textContent = Math.round(stats.avg);
@@ -1252,9 +1932,16 @@ function renderDashboard(readings, stats) {
     document.getElementById('bw-worst-stat').textContent = `TIR: ${Math.round(wd.tir)}% · Avg: ${Math.round(wd.avg)} mg/dL · ${wd.count} readings`;
   }
 
-  // Pattern Analysis
   const patterns = computePatterns(readings);
   renderPatterns(patterns);
+
+  // Render insulin section if available
+  if (hasInsulinData) {
+    const insulinStats = computeInsulinStats(readings);
+    renderInsulinSection(readings, insulinStats);
+  } else {
+    document.getElementById('insulin-section').classList.remove('visible');
+  }
 
   document.getElementById('dashboard').classList.add('visible');
   document.getElementById('cta-section').style.display = 'block';
@@ -1277,14 +1964,12 @@ function drawAllCharts(readings, stats) {
 // ========== TIME RANGE HANDLING ==========
 function applyTimeRange(rangeDays) {
   currentRange = rangeDays;
-  // Update active button
   document.querySelectorAll('.time-range-btn').forEach(btn => {
     btn.classList.toggle('active', btn.dataset.range === String(rangeDays));
   });
 
   const filtered = filterReadings(allReadings, rangeDays);
   if (filtered.length < 2) {
-    // Not enough data — show message but keep dashboard
     drawBGChart(document.getElementById('chart-bg'), []);
     return;
   }
@@ -1326,6 +2011,10 @@ document.getElementById('paste-submit').addEventListener('click', () => {
   uploadZone.querySelector('.upload-icon').textContent = '⏳';
   uploadZone.querySelector('h3').textContent = 'Processing your data...';
   try {
+    // Reset insulin data for plain text
+    glooko = { bolus: [], basal: [], daily: [], carbs: [], alarms: [], bgManual: [] };
+    hasInsulinData = false;
+
     const readings = parseCSV(text);
     if (readings.length < 5) {
       showError('Could not find enough glucose readings. Try format: "2024-01-15 08:30, 142" (one per line) or paste the full CSV text.');
@@ -1347,17 +2036,17 @@ document.getElementById('paste-submit').addEventListener('click', () => {
   }
 });
 
-function processFile(file) {
+async function processFile(file) {
   uploadZone.classList.add('processing');
   uploadZone.querySelector('.upload-icon').textContent = '⏳';
   uploadZone.querySelector('h3').textContent = 'Processing your data...';
 
-  const reader = new FileReader();
-  reader.onload = e => {
-    try {
-      const readings = parseCSV(e.target.result);
+  try {
+    if (file.name.toLowerCase().endsWith('.zip')) {
+      // ZIP file — Glooko export
+      const readings = await processZipFile(file);
       if (readings.length < 10) {
-        showError('Could not find enough glucose readings in this file. Please check the format.');
+        showError('Could not find enough glucose readings in the ZIP file. Make sure it contains CGM data CSVs.');
         return;
       }
       allReadings = readings;
@@ -1370,14 +2059,46 @@ function processFile(file) {
 
       uploadZone.classList.remove('processing');
       uploadZone.querySelector('.upload-icon').textContent = '✅';
-      uploadZone.querySelector('h3').textContent = 'Data loaded! Drop another file to replace.';
-      uploadZone.querySelector('p').textContent = file.name + ' — ' + readings.length.toLocaleString() + ' readings';
-    } catch (err) {
-      showError('Error processing file: ' + err.message);
+      uploadZone.querySelector('h3').textContent = 'Glooko data loaded! Drop another file to replace.';
+      let desc = file.name + ' — ' + readings.length.toLocaleString() + ' CGM readings';
+      if (hasInsulinData) desc += ' + ' + glooko.bolus.length + ' bolus events';
+      uploadZone.querySelector('p').textContent = desc;
+    } else {
+      // Plain CSV file
+      const reader = new FileReader();
+      reader.onload = e => {
+        try {
+          // Reset insulin data for plain CSV
+          glooko = { bolus: [], basal: [], daily: [], carbs: [], alarms: [], bgManual: [] };
+          hasInsulinData = false;
+
+          const readings = parseCSV(e.target.result);
+          if (readings.length < 10) {
+            showError('Could not find enough glucose readings in this file. Please check the format.');
+            return;
+          }
+          allReadings = readings;
+          currentRange = 'all';
+          document.querySelectorAll('.time-range-btn').forEach(btn => btn.classList.toggle('active', btn.dataset.range === 'all'));
+          const stats = computeStats(readings);
+          allStats = stats;
+          renderDashboard(readings, stats);
+          drawAllCharts(readings, stats);
+
+          uploadZone.classList.remove('processing');
+          uploadZone.querySelector('.upload-icon').textContent = '✅';
+          uploadZone.querySelector('h3').textContent = 'Data loaded! Drop another file to replace.';
+          uploadZone.querySelector('p').textContent = file.name + ' — ' + readings.length.toLocaleString() + ' readings';
+        } catch (err) {
+          showError('Error processing file: ' + err.message);
+        }
+      };
+      reader.onerror = () => showError('Could not read file.');
+      reader.readAsText(file);
     }
-  };
-  reader.onerror = () => showError('Could not read file.');
-  reader.readAsText(file);
+  } catch (err) {
+    showError('Error processing file: ' + err.message);
+  }
 }
 
 function showError(msg) {
@@ -1406,6 +2127,10 @@ window.addEventListener('resize', () => {
       if (filtered.length >= 2) {
         const stats = computeStats(filtered);
         drawAllCharts(filtered, stats);
+        if (hasInsulinData) {
+          const insulinStats = computeInsulinStats(filtered);
+          renderInsulinSection(filtered, insulinStats);
+        }
       }
     }
   }, 300);

@@ -701,6 +701,101 @@ footer{padding:48px 0 32px;border-top:1px solid var(--glass-border)}
       <button id="paste-submit" style="margin-top:8px;padding:10px 24px;background:linear-gradient(135deg,var(--cyan),var(--purple));border:none;border-radius:10px;color:white;font-weight:600;cursor:pointer;font-size:.9rem">Analyze Pasted Data</button>
     </div>
   </div>
+
+  <!-- EXPORT GUIDES -->
+  <div style="max-width:700px;margin:32px auto 0">
+    <div style="text-align:center;margin-bottom:16px">
+      <span style="font-size:.85rem;font-weight:700;color:var(--text-dim)">Need help exporting? Pick your platform:</span>
+    </div>
+    <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-bottom:16px">
+      <button onclick="showGuide('glooko')" class="export-guide-tab" id="tab-glooko" style="padding:10px 20px;border-radius:50px;font-family:'Inter',sans-serif;font-size:.82rem;font-weight:600;cursor:pointer;transition:all .25s;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);color:var(--text-dim)">📱 Glooko</button>
+      <button onclick="showGuide('dexcom')" class="export-guide-tab" id="tab-dexcom" style="padding:10px 20px;border-radius:50px;font-family:'Inter',sans-serif;font-size:.82rem;font-weight:600;cursor:pointer;transition:all .25s;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);color:var(--text-dim)">🟢 Dexcom Clarity</button>
+      <button onclick="showGuide('libre')" class="export-guide-tab" id="tab-libre" style="padding:10px 20px;border-radius:50px;font-family:'Inter',sans-serif;font-size:.82rem;font-weight:600;cursor:pointer;transition:all .25s;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);color:var(--text-dim)">🔵 FreeStyle Libre</button>
+    </div>
+
+    <!-- Glooko Guide -->
+    <div id="guide-glooko" class="export-guide" style="display:none;background:var(--gradient-card);border:1px solid var(--glass-border);border-radius:var(--radius);padding:24px;animation:fadeUp .3s ease-out">
+      <h4 style="font-size:1rem;font-weight:700;margin-bottom:16px;display:flex;align-items:center;gap:8px">📱 Export from Glooko <span style="font-size:.72rem;padding:3px 10px;border-radius:50px;background:rgba(74,222,128,0.1);color:#4ade80;border:1px solid rgba(74,222,128,0.2);font-weight:700">Recommended — includes insulin + carb data!</span></h4>
+      <div style="display:flex;flex-direction:column;gap:14px">
+        <div style="display:flex;align-items:flex-start;gap:12px">
+          <span style="flex-shrink:0;width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,rgba(0,212,255,0.2),rgba(123,47,247,0.2));display:flex;align-items:center;justify-content:center;font-size:.8rem;font-weight:800;color:var(--cyan)">1</span>
+          <div><span style="font-weight:600;color:var(--text)">Open Glooko on your computer</span><br><span style="font-size:.85rem;color:var(--text-dim)">Go to <a href="https://my.glooko.com" target="_blank" style="color:var(--cyan);text-decoration:underline">my.glooko.com</a> and log in with your Glooko account</span></div>
+        </div>
+        <div style="display:flex;align-items:flex-start;gap:12px">
+          <span style="flex-shrink:0;width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,rgba(0,212,255,0.2),rgba(123,47,247,0.2));display:flex;align-items:center;justify-content:center;font-size:.8rem;font-weight:800;color:var(--cyan)">2</span>
+          <div><span style="font-weight:600;color:var(--text)">Click on your profile icon</span><br><span style="font-size:.85rem;color:var(--text-dim)">Top-right corner → then click <strong>"Export Data"</strong> or <strong>"Download"</strong></span></div>
+        </div>
+        <div style="display:flex;align-items:flex-start;gap:12px">
+          <span style="flex-shrink:0;width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,rgba(0,212,255,0.2),rgba(123,47,247,0.2));display:flex;align-items:center;justify-content:center;font-size:.8rem;font-weight:800;color:var(--cyan)">3</span>
+          <div><span style="font-weight:600;color:var(--text)">Pick your date range</span><br><span style="font-size:.85rem;color:var(--text-dim)">We recommend at least 14 days for the best insights (30-90 days is ideal)</span></div>
+        </div>
+        <div style="display:flex;align-items:flex-start;gap:12px">
+          <span style="flex-shrink:0;width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,rgba(0,212,255,0.2),rgba(123,47,247,0.2));display:flex;align-items:center;justify-content:center;font-size:.8rem;font-weight:800;color:var(--cyan)">4</span>
+          <div><span style="font-weight:600;color:var(--text)">Download the ZIP file</span><br><span style="font-size:.85rem;color:var(--text-dim)">It'll save as something like <code style="background:rgba(255,255,255,0.06);padding:2px 6px;border-radius:4px;font-size:.82rem">glooko_export.zip</code> — don't unzip it!</span></div>
+        </div>
+        <div style="display:flex;align-items:flex-start;gap:12px">
+          <span style="flex-shrink:0;width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,rgba(74,222,128,0.2),rgba(74,222,128,0.3));display:flex;align-items:center;justify-content:center;font-size:.8rem;font-weight:800;color:#4ade80">✓</span>
+          <div><span style="font-weight:600;color:#4ade80">Drop the ZIP file right here!</span><br><span style="font-size:.85rem;color:var(--text-dim)">We'll automatically extract your CGM readings, insulin doses, carbs, basal rates, and more</span></div>
+        </div>
+      </div>
+      <div style="margin-top:16px;padding:12px 16px;background:rgba(0,212,255,0.06);border:1px solid rgba(0,212,255,0.12);border-radius:10px;font-size:.82rem;color:var(--text-dim)">
+        💡 <strong style="color:var(--text)">On your phone?</strong> Open my.glooko.com in Safari/Chrome, export there, then come back and tap the upload area to select the ZIP from your Downloads.
+      </div>
+    </div>
+
+    <!-- Dexcom Clarity Guide -->
+    <div id="guide-dexcom" class="export-guide" style="display:none;background:var(--gradient-card);border:1px solid var(--glass-border);border-radius:var(--radius);padding:24px;animation:fadeUp .3s ease-out">
+      <h4 style="font-size:1rem;font-weight:700;margin-bottom:16px;display:flex;align-items:center;gap:8px">🟢 Export from Dexcom Clarity</h4>
+      <div style="display:flex;flex-direction:column;gap:14px">
+        <div style="display:flex;align-items:flex-start;gap:12px">
+          <span style="flex-shrink:0;width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,rgba(0,212,255,0.2),rgba(123,47,247,0.2));display:flex;align-items:center;justify-content:center;font-size:.8rem;font-weight:800;color:var(--cyan)">1</span>
+          <div><span style="font-weight:600;color:var(--text)">Open Dexcom Clarity</span><br><span style="font-size:.85rem;color:var(--text-dim)">Go to <a href="https://clarity.dexcom.com" target="_blank" style="color:var(--cyan);text-decoration:underline">clarity.dexcom.com</a> and sign in</span></div>
+        </div>
+        <div style="display:flex;align-items:flex-start;gap:12px">
+          <span style="flex-shrink:0;width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,rgba(0,212,255,0.2),rgba(123,47,247,0.2));display:flex;align-items:center;justify-content:center;font-size:.8rem;font-weight:800;color:var(--cyan)">2</span>
+          <div><span style="font-weight:600;color:var(--text)">Click the Export button</span><br><span style="font-size:.85rem;color:var(--text-dim)">Look for the <strong>Export</strong> icon (download arrow) in the top-right area of the dashboard</span></div>
+        </div>
+        <div style="display:flex;align-items:flex-start;gap:12px">
+          <span style="flex-shrink:0;width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,rgba(0,212,255,0.2),rgba(123,47,247,0.2));display:flex;align-items:center;justify-content:center;font-size:.8rem;font-weight:800;color:var(--cyan)">3</span>
+          <div><span style="font-weight:600;color:var(--text)">Select date range and download</span><br><span style="font-size:.85rem;color:var(--text-dim)">Choose your time period and click <strong>"Export"</strong> — saves as a CSV file</span></div>
+        </div>
+        <div style="display:flex;align-items:flex-start;gap:12px">
+          <span style="flex-shrink:0;width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,rgba(74,222,128,0.2),rgba(74,222,128,0.3));display:flex;align-items:center;justify-content:center;font-size:.8rem;font-weight:800;color:#4ade80">✓</span>
+          <div><span style="font-weight:600;color:#4ade80">Upload the CSV file here!</span><br><span style="font-size:.85rem;color:var(--text-dim)">Drop it in the upload area above or tap to browse your files</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Libre Guide -->
+    <div id="guide-libre" class="export-guide" style="display:none;background:var(--gradient-card);border:1px solid var(--glass-border);border-radius:var(--radius);padding:24px;animation:fadeUp .3s ease-out">
+      <h4 style="font-size:1rem;font-weight:700;margin-bottom:16px;display:flex;align-items:center;gap:8px">🔵 Export from FreeStyle Libre / LibreView</h4>
+      <div style="display:flex;flex-direction:column;gap:14px">
+        <div style="display:flex;align-items:flex-start;gap:12px">
+          <span style="flex-shrink:0;width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,rgba(0,212,255,0.2),rgba(123,47,247,0.2));display:flex;align-items:center;justify-content:center;font-size:.8rem;font-weight:800;color:var(--cyan)">1</span>
+          <div><span style="font-weight:600;color:var(--text)">Open LibreView</span><br><span style="font-size:.85rem;color:var(--text-dim)">Go to <a href="https://www.libreview.com" target="_blank" style="color:var(--cyan);text-decoration:underline">libreview.com</a> and sign in with your account</span></div>
+        </div>
+        <div style="display:flex;align-items:flex-start;gap:12px">
+          <span style="flex-shrink:0;width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,rgba(0,212,255,0.2),rgba(123,47,247,0.2));display:flex;align-items:center;justify-content:center;font-size:.8rem;font-weight:800;color:var(--cyan)">2</span>
+          <div><span style="font-weight:600;color:var(--text)">Go to Reports</span><br><span style="font-size:.85rem;color:var(--text-dim)">Click on the <strong>Reports</strong> tab, then look for <strong>"Download Glucose Data"</strong> or the export/download button</span></div>
+        </div>
+        <div style="display:flex;align-items:flex-start;gap:12px">
+          <span style="flex-shrink:0;width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,rgba(0,212,255,0.2),rgba(123,47,247,0.2));display:flex;align-items:center;justify-content:center;font-size:.8rem;font-weight:800;color:var(--cyan)">3</span>
+          <div><span style="font-weight:600;color:var(--text)">Download the CSV</span><br><span style="font-size:.85rem;color:var(--text-dim)">Select your date range and export — it downloads as a CSV file</span></div>
+        </div>
+        <div style="display:flex;align-items:flex-start;gap:12px">
+          <span style="flex-shrink:0;width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,rgba(74,222,128,0.2),rgba(74,222,128,0.3));display:flex;align-items:center;justify-content:center;font-size:.8rem;font-weight:800;color:#4ade80">✓</span>
+          <div><span style="font-weight:600;color:#4ade80">Upload the CSV file here!</span><br><span style="font-size:.85rem;color:var(--text-dim)">Drop it in the upload area above — we support both Libre 2 and Libre 3 formats</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Connect Account Teaser -->
+    <div style="margin-top:20px;text-align:center">
+      <div style="display:inline-flex;align-items:center;gap:8px;padding:12px 24px;border-radius:50px;background:rgba(123,47,247,0.06);border:1px solid rgba(123,47,247,0.15);font-size:.82rem;color:var(--text-dim)">
+        🔮 <strong style="color:#b07aff">Coming Soon:</strong> Connect your Glooko or Dexcom account directly — no downloads needed!
+      </div>
+    </div>
+  </div>
 </div>
 </section>
 
@@ -3025,6 +3120,28 @@ uploadZone.addEventListener('drop', e => {
 fileInput.addEventListener('change', e => {
   if (e.target.files.length) processFile(e.target.files[0]);
 });
+
+// Export guide tabs
+function showGuide(platform) {
+  document.querySelectorAll('.export-guide').forEach(g => g.style.display = 'none');
+  document.querySelectorAll('.export-guide-tab').forEach(t => {
+    t.style.background = 'rgba(255,255,255,0.04)';
+    t.style.borderColor = 'rgba(255,255,255,0.08)';
+    t.style.color = 'var(--text-dim)';
+  });
+  const guide = document.getElementById('guide-' + platform);
+  const tab = document.getElementById('tab-' + platform);
+  if (guide) {
+    if (guide.style.display === 'none' || guide.style.display === '') {
+      guide.style.display = 'block';
+      if (tab) {
+        tab.style.background = 'linear-gradient(135deg,rgba(0,212,255,0.2),rgba(123,47,247,0.2))';
+        tab.style.borderColor = 'var(--cyan)';
+        tab.style.color = '#fff';
+      }
+    }
+  }
+}
 
 // Paste toggle
 document.getElementById('paste-toggle').addEventListener('click', () => {
